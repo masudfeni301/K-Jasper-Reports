@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Created with Jaspersoft Studio version 6.3.0.final using JasperReports Library version 6.3.0  -->
-<!-- 2020-11-02T15:43:46 -->
+<!-- Created with Jaspersoft Studio version 6.3.1.final using JasperReports Library version 6.3.1  -->
+<!-- 2020-11-02T23:01:03 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="HR_COMMON_HEADER" pageWidth="842" pageHeight="595" orientation="Landscape" columnWidth="802" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="fbab61c1-1d53-4b76-be2d-24785ded146c">
-	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="KALYAR "/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="Kalyar"/>
 	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
 	<parameter name="P_COMPANY_CODE" class="java.lang.String"/>
 	<parameter name="P_COMPANY_BRANCH_CODE" class="java.lang.String"/>
@@ -19,25 +19,25 @@ AND B.COMPANY_BRANCH_CODE = $P{P_COMPANY_BRANCH_CODE}]]>
 		<band splitType="Stretch"/>
 	</background>
 	<detail>
-		<band height="107">
+		<band height="108">
+			<image hAlign="Center">
+				<reportElement positionType="Float" x="370" y="1" width="60" height="60" uuid="47d365a7-03bc-4790-bc52-27515a01f113"/>
+				<imageExpression><![CDATA[$F{COMPANY_LOGO}]]></imageExpression>
+			</image>
 			<textField>
-				<reportElement x="0" y="86" width="800" height="21" uuid="9be3d009-1f7b-4a99-bd74-6f0b03753b34"/>
+				<reportElement x="3" y="87" width="800" height="21" uuid="9be3d009-1f7b-4a99-bd74-6f0b03753b34"/>
 				<textElement textAlignment="Center">
 					<font size="12" isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{ADDRESS}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="0" y="63" width="800" height="20" uuid="106ba382-6dfc-4ca3-9bc5-4c48f08d11a8"/>
+				<reportElement x="3" y="64" width="800" height="20" uuid="106ba382-6dfc-4ca3-9bc5-4c48f08d11a8"/>
 				<textElement textAlignment="Center">
 					<font size="14" isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{COMPANY_NAME}]]></textFieldExpression>
 			</textField>
-			<image hAlign="Center">
-				<reportElement positionType="Float" x="367" y="0" width="60" height="60" uuid="47d365a7-03bc-4790-bc52-27515a01f113"/>
-				<imageExpression><![CDATA[$F{COMPANY_LOGO}]]></imageExpression>
-			</image>
 		</band>
 	</detail>
 </jasperReport>

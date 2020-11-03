@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Created with Jaspersoft Studio version 6.15.0.final using JasperReports Library version 6.15.0-dd49bfb94918336b8321d5507193f0169ead4e95  -->
+<!-- Created with Jaspersoft Studio version 6.3.1.final using JasperReports Library version 6.3.1  -->
+<!-- 2020-11-04T00:21:03 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="OFFDAY_ALLOWANCE_SUMMARY" pageWidth="1050" pageHeight="750" orientation="Landscape" columnWidth="1010" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="62d0349b-7ae0-4e9d-9b93-e2c3e0b912f3">
 	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
-	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="KALYAR "/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="Kalyar"/>
 	<property name="com.jaspersoft.studio.data.sql.SQLQueryDesigner.sash.w1" value="0"/>
 	<property name="com.jaspersoft.studio.data.sql.SQLQueryDesigner.sash.w2" value="1000"/>
 	<subDataset name="COMPANY_INFO" uuid="6e0d2f84-e900-408a-a061-7a1a8a07a779">
@@ -461,11 +462,11 @@ EMP_ID]]>
 	<field name="DEPT_CODE" class="java.lang.String"/>
 	<field name="DEPT_GROUP_SL" class="java.math.BigDecimal"/>
 	<field name="JOIN_DT" class="java.sql.Timestamp"/>
-	<variable name="V_SEC_OFFDAY_QTY" class="java.math.BigDecimal" resetType="Group" resetGroup="Section" calculation="Sum">
-		<variableExpression><![CDATA[$F{OFFDAY_QTY}]]></variableExpression>
-	</variable>
 	<variable name="V_HEADER" class="java.lang.String">
 		<variableExpression><![CDATA[$F{NAME}]]></variableExpression>
+	</variable>
+	<variable name="V_SEC_OFFDAY_QTY" class="java.math.BigDecimal" resetType="Group" resetGroup="Section" calculation="Sum">
+		<variableExpression><![CDATA[$F{OFFDAY_QTY}]]></variableExpression>
 	</variable>
 	<variable name="V_SEC_LUNCH_QTY" class="java.math.BigDecimal" resetType="Group" resetGroup="Section" calculation="Sum">
 		<variableExpression><![CDATA[$F{LUNCH_DIN_QTY}]]></variableExpression>
@@ -479,45 +480,27 @@ EMP_ID]]>
 	<variable name="V_SEC_CASH" class="java.math.BigDecimal" resetType="Group" resetGroup="Section" calculation="Sum">
 		<variableExpression><![CDATA[$F{NET_PAYABLE_CASH}]]></variableExpression>
 	</variable>
-	<variable name="V_SEC_BANK" class="java.math.BigDecimal" calculation="Sum">
+	<variable name="V_SEC_BANK" class="java.math.BigDecimal" resetType="Group" resetGroup="Section" calculation="Sum">
 		<variableExpression><![CDATA[$F{NET_PAYABLE_BANK}]]></variableExpression>
 	</variable>
-	<group name="Department">
-		<groupExpression><![CDATA[$F{DEPARTMENT}]]></groupExpression>
-		<groupHeader>
-			<band height="18">
-				<frame>
-					<reportElement x="0" y="0" width="1010" height="18" uuid="2a277a7a-cfc8-498d-9395-d41df20f9753">
-						<property name="com.jaspersoft.studio.unit.height" value="px"/>
-					</reportElement>
-					<box>
-						<pen lineWidth="1.0"/>
-					</box>
-					<textField>
-						<reportElement x="126" y="1" width="260" height="18" uuid="1b8f1892-ec24-487d-9af8-b1a754fad197">
-							<property name="com.jaspersoft.studio.unit.height" value="px"/>
-						</reportElement>
-						<textElement textAlignment="Left" verticalAlignment="Middle">
-							<font size="11" isBold="true"/>
-						</textElement>
-						<textFieldExpression><![CDATA[$F{DEPARTMENT}]]></textFieldExpression>
-					</textField>
-					<staticText>
-						<reportElement x="42" y="1" width="83" height="18" uuid="603044e4-2091-4249-a7cb-51bb1fcbb713">
-							<property name="com.jaspersoft.studio.unit.height" value="px"/>
-						</reportElement>
-						<textElement textAlignment="Left" verticalAlignment="Middle">
-							<font size="11" isBold="true"/>
-						</textElement>
-						<text><![CDATA[Department:]]></text>
-					</staticText>
-				</frame>
-			</band>
-		</groupHeader>
-		<groupFooter>
-			<band height="50"/>
-		</groupFooter>
-	</group>
+	<variable name="V_GRAND_OFFDAY_QTY" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{OFFDAY_QTY}]]></variableExpression>
+	</variable>
+	<variable name="V_GRAND_OFFDAY_LUNCH_QTY" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{LUNCH_DIN_QTY}]]></variableExpression>
+	</variable>
+	<variable name="V_GRAND_OFFDAY_AMT" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{OFFDAY_ALL}]]></variableExpression>
+	</variable>
+	<variable name="V_GRAND_LUNCH_AMt" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{LUNCH_DIN_ALL}]]></variableExpression>
+	</variable>
+	<variable name="V_GRAND_BANK" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{NET_PAYABLE_BANK}]]></variableExpression>
+	</variable>
+	<variable name="V_GRAND_CASH" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{NET_PAYABLE_CASH}]]></variableExpression>
+	</variable>
 	<group name="Section">
 		<groupExpression><![CDATA[$F{SECTION_NAME}]]></groupExpression>
 		<groupHeader>
@@ -530,7 +513,25 @@ EMP_ID]]>
 						<pen lineWidth="1.0"/>
 					</box>
 					<textField>
-						<reportElement x="126" y="0" width="260" height="18" uuid="6721eab8-d6e2-4c04-992b-6e7634ed7c27">
+						<reportElement x="121" y="0" width="260" height="18" uuid="1b8f1892-ec24-487d-9af8-b1a754fad197">
+							<property name="com.jaspersoft.studio.unit.height" value="px"/>
+						</reportElement>
+						<textElement textAlignment="Left" verticalAlignment="Middle">
+							<font size="11" isBold="true"/>
+						</textElement>
+						<textFieldExpression><![CDATA[$F{DEPARTMENT}]]></textFieldExpression>
+					</textField>
+					<staticText>
+						<reportElement x="40" y="0" width="83" height="18" uuid="603044e4-2091-4249-a7cb-51bb1fcbb713">
+							<property name="com.jaspersoft.studio.unit.height" value="px"/>
+						</reportElement>
+						<textElement textAlignment="Left" verticalAlignment="Middle">
+							<font size="11" isBold="true"/>
+						</textElement>
+						<text><![CDATA[Department:]]></text>
+					</staticText>
+					<textField>
+						<reportElement x="468" y="1" width="260" height="18" uuid="6721eab8-d6e2-4c04-992b-6e7634ed7c27">
 							<property name="com.jaspersoft.studio.unit.height" value="px"/>
 						</reportElement>
 						<textElement textAlignment="Left" verticalAlignment="Middle">
@@ -539,7 +540,7 @@ EMP_ID]]>
 						<textFieldExpression><![CDATA[$F{SECTION_NAME}]]></textFieldExpression>
 					</textField>
 					<staticText>
-						<reportElement x="42" y="0" width="85" height="18" uuid="abd0fde7-8b0d-4520-8cdd-f61586bf984b">
+						<reportElement x="384" y="1" width="85" height="18" uuid="abd0fde7-8b0d-4520-8cdd-f61586bf984b">
 							<property name="com.jaspersoft.studio.unit.height" value="px"/>
 						</reportElement>
 						<textElement textAlignment="Left" verticalAlignment="Middle">
@@ -559,7 +560,7 @@ EMP_ID]]>
 					<box>
 						<pen lineWidth="1.0"/>
 					</box>
-					<textField>
+					<textField pattern="#,##0.###;#,##0.###-">
 						<reportElement x="464" y="0" width="46" height="18" uuid="42c16e32-8c1c-44b0-a05b-9eb1ce354b5c">
 							<property name="com.jaspersoft.studio.unit.height" value="px"/>
 						</reportElement>
@@ -571,7 +572,7 @@ EMP_ID]]>
 						</textElement>
 						<textFieldExpression><![CDATA[$V{V_SEC_OFFDAY_QTY}]]></textFieldExpression>
 					</textField>
-					<textField>
+					<textField pattern="#,##0.###;#,##0.###-">
 						<reportElement x="510" y="0" width="58" height="18" uuid="a6be2246-e536-48e2-8515-2443bed6c191">
 							<property name="com.jaspersoft.studio.unit.height" value="px"/>
 						</reportElement>
@@ -583,7 +584,7 @@ EMP_ID]]>
 						</textElement>
 						<textFieldExpression><![CDATA[$V{V_SEC_LUNCH_QTY}]]></textFieldExpression>
 					</textField>
-					<textField>
+					<textField pattern="#,##0.###;#,##0.###-">
 						<reportElement x="670" y="0" width="50" height="18" uuid="8364a9ff-d32c-445e-8432-59f285bdc8a5">
 							<property name="com.jaspersoft.studio.unit.height" value="px"/>
 						</reportElement>
@@ -595,8 +596,8 @@ EMP_ID]]>
 						</textElement>
 						<textFieldExpression><![CDATA[$V{V_SEC_OFFDAY_AMT}]]></textFieldExpression>
 					</textField>
-					<textField>
-						<reportElement x="720" y="0" width="56" height="18" uuid="e9a0d896-f63a-4de1-a1e2-a570b80c589d">
+					<textField pattern="#,##0.###;#,##0.###-">
+						<reportElement x="720" y="0" width="57" height="18" uuid="e9a0d896-f63a-4de1-a1e2-a570b80c589d">
 							<property name="com.jaspersoft.studio.unit.height" value="px"/>
 						</reportElement>
 						<box>
@@ -607,26 +608,26 @@ EMP_ID]]>
 						</textElement>
 						<textFieldExpression><![CDATA[$V{V_SEC_LUNCH_AMT}]]></textFieldExpression>
 					</textField>
-					<textField>
+					<textField pattern="#,##0.###;#,##0.###-">
 						<reportElement x="777" y="0" width="72" height="18" uuid="648c5755-8fca-434a-ac92-a13860af41f2">
 							<property name="com.jaspersoft.studio.unit.height" value="px"/>
 						</reportElement>
 						<box>
 							<pen lineWidth="1.0"/>
 						</box>
-						<textElement textAlignment="Center">
+						<textElement textAlignment="Right">
 							<font isBold="true"/>
 						</textElement>
 						<textFieldExpression><![CDATA[$V{V_SEC_BANK}]]></textFieldExpression>
 					</textField>
-					<textField>
+					<textField pattern="#,##0.###;#,##0.###-">
 						<reportElement x="849" y="0" width="70" height="18" uuid="6e30d416-0221-4b94-8faa-d76104f01d09">
 							<property name="com.jaspersoft.studio.unit.height" value="px"/>
 						</reportElement>
 						<box>
 							<pen lineWidth="1.0"/>
 						</box>
-						<textElement textAlignment="Center">
+						<textElement textAlignment="Right">
 							<font isBold="true"/>
 						</textElement>
 						<textFieldExpression><![CDATA[$V{V_SEC_CASH}]]></textFieldExpression>
@@ -679,7 +680,7 @@ EMP_ID]]>
 			</staticText>
 			<componentElement>
 				<reportElement x="154" y="3" width="700" height="100" uuid="58a317e0-8cb3-4910-ad56-36a75aee58de"/>
-				<jr:list xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd">
+				<jr:list xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd" printOrder="Vertical">
 					<datasetRun subDataset="COMPANY_INFO" uuid="f4f84f87-2c18-4c22-8c73-2b7ba73f7d98">
 						<datasetParameter name="P_COMPANY_CODE">
 							<datasetParameterExpression><![CDATA[$P{P_COMPANY_CODE}]]></datasetParameterExpression>
@@ -715,16 +716,16 @@ EMP_ID]]>
 	</title>
 	<pageHeader>
 		<band height="32" splitType="Stretch">
-			<staticText>
-				<reportElement mode="Opaque" x="0" y="0" width="1010" height="32" backcolor="#EDEDED" uuid="f0051f5f-c79b-4f06-92cd-b0315c8e7dbd"/>
+			<textField>
+				<reportElement mode="Opaque" x="0" y="0" width="1010" height="32" backcolor="#EDEDED" uuid="9702a3c9-8e6d-469d-b6e4-151f3ff1d28e"/>
 				<box>
 					<pen lineWidth="1.0"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font size="14" isBold="true"/>
 				</textElement>
-				<text><![CDATA[Offday Allowance Summary Report]]></text>
-			</staticText>
+				<textFieldExpression><![CDATA["Offday Statement for the Month of  "+new SimpleDateFormat("MMMM, yyyy").format(new SimpleDateFormat("MM/yyyy").parse($P{P_MNYR}))]]></textFieldExpression>
+			</textField>
 		</band>
 	</pageHeader>
 	<columnHeader>
@@ -931,7 +932,7 @@ EMP_ID]]>
 				<textElement textAlignment="Center"/>
 				<textFieldExpression><![CDATA[$F{OFFDAY_THIS_MONTH}]]></textFieldExpression>
 			</textField>
-			<textField>
+			<textField pattern="#,##0.###;#,##0.###-">
 				<reportElement x="464" y="0" width="46" height="16" uuid="1d23e8e2-f60e-4a07-8049-e01d71badbbf">
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 				</reportElement>
@@ -941,7 +942,7 @@ EMP_ID]]>
 				<textElement textAlignment="Center"/>
 				<textFieldExpression><![CDATA[$F{OFFDAY_QTY}]]></textFieldExpression>
 			</textField>
-			<textField>
+			<textField pattern="#,##0.###;#,##0.###-">
 				<reportElement x="510" y="0" width="58" height="16" uuid="a2952af8-0699-4687-90af-ba0281c60c69"/>
 				<box>
 					<pen lineWidth="1.0"/>
@@ -965,7 +966,7 @@ EMP_ID]]>
 				<textElement textAlignment="Center"/>
 				<textFieldExpression><![CDATA[$F{LUNCH_DIN_RATE}]]></textFieldExpression>
 			</textField>
-			<textField>
+			<textField pattern="#,##0.###;#,##0.###-">
 				<reportElement x="670" y="0" width="50" height="16" uuid="0ef513f8-3719-4ea2-bfb9-4db664ff20f8"/>
 				<box>
 					<pen lineWidth="1.0"/>
@@ -973,7 +974,7 @@ EMP_ID]]>
 				<textElement textAlignment="Center"/>
 				<textFieldExpression><![CDATA[$F{OFFDAY_ALL}]]></textFieldExpression>
 			</textField>
-			<textField>
+			<textField pattern="#,##0.###;#,##0.###-">
 				<reportElement x="720" y="0" width="57" height="16" uuid="eaba095b-4f2c-4d67-841e-8852fa16bb1b"/>
 				<box>
 					<pen lineWidth="1.0"/>
@@ -981,7 +982,7 @@ EMP_ID]]>
 				<textElement textAlignment="Center"/>
 				<textFieldExpression><![CDATA[$F{LUNCH_DIN_ALL}]]></textFieldExpression>
 			</textField>
-			<textField>
+			<textField pattern="#,##0.###;#,##0.###-">
 				<reportElement x="777" y="0" width="72" height="16" uuid="6b4c93d6-86e6-4d7f-90f2-e324f4927592"/>
 				<box>
 					<pen lineWidth="1.0"/>
@@ -989,7 +990,7 @@ EMP_ID]]>
 				<textElement textAlignment="Right"/>
 				<textFieldExpression><![CDATA[$F{NET_PAYABLE_BANK}]]></textFieldExpression>
 			</textField>
-			<textField>
+			<textField pattern="#,##0.###;#,##0.###-">
 				<reportElement x="849" y="0" width="70" height="16" uuid="94c29667-e5b6-4556-8359-2f8fcbe72a9f"/>
 				<box>
 					<pen lineWidth="1.0"/>
@@ -1016,7 +1017,7 @@ EMP_ID]]>
 		<band height="65" splitType="Stretch">
 			<componentElement>
 				<reportElement x="2" y="22" width="210" height="41" uuid="ba7b4d90-659d-4b20-80dd-ae371922d47f"/>
-				<jr:list xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd">
+				<jr:list xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd" printOrder="Vertical">
 					<datasetRun subDataset="PRE_BY" uuid="fc2dbd59-b03f-4c1d-bb88-5e373bac22c0">
 						<datasetParameter name="P_COMPANY_BRANCH_CODE">
 							<datasetParameterExpression><![CDATA[$P{P_COMPANY_BRANCH_CODE}]]></datasetParameterExpression>
@@ -1051,7 +1052,7 @@ EMP_ID]]>
 				<reportElement x="260" y="23" width="210" height="41" uuid="8a6f542a-46a1-4573-a0c7-f9c9ae071c3f">
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 				</reportElement>
-				<jr:list xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd">
+				<jr:list xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd" printOrder="Vertical">
 					<datasetRun subDataset="CHK_BY" uuid="856cfcf2-03a4-4fc1-8c00-c03f7610905f">
 						<datasetParameter name="P_COMPANY_BRANCH_CODE">
 							<datasetParameterExpression><![CDATA[$P{P_COMPANY_BRANCH_CODE}]]></datasetParameterExpression>
@@ -1087,7 +1088,7 @@ EMP_ID]]>
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 				</reportElement>
-				<jr:list xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd">
+				<jr:list xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd" printOrder="Vertical">
 					<datasetRun subDataset="REC_BY" uuid="015db90b-9e54-4b76-a2cd-578f7f9c5914">
 						<datasetParameter name="P_COMPANY_BRANCH_CODE">
 							<datasetParameterExpression><![CDATA[$P{P_COMPANY_BRANCH_CODE}]]></datasetParameterExpression>
@@ -1121,7 +1122,7 @@ EMP_ID]]>
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 				</reportElement>
-				<jr:list xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd">
+				<jr:list xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd" printOrder="Vertical">
 					<datasetRun subDataset="AUD_BY" uuid="bf5c2565-a1e2-41d8-a8aa-969fcdcf6670">
 						<datasetParameter name="P_COMPANY_BRANCH_CODE">
 							<datasetParameterExpression><![CDATA[$P{P_COMPANY_BRANCH_CODE}]]></datasetParameterExpression>
@@ -1153,6 +1154,96 @@ EMP_ID]]>
 		</band>
 	</pageFooter>
 	<summary>
-		<band height="42" splitType="Stretch"/>
+		<band height="42" splitType="Stretch">
+			<frame>
+				<reportElement x="0" y="1" width="1010" height="18" uuid="6204d6e9-d36a-4b5f-a209-4e08ce689971">
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+				</reportElement>
+				<box>
+					<pen lineWidth="1.0"/>
+				</box>
+				<staticText>
+					<reportElement x="362" y="0" width="100" height="18" uuid="d5659ce6-c887-44d2-8ab0-a28f5031fe81">
+						<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+					</reportElement>
+					<textElement textAlignment="Right">
+						<font isBold="true"/>
+					</textElement>
+					<text><![CDATA[Grand Total:]]></text>
+				</staticText>
+				<textField pattern="#,##0.###;#,##0.###-">
+					<reportElement x="464" y="0" width="46" height="18" uuid="91224978-ab4a-46c3-9f78-e2361bc324c8">
+						<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+					</reportElement>
+					<box>
+						<pen lineWidth="1.0"/>
+					</box>
+					<textElement textAlignment="Center">
+						<font isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{V_GRAND_OFFDAY_QTY}]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,##0.###;#,##0.###-">
+					<reportElement x="510" y="0" width="58" height="18" uuid="ad552de0-2940-481d-bc2f-e503e7f16a57">
+						<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+					</reportElement>
+					<box>
+						<pen lineWidth="1.0"/>
+					</box>
+					<textElement textAlignment="Center">
+						<font isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{V_GRAND_OFFDAY_LUNCH_QTY}]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,##0.###;#,##0.###-">
+					<reportElement x="670" y="0" width="50" height="18" uuid="302a48e5-f163-479a-ad8d-63ffffaa822c">
+						<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+					</reportElement>
+					<box>
+						<pen lineWidth="1.0"/>
+					</box>
+					<textElement textAlignment="Center">
+						<font isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{V_GRAND_OFFDAY_AMT}]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,##0.###;#,##0.###-">
+					<reportElement x="720" y="0" width="57" height="18" uuid="4c28ed05-b265-4102-8a16-e146f71f75d1">
+						<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+					</reportElement>
+					<box>
+						<pen lineWidth="1.0"/>
+					</box>
+					<textElement textAlignment="Center">
+						<font isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{V_GRAND_LUNCH_AMt}]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,##0.###;#,##0.###-">
+					<reportElement x="777" y="0" width="72" height="18" uuid="e4a1af68-ed8d-4a8a-9945-6fd3b0295e6e">
+						<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+					</reportElement>
+					<box>
+						<pen lineWidth="1.0"/>
+					</box>
+					<textElement textAlignment="Right">
+						<font isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{V_GRAND_BANK}]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,##0.###;#,##0.###-">
+					<reportElement x="849" y="0" width="70" height="18" uuid="31736a5f-e8f0-44d3-b5c0-48e7dfbb92cd">
+						<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+					</reportElement>
+					<box>
+						<pen lineWidth="1.0"/>
+					</box>
+					<textElement textAlignment="Right">
+						<font isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{V_GRAND_CASH}]]></textFieldExpression>
+				</textField>
+			</frame>
+		</band>
 	</summary>
 </jasperReport>

@@ -1,0 +1,1292 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.15.0.final using JasperReports Library version 6.15.0-dd49bfb94918336b8321d5507193f0169ead4e95  -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="EXT_HR_ALLOWANCE_SUMMARY" pageWidth="1050" pageHeight="750" orientation="Landscape" columnWidth="1010" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="62d0349b-7ae0-4e9d-9b93-e2c3e0b912f3">
+	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="KALYAR "/>
+	<property name="com.jaspersoft.studio.data.sql.SQLQueryDesigner.sash.w1" value="0"/>
+	<property name="com.jaspersoft.studio.data.sql.SQLQueryDesigner.sash.w2" value="1000"/>
+	<subDataset name="COMPANY_INFO" uuid="6e0d2f84-e900-408a-a061-7a1a8a07a779">
+		<property name="com.jaspersoft.studio.data.defaultdataadapter" value="KALYAR "/>
+		<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
+		<property name="com.jaspersoft.studio.data.sql.SQLQueryDesigner.sash.w1" value="0"/>
+		<property name="com.jaspersoft.studio.data.sql.SQLQueryDesigner.sash.w2" value="1000"/>
+		<parameter name="P_COMPANY_BRANCH_CODE" class="java.lang.String"/>
+		<parameter name="P_COMPANY_CODE" class="java.lang.String"/>
+		<queryString>
+			<![CDATA[SELECT A.COMPANY_NAME, B.ADDRESS1||' '||B.ADDRESS2 ADDRESS, A.COMPANY_LOGO
+FROM COMPANY_INFO A, COMPANY_BRANCH_INFO B
+WHERE A.COMPANY_CODE = $P{P_COMPANY_CODE}
+AND B.COMPANY_BRANCH_CODE = $P{P_COMPANY_BRANCH_CODE}]]>
+		</queryString>
+		<field name="COMPANY_NAME" class="java.lang.String">
+			<property name="com.jaspersoft.studio.field.name" value="COMPANY_NAME"/>
+			<property name="com.jaspersoft.studio.field.label" value="COMPANY_NAME"/>
+		</field>
+		<field name="ADDRESS" class="java.lang.String">
+			<property name="com.jaspersoft.studio.field.name" value="ADDRESS"/>
+			<property name="com.jaspersoft.studio.field.label" value="ADDRESS"/>
+		</field>
+		<field name="COMPANY_LOGO" class="java.awt.Image">
+			<property name="com.jaspersoft.studio.field.name" value="COMPANY_LOGO"/>
+			<property name="com.jaspersoft.studio.field.label" value="COMPANY_LOGO"/>
+		</field>
+	</subDataset>
+	<subDataset name="PRE_BY" uuid="1283ec2a-182e-4ba0-af04-463b09104e35">
+		<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
+		<property name="com.jaspersoft.studio.data.defaultdataadapter" value="KALYAR "/>
+		<parameter name="P_COMPANY_BRANCH_CODE" class="java.lang.String"/>
+		<queryString language="SQL">
+			<![CDATA[SELECT
+(SELECT ' '||NAME
+    FROM EMP 
+    WHERE EMP_ID = A.EMP_ID) PRE_BY_NAME,
+(SELECT ' '||DESIG_DESC
+    FROM DESIGNATION
+    WHERE
+    DEPT_GROUP = B.DEPT_GROUP AND 
+    DEPT_CODE = B.DEPT_CODE AND 
+    DESIG_CODE =B.DESIG_CODE) PRE_BY_DESIG
+FROM SIGNATURE A, EMP B
+WHERE
+A.COMPANY_CODE = B.COMPANY_CODE AND
+A.COMPANY_BRANCH_CODE = B.COMPANY_BRANCH_CODE AND
+A.EMP_ID = B.EMP_ID AND
+A.COMPANY_BRANCH_CODE = $P{P_COMPANY_BRANCH_CODE} AND
+SIGNATORY_TYPE = 'PB' AND
+SIGNATORY_FOR   ='HRM']]>
+		</queryString>
+		<field name="PRE_BY_NAME" class="java.lang.String">
+			<property name="com.jaspersoft.studio.field.name" value="PRE_BY_NAME"/>
+			<property name="com.jaspersoft.studio.field.label" value="PRE_BY_NAME"/>
+		</field>
+		<field name="PRE_BY_DESIG" class="java.lang.String">
+			<property name="com.jaspersoft.studio.field.name" value="PRE_BY_DESIG"/>
+			<property name="com.jaspersoft.studio.field.label" value="PRE_BY_DESIG"/>
+		</field>
+	</subDataset>
+	<subDataset name="CHK_BY" uuid="591bb864-3c82-49f0-ad89-d5230bc34cd3">
+		<property name="com.jaspersoft.studio.data.defaultdataadapter" value="KALYAR "/>
+		<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
+		<parameter name="P_COMPANY_BRANCH_CODE" class="java.lang.String"/>
+		<queryString>
+			<![CDATA[SELECT 
+(SELECT ' '||NAME
+    FROM EMP 
+    WHERE EMP_ID = A.EMP_ID) CHK_BY_NAME,
+(SELECT ' '||DESIG_DESC
+    FROM DESIGNATION
+    WHERE
+    DEPT_GROUP = B.DEPT_GROUP AND 
+    DEPT_CODE = B.DEPT_CODE AND 
+    DESIG_CODE =B.DESIG_CODE) CHK_BY_DESIG
+FROM SIGNATURE A, EMP B
+WHERE
+A.COMPANY_CODE = B.COMPANY_CODE AND
+A.COMPANY_BRANCH_CODE = B.COMPANY_BRANCH_CODE AND
+A.EMP_ID = B.EMP_ID AND
+A.COMPANY_BRANCH_CODE = $P{P_COMPANY_BRANCH_CODE} AND
+SIGNATORY_TYPE = 'CB' AND
+SIGNATORY_FOR   ='HRM']]>
+		</queryString>
+		<field name="CHK_BY_NAME" class="java.lang.String">
+			<property name="com.jaspersoft.studio.field.name" value="CHK_BY_NAME"/>
+			<property name="com.jaspersoft.studio.field.label" value="CHK_BY_NAME"/>
+		</field>
+		<field name="CHK_BY_DESIG" class="java.lang.String">
+			<property name="com.jaspersoft.studio.field.name" value="CHK_BY_DESIG"/>
+			<property name="com.jaspersoft.studio.field.label" value="CHK_BY_DESIG"/>
+		</field>
+	</subDataset>
+	<subDataset name="REC_BY" uuid="54c7663c-dc90-4cdd-9fc1-999a5f22af74">
+		<property name="com.jaspersoft.studio.data.defaultdataadapter" value="KALYAR "/>
+		<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
+		<parameter name="P_COMPANY_BRANCH_CODE" class="java.lang.String"/>
+		<queryString>
+			<![CDATA[SELECT 
+(SELECT ' '||NAME
+    FROM EMP 
+    WHERE EMP_ID = A.EMP_ID) REC_BY_NAME,
+(SELECT ' '||DESIG_DESC
+    FROM DESIGNATION
+    WHERE
+    DEPT_GROUP = B.DEPT_GROUP AND 
+    DEPT_CODE = B.DEPT_CODE AND 
+    DESIG_CODE =B.DESIG_CODE) REC_BY_DESIG
+FROM SIGNATURE A, EMP B
+WHERE
+A.COMPANY_CODE = B.COMPANY_CODE AND
+A.COMPANY_BRANCH_CODE = B.COMPANY_BRANCH_CODE AND
+A.EMP_ID = B.EMP_ID AND
+A.COMPANY_BRANCH_CODE = $P{P_COMPANY_BRANCH_CODE} AND
+SIGNATORY_TYPE = 'RB' AND
+SIGNATORY_FOR   ='HRM']]>
+		</queryString>
+		<field name="REC_BY_NAME" class="java.lang.String">
+			<property name="com.jaspersoft.studio.field.name" value="REC_BY_NAME"/>
+			<property name="com.jaspersoft.studio.field.label" value="REC_BY_NAME"/>
+		</field>
+		<field name="REC_BY_DESIG" class="java.lang.String">
+			<property name="com.jaspersoft.studio.field.name" value="REC_BY_DESIG"/>
+			<property name="com.jaspersoft.studio.field.label" value="REC_BY_DESIG"/>
+		</field>
+	</subDataset>
+	<subDataset name="AUD_BY" uuid="2baa0b9b-b293-43a4-98a5-1f3eb2ada058">
+		<property name="com.jaspersoft.studio.data.defaultdataadapter" value="KALYAR "/>
+		<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
+		<parameter name="P_COMPANY_BRANCH_CODE" class="java.lang.String"/>
+		<queryString>
+			<![CDATA[SELECT 
+(SELECT ' '||NAME
+    FROM EMP 
+    WHERE EMP_ID = A.EMP_ID) AUD_BY_NAME,
+(SELECT ' '||DESIG_DESC
+    FROM DESIGNATION
+    WHERE
+    DEPT_GROUP = B.DEPT_GROUP AND 
+    DEPT_CODE = B.DEPT_CODE AND 
+    DESIG_CODE =B.DESIG_CODE) AUD_BY_DESIG
+FROM SIGNATURE A, EMP B
+WHERE
+A.COMPANY_CODE = B.COMPANY_CODE AND
+A.COMPANY_BRANCH_CODE = B.COMPANY_BRANCH_CODE AND
+A.EMP_ID = B.EMP_ID AND
+A.COMPANY_BRANCH_CODE = $P{P_COMPANY_BRANCH_CODE}  AND
+SIGNATORY_TYPE = 'AB' AND
+SIGNATORY_FOR   ='HRM']]>
+		</queryString>
+		<field name="AUD_BY_NAME" class="java.lang.String">
+			<property name="com.jaspersoft.studio.field.name" value="AUD_BY_NAME"/>
+			<property name="com.jaspersoft.studio.field.label" value="AUD_BY_NAME"/>
+		</field>
+		<field name="AUD_BY_DESIG" class="java.lang.String">
+			<property name="com.jaspersoft.studio.field.name" value="AUD_BY_DESIG"/>
+			<property name="com.jaspersoft.studio.field.label" value="AUD_BY_DESIG"/>
+		</field>
+	</subDataset>
+	<parameter name="P_MNYR" class="java.lang.String"/>
+	<parameter name="P_COMPANY_CODE" class="java.lang.String"/>
+	<parameter name="P_COMPANY_BRANCH_CODE" class="java.lang.String"/>
+	<parameter name="P_DESIG_GROUP" class="java.lang.String"/>
+	<parameter name="P_DEPT_CODE" class="java.lang.String"/>
+	<parameter name="P_EMP" class="java.lang.String"/>
+	<parameter name="P_DEPT_GROUP" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[SELECT NAME, EMP_ID, DESIGNATION,
+
+(CASE 
+WHEN DESIG_GROUP ='OF' THEN EMP_AC_NO 
+WHEN DESIG_GROUP ='FW' THEN MOBILE_AC_NO
+WHEN DESIG_GROUP ='OS' THEN MOBILE_AC_NO
+ELSE NULL END) as ACCOUNT_NO,
+
+(SELECT COUNT(HOLIDAY_DATE) 
+FROM ( SELECT HOLIDAY_DATE HOLIDAY_DATE
+FROM HOLIDAY_WEEK
+WHERE 
+COMPANY_CODE        = $P{P_COMPANY_CODE} AND
+COMPANY_BRANCH_CODE = $P{P_COMPANY_BRANCH_CODE} AND
+TO_CHAR(HOLIDAY_DATE,'MM/YYYY') = $P{P_MNYR}
+UNION
+SELECT DATE_TO HOLIDAY_DATE
+FROM HOLIDAY
+WHERE 
+COMPANY_CODE        = $P{P_COMPANY_CODE} AND
+COMPANY_BRANCH_CODE = $P{P_COMPANY_BRANCH_CODE} AND
+TO_CHAR(FROM_DATE,'MM/YYYY')   = $P{P_MNYR}
+)) as OFFDAY_THIS_MONTH, 
+
+COUNT(ATTEND_DATE) as OFFDAY_QTY, SUM(LUNCH_QTY) as LUNCH_DIN_QTY,
+
+(SELECT NVL(O.EXCESS_HOUR_ALL,0) FROM HR_TNOFF_ALLOWANCE O
+WHERE O.DEPT_GROUP  = Y.DEPT_GROUP 
+AND O.DEPT_CODE   =  Y.DEPT_CODE  
+AND O.DESIG_CODE  = Y.DESIG_CODE 
+AND O.EFFECTIVE_DATE  = (SELECT MAX(EFFECTIVE_DATE) 
+                     FROM HR_TNOFF_ALLOWANCE 
+                     WHERE DEPT_GROUP = Y.DEPT_GROUP AND
+                     DEPT_CODE        = Y.DEPT_CODE  AND
+                     DESIG_CODE      = Y.DESIG_CODE AND
+                     EFFECTIVE_DATE  <= TO_DATE($P{P_MNYR},'MM/YYYY'))) as OFFDAY_RATE,
+
+(SELECT NVL(O.OFFDAY_LUNCH_BILL,0) FROM HR_TNOFF_ALLOWANCE O
+  WHERE O.DEPT_GROUP  = Y.DEPT_GROUP 
+  AND O.DEPT_CODE   =  Y.DEPT_CODE  
+  AND O.DESIG_CODE  = Y.DESIG_CODE 
+  AND O.EFFECTIVE_DATE  = (SELECT MAX(EFFECTIVE_DATE) 
+         FROM HR_TNOFF_ALLOWANCE 
+         WHERE DEPT_GROUP = Y.DEPT_GROUP AND
+         DEPT_CODE        = Y.DEPT_CODE  AND
+         DESIG_CODE      = Y.DESIG_CODE AND
+         EFFECTIVE_DATE  <= TO_DATE($P{P_MNYR},'MM/YYYY'))) as LUNCH_DIN_RATE,
+         
+SUM(OFFDAY_ALL) as OFFDAY_ALL , SUM(OFFDAY_LUNCH_DIN_ALL) as LUNCH_DIN_ALL, SUM(TOTAL_PAY_AMT) AS TOT_PAY_AMT, 
+SUM(NET_PAYABLE_BANK) as NET_PAYABLE_BANK, SUM(NET_PAYABLE_CASH) as NET_PAYABLE_CASH,
+DEPARTMENT, SECTION_NAME, DEPT_GROUP, DEPT_CODE, DEPT_GROUP_SL, JOIN_DT
+FROM (SELECT 
+NAME, DESIGNATION, DEPARTMENT, SECTION_NAME, ATTEND_DATE , DD, EMP_ID,DUTY,
+BASIC_SALARY, JOIN_DT, BANK_SAL_FLAG, EMP_AC_NO, EMP_AC_DATE, MOBILE_BANK_SAL_FLAG, MOBILE_AC_NO, MOBILE_AC_DATE, DEPT_GROUP, DEPT_CODE, 
+DESIG_CODE, SALARY_TYPE, DESIG_GROUP, DEPT_GROUP_SL, OFFDAY_ALL, OFFDAY_LUNCH_DIN_ALL, ACTUAL_TIME, 
+IN_TIME, OUT_TIME, NVL(OFFDAY_ALL, 0)+NVL(OFFDAY_LUNCH_DIN_ALL, 0) as TOTAL_PAY_AMT,
+(CASE
+When NVL(OFFDAY_LUNCH_DIN_ALL, 0)  = 0 THEN 0
+ELSE
+1
+END) as LUNCH_QTY,
+(CASE 
+WHEN EMP_AC_NO IS NOT NULL AND BANK_SAL_FLAG IS NOT NULL 
+    OR MOBILE_AC_NO IS NOT NULL AND MOBILE_BANK_SAL_FLAG IS NOT NULL THEN
+    NVL(OFFDAY_ALL, 0)+NVL(OFFDAY_LUNCH_DIN_ALL, 0)
+ELSE 0
+END) as NET_PAYABLE_BANK,
+
+(CASE
+WHEN EMP_AC_NO IS NULL AND BANK_SAL_FLAG IS NULL AND MOBILE_AC_NO IS NULL AND MOBILE_BANK_SAL_FLAG IS NULL THEN
+    NVL(OFFDAY_ALL, 0)+NVL(OFFDAY_LUNCH_DIN_ALL, 0)
+ELSE 0
+END) as NET_PAYABLE_CASH 
+FROM (SELECT
+NAME, DESIGNATION, DEPARTMENT, SECTION_NAME, ATTEND_DATE , DD, EMP_ID,DUTY,
+BASIC_SALARY, JOIN_DT, EMP_AC_NO, EMP_AC_DATE, MOBILE_AC_NO, MOBILE_AC_DATE, DEPT_GROUP, DEPT_CODE, 
+DESIG_CODE, SALARY_TYPE, DESIG_GROUP, DEPT_GROUP_SL, BANK_SAL_FLAG, MOBILE_BANK_SAL_FLAG,
+(CASE 
+WHEN PRE_ADJ_OFFDAY_ALL > 0 THEN 0
+    ELSE PRE_OFFDAY_ALL
+END) as OFFDAY_ALL,
+
+(CASE 
+WHEN PRE_ADJ_OFFDAY_LUNCH_ALL > 0 THEN 0
+ELSE 
+ CASE WHEN OUT_TIME1 IS NOT NULL AND OUT_TIME1>= TO_CHAR(TO_DATE('1400','HH24:MI'),'HH24:MI')  AND OUT_TIME1< TO_CHAR(TO_DATE('23:00','HH24:MI'),'HH24:MI') OR
+ DUTY > 4 THEN 
+  PRE_OFFDAY_LUNCH_ALL
+ ELSE
+    CASE WHEN ADJ_OFFDAY_LUNCH_ALL > 0 THEN PRE_OFFDAY_LUNCH_ALL
+    ELSE 0
+    END
+ END    
+END) as OFFDAY_LUNCH_DIN_ALL,
+
+(CASE 
+  WHEN OUT_TIME_DATE> IN_TIME_DATE THEN 
+    ROUND(24*(OUT_TIME_DATE-IN_TIME_DATE))
+  WHEN IN_TIME_DATE > OUT_TIME_DATE  THEN 
+    ROUND(24*(IN_TIME_DATE-OUT_TIME_DATE))
+  WHEN OUT_TIME_DATE IS NULL  THEN 1
+END) as ACTUAL_TIME, 
+(CASE
+WHEN PRE_IN_TIME > 0 THEN ORIGIN_IN_TIME
+ELSE
+IN_TIME1
+END) as IN_TIME,
+
+(CASE
+WHEN PRE_IN_TIME > 0 THEN ORIGIN_OUT_TIME
+ELSE
+OUT_TIME1
+END) as OUT_TIME
+FROM (SELECT 
+(SELECT ' '||O.DESIG_DESC FROM DESIGNATION O WHERE O.DEPT_GROUP = X.DEPT_GROUP AND O.DEPT_CODE  = X.DEPT_CODE AND O.DESIG_CODE = X.DESIG_CODE) as DESIGNATION,
+(SELECT ' '||O.DEPT_GROUP_NAME FROM DEPT_GROUP O WHERE O.DEPT_GROUP_CODE = X.DEPT_GROUP) as DEPARTMENT,
+(SELECT ' '||O.DEPT_DESC FROM DEPT O WHERE O.DEPT_GROUP = X.DEPT_GROUP AND O.DEPT_CODE  = X.DEPT_CODE) as SECTION_NAME,
+ATTEND_DATE , DD, EMP_ID, NAME, IN_TIME as IN_TIME_DATE, OUT_TIME as OUT_TIME_DATE, IN_TIME1, OUT_TIME1, ABS(TO_NUMBER(TO_CHAR(IN_TIME,'HH24'))-  TO_NUMBER(TO_CHAR(OUT_TIME,'HH24'))) DUTY,
+BASIC_SALARY, JOIN_DT,BANK_SAL_FLAG,EMP_AC_NO,EMP_AC_DATE,MOBILE_BANK_SAL_FLAG,MOBILE_AC_NO,
+MOBILE_AC_DATE, DEPT_GROUP, DEPT_CODE, DESIG_CODE, SALARY_TYPE, DESIG_GROUP, DEPT_GROUP_SL,
+(SELECT NVL(O.EXCESS_HOUR_ALL,0) FROM HR_TNOFF_ALLOWANCE O
+WHERE O.DEPT_GROUP  = X.DEPT_GROUP 
+AND O.DEPT_CODE   =  X.DEPT_CODE  
+AND O.DESIG_CODE  = X.DESIG_CODE 
+AND O.EFFECTIVE_DATE  = (SELECT MAX(EFFECTIVE_DATE) 
+                     FROM HR_TNOFF_ALLOWANCE 
+                     WHERE DEPT_GROUP = X.DEPT_GROUP AND
+                     DEPT_CODE        = X.DEPT_CODE  AND
+                     DESIG_CODE      = X.DESIG_CODE AND
+                     EFFECTIVE_DATE  <= TO_DATE($P{P_MNYR},'MM/YYYY'))) PRE_OFFDAY_ALL,
+                     
+(SELECT COUNT(O.EMP_ID) FROM HR_EXT_HOUR_ADJUST O
+        WHERE O.COMPANY_CODE=$P{P_COMPANY_CODE}
+        AND O.COMPANY_BRANCH_CODE=$P{P_COMPANY_BRANCH_CODE}
+        AND O.EMP_ID = X.EMP_ID 
+        AND O.ADJ_DATE = X.ATTEND_DATE 
+        AND O.EXT_HR_ADJUST ='C' 
+        AND INIT_YR(TO_CHAR(O.ADJ_DATE,'MM/YYYY')) =  INIT_YR($P{P_MNYR})) as PRE_ADJ_OFFDAY_ALL,
+        
+(SELECT NVL(O.OFFDAY_LUNCH_BILL,0) FROM HR_TNOFF_ALLOWANCE O
+  WHERE O.DEPT_GROUP  = X.DEPT_GROUP 
+  AND O.DEPT_CODE   =  X.DEPT_CODE  
+  AND O.DESIG_CODE  = X.DESIG_CODE 
+  AND O.EFFECTIVE_DATE  = (SELECT MAX(EFFECTIVE_DATE) 
+         FROM HR_TNOFF_ALLOWANCE 
+         WHERE DEPT_GROUP = X.DEPT_GROUP AND
+         DEPT_CODE        = X.DEPT_CODE  AND
+         DESIG_CODE      = x.DESIG_CODE AND
+         EFFECTIVE_DATE  <= TO_DATE($P{P_MNYR},'MM/YYYY'))) as PRE_OFFDAY_LUNCH_ALL,
+         
+(SELECT COUNT(O.EMP_ID) FROM HR_EXT_HOUR_ADJUST O
+        WHERE O.COMPANY_CODE=$P{P_COMPANY_CODE}
+        AND O.COMPANY_BRANCH_CODE=$P{P_COMPANY_BRANCH_CODE}
+        AND O.EMP_ID = X.EMP_ID 
+        AND O.ADJ_DATE = X.ATTEND_DATE 
+        AND O.DINNER_ADJUST ='C' 
+        AND INIT_YR(TO_CHAR(O.ADJ_DATE,'MM/YYYY')) =  INIT_YR($P{P_MNYR})) as PRE_ADJ_OFFDAY_LUNCH_ALL,
+        
+(SELECT COUNT(EMP_ID) FROM HR_EXT_HOUR_ADJUST O
+        WHERE O.COMPANY_CODE=$P{P_COMPANY_CODE} 
+        AND O.COMPANY_BRANCH_CODE=$P{P_COMPANY_BRANCH_CODE}
+        AND O.EMP_ID = X.EMP_ID 
+        AND O.ADJ_DATE = X.ATTEND_DATE 
+        AND O.DINNER_ADJUST ='A' 
+        AND INIT_YR(TO_CHAR(O.ADJ_DATE,'MM/YYYY')) =  INIT_YR($P{P_MNYR})) as ADJ_OFFDAY_LUNCH_ALL,
+        
+(SELECT COUNT(attend_date) from daily_attendance O
+ WHERE O.EMP_ID = X.EMP_ID AND to_char(O.attend_date, 'MM/YYYY') = $P{P_MNYR}
+ AND O.attend_date = (SELECT adj_date FROM HR_OFFDAY_ADJUST WHERE emp_id = X.emp_id AND to_char(adj_date, 'MM/YYYY') = $P{P_MNYR} and adj_date = X.attend_date )) as PRE_IN_TIME,
+ 
+(SELECT to_char(O.in_time, 'HH24:MI') from daily_attendance O
+ WHERE O.EMP_ID = X.EMP_ID
+ AND to_char(O.attend_date, 'MM/YYYY') = $P{P_MNYR}
+ AND O.attend_date = X.attend_date) as ORIGIN_IN_TIME,
+ 
+ (SELECT to_char(O.out_time, 'HH24:MI') from daily_attendance O
+ WHERE O.EMP_ID = X.EMP_ID
+ AND to_char(O.attend_date, 'MM/YYYY') = $P{P_MNYR}
+ AND O.attend_date = X.attend_date) as ORIGIN_OUT_TIME
+ 
+FROM (SELECT ATTEND_DATE , DD, EMP_ID, NAME, IN_TIME, OUT_TIME, IN_TIME1, abs(TO_NUMBER(TO_CHAR(IN_TIME,'HH24'))-  TO_NUMBER(TO_CHAR(OUT_TIME,'HH24'))) DUTY,
+BASIC_SALARY, OUT_TIME1,JOIN_DT,BANK_SAL_FLAG,EMP_AC_NO,EMP_AC_DATE,MOBILE_BANK_SAL_FLAG,MOBILE_AC_NO,
+MOBILE_AC_DATE, DEPT_GROUP, DEPT_CODE, DESIG_CODE, SALARY_TYPE, DESIG_GROUP, DEPT_GROUP_SL
+FROM
+(SELECT DISTINCT A.ATTEND_DATE ,TO_CHAR(A.ATTEND_DATE,'DY') DD,A.EMP_ID,B.NAME,A.IN_TIME,A.OUT_TIME,TO_CHAR(A.IN_TIME,'HH24:MI') IN_TIME1,
+B.BASIC_SALARY,TO_CHAR(A.OUT_TIME,'HH24:MI') OUT_TIME1,B.JOIN_DT,B.BANK_SAL_FLAG,B.EMP_AC_NO,B.EMP_AC_DATE,B.MOBILE_BANK_SAL_FLAG,B.MOBILE_AC_NO,
+B.MOBILE_AC_DATE, B.DEPT_GROUP,B.DEPT_CODE,B.DESIG_CODE,B.SALARY_TYPE,S.DESIG_GROUP ,G.DEPT_GROUP_SL
+FROM DAILY_ATTENDANCE A, EMP B, DESIGNATION S, DEPT_GROUP G
+WHERE 
+(B.DEPT_GROUP = G.DEPT_GROUP_CODE) AND
+A.COMPANY_CODE =B.COMPANY_CODE AND
+A.COMPANY_BRANCH_CODE=B.COMPANY_BRANCH_CODE AND
+A.EMP_ID=B.EMP_ID AND
+(TO_NUMBER(REPLACE(TO_CHAR(A.IN_TIME, 'HH24:MI'), ':', '')) < 1900 AND TO_NUMBER(REPLACE(TO_CHAR(A.OUT_TIME, 'HH24:MI'), ':', '')) > 2200) AND
+A.EMP_ID NOT IN(
+SELECT EMP_ID FROM EMP_SHIFT WHERE SHIFT_ID != 'STD' AND  INIT_YR(TO_CHAR(SHIFT_DT_FROM,'MM/YYYY')) = INIT_YR($P{P_MNYR})) AND
+(A.EMP_ID, A.ATTEND_DATE) NOT IN (
+        SELECT EMP_ID, ADJ_DATE
+        FROM HR_EXT_HOUR_ADJUST
+        WHERE 
+        COMPANY_CODE=$P{P_COMPANY_CODE} AND
+        COMPANY_BRANCH_CODE=$P{P_COMPANY_BRANCH_CODE} AND
+        INIT_YR(TO_CHAR(ADJ_DATE,'MM/YYYY')) =  INIT_YR($P{P_MNYR})
+) AND
+B.DEPT_GROUP = S.DEPT_GROUP  AND
+B.DEPT_CODE  = S.DEPT_CODE  AND
+B.DESIG_CODE = S.DESIG_CODE AND
+A.COMPANY_CODE = $P{P_COMPANY_CODE} AND
+A.COMPANY_BRANCH_CODE = $P{P_COMPANY_BRANCH_CODE} AND
+S.DESIG_GROUP   NOT IN ('FW') AND
+UPPER(S.DESIG_DESC) NOT LIKE UPPER('%DRIVER%') 
+AND UPPER(S.DESIG_DESC) NOT LIKE UPPER('%HELPER%') AND
+UPPER(S.DESIG_DESC) NOT LIKE UPPER('%DELLIVERY%') AND
+(S.DESIG_GROUP = $P{P_DESIG_GROUP} OR $P{P_DESIG_GROUP} IS NULL) AND
+(B.DEPT_GROUP  = $P{P_DEPT_GROUP} OR $P{P_DEPT_GROUP} IS NULL) AND
+(B.DEPT_CODE = $P{P_DEPT_CODE} OR $P{P_DEPT_CODE} IS NULL) AND
+--(B.BLOCK_CODE = :P_BLOCK OR :P_BLOCK IS NULL) AND
+(A.EMP_ID = $P{P_EMP} OR $P{P_EMP} IS NULL) AND
+(B.EMP_STATUS IN('A') OR B.EMP_STATUS IN('I') AND 
+B.EMP_INACTIVE_DT > (TO_DATE('01/'||$P{P_MNYR},'DD/MM/YYYY'))) AND
+INIT_YR(TO_CHAR(A.ATTEND_DATE,'MM/YYYY')) = INIT_YR($P{P_MNYR})    
+
+UNION
+
+SELECT DISTINCT A.ADJ_DATE ,TO_CHAR(A.ADJ_DATE,'DY') DD, A.EMP_ID,B.NAME, NULL,NULL, NULL,
+B.BASIC_SALARY, NULL,B.JOIN_DT,B.BANK_SAL_FLAG,B.EMP_AC_NO,B.EMP_AC_DATE,B.MOBILE_BANK_SAL_FLAG,B.MOBILE_AC_NO,
+B.MOBILE_AC_DATE, B.DEPT_GROUP,B.DEPT_CODE,B.DESIG_CODE,B.SALARY_TYPE,S.DESIG_GROUP ,G.DEPT_GROUP_SL
+FROM HR_EXT_HOUR_ADJUST A, EMP B, DESIGNATION S, DEPT_GROUP G
+WHERE 
+(B.DEPT_GROUP = G.DEPT_GROUP_CODE) AND
+A.COMPANY_CODE  =B.COMPANY_CODE AND
+A.COMPANY_BRANCH_CODE =B.COMPANY_BRANCH_CODE AND
+A.EMP_ID=B.EMP_ID AND
+B.DEPT_GROUP = S.DEPT_GROUP  AND
+B.DEPT_CODE = S.DEPT_CODE  AND
+B.DESIG_CODE = S.DESIG_CODE AND
+A.COMPANY_CODE = $P{P_COMPANY_CODE} AND
+A.COMPANY_BRANCH_CODE = $P{P_COMPANY_BRANCH_CODE} AND
+------S.DESIG_GROUP   NOT IN ('FW') AND
+(S.DESIG_GROUP = $P{P_DESIG_GROUP} OR $P{P_DESIG_GROUP} IS NULL) AND
+(B.DEPT_GROUP = $P{P_DEPT_GROUP} OR $P{P_DEPT_GROUP} IS NULL) AND
+(B.DEPT_CODE = $P{P_DEPT_CODE} OR $P{P_DEPT_CODE} IS NULL) AND
+--(B.BLOCK_CODE   = :P_BLOCK OR :P_BLOCK IS NULL) AND
+(A.EMP_ID = $P{P_EMP} OR $P{P_EMP} IS NULL) AND
+(A.EMP_ID,A.ADJ_DATE) NOT IN (
+        SELECT EMP_ID,ADJ_DATE
+        FROM HR_EXT_HOUR_ADJUST
+        WHERE 
+        COMPANY_CODE=$P{P_COMPANY_CODE} AND
+        COMPANY_BRANCH_CODE=$P{P_COMPANY_BRANCH_CODE} AND
+        (EXT_HR_ADJUST IS NULL AND  DINNER_ADJUST IS NULL) OR
+        (EXT_HR_ADJUST ='C' AND  DINNER_ADJUST ='C') AND
+        INIT_YR(TO_CHAR(ADJ_DATE,'MM/YYYY')) =  INIT_YR($P{P_MNYR})
+) AND
+(B.EMP_STATUS IN('A') OR B.EMP_STATUS IN('I') AND 
+B.EMP_INACTIVE_DT > (TO_DATE('01/'||$P{P_MNYR},'DD/MM/YYYY'))) AND
+INIT_YR(TO_CHAR(A.ADJ_DATE ,'MM/YYYY')) = INIT_YR($P{P_MNYR})   )                                 
+
+ORDER BY 
+DEPT_GROUP_SL, DEPT_GROUP, DEPT_CODE, DESIG_CODE, JOIN_DT,
+EMP_ID, ATTEND_DATE) X))) Y
+
+GROUP BY NAME, DESIGNATION, DEPARTMENT, SECTION_NAME, EMP_ID, 
+DEPT_GROUP, DEPT_CODE, DEPT_GROUP_SL, DESIG_CODE, DESIG_GROUP, JOIN_DT, EMP_AC_NO, MOBILE_AC_NO                      
+
+ORDER BY 
+DEPT_GROUP_SL, DEPT_GROUP, DEPT_CODE, DESIG_CODE, JOIN_DT,
+EMP_ID
+]]>
+	</queryString>
+	<field name="NAME" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="NAME"/>
+		<property name="com.jaspersoft.studio.field.label" value="NAME"/>
+	</field>
+	<field name="EMP_ID" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="EMP_ID"/>
+		<property name="com.jaspersoft.studio.field.label" value="EMP_ID"/>
+	</field>
+	<field name="DESIGNATION" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="DESIGNATION"/>
+		<property name="com.jaspersoft.studio.field.label" value="DESIGNATION"/>
+	</field>
+	<field name="ACCOUNT_NO" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="ACCOUNT_NO"/>
+		<property name="com.jaspersoft.studio.field.label" value="ACCOUNT_NO"/>
+	</field>
+	<field name="OFFDAY_THIS_MONTH" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="OFFDAY_THIS_MONTH"/>
+		<property name="com.jaspersoft.studio.field.label" value="OFFDAY_THIS_MONTH"/>
+	</field>
+	<field name="OFFDAY_QTY" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="OFFDAY_QTY"/>
+		<property name="com.jaspersoft.studio.field.label" value="OFFDAY_QTY"/>
+	</field>
+	<field name="LUNCH_DIN_QTY" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="LUNCH_DIN_QTY"/>
+		<property name="com.jaspersoft.studio.field.label" value="LUNCH_DIN_QTY"/>
+	</field>
+	<field name="OFFDAY_RATE" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="OFFDAY_RATE"/>
+		<property name="com.jaspersoft.studio.field.label" value="OFFDAY_RATE"/>
+	</field>
+	<field name="LUNCH_DIN_RATE" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="LUNCH_DIN_RATE"/>
+		<property name="com.jaspersoft.studio.field.label" value="LUNCH_DIN_RATE"/>
+	</field>
+	<field name="OFFDAY_ALL" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="OFFDAY_ALL"/>
+		<property name="com.jaspersoft.studio.field.label" value="OFFDAY_ALL"/>
+	</field>
+	<field name="LUNCH_DIN_ALL" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="LUNCH_DIN_ALL"/>
+		<property name="com.jaspersoft.studio.field.label" value="LUNCH_DIN_ALL"/>
+	</field>
+	<field name="TOT_PAY_AMT" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="TOT_PAY_AMT"/>
+		<property name="com.jaspersoft.studio.field.label" value="TOT_PAY_AMT"/>
+	</field>
+	<field name="NET_PAYABLE_BANK" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="NET_PAYABLE_BANK"/>
+		<property name="com.jaspersoft.studio.field.label" value="NET_PAYABLE_BANK"/>
+	</field>
+	<field name="NET_PAYABLE_CASH" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="NET_PAYABLE_CASH"/>
+		<property name="com.jaspersoft.studio.field.label" value="NET_PAYABLE_CASH"/>
+	</field>
+	<field name="DEPARTMENT" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="DEPARTMENT"/>
+		<property name="com.jaspersoft.studio.field.label" value="DEPARTMENT"/>
+	</field>
+	<field name="SECTION_NAME" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="SECTION_NAME"/>
+		<property name="com.jaspersoft.studio.field.label" value="SECTION_NAME"/>
+	</field>
+	<field name="DEPT_GROUP" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="DEPT_GROUP"/>
+		<property name="com.jaspersoft.studio.field.label" value="DEPT_GROUP"/>
+	</field>
+	<field name="DEPT_CODE" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="DEPT_CODE"/>
+		<property name="com.jaspersoft.studio.field.label" value="DEPT_CODE"/>
+	</field>
+	<field name="DEPT_GROUP_SL" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="DEPT_GROUP_SL"/>
+		<property name="com.jaspersoft.studio.field.label" value="DEPT_GROUP_SL"/>
+	</field>
+	<field name="JOIN_DT" class="java.sql.Timestamp">
+		<property name="com.jaspersoft.studio.field.name" value="JOIN_DT"/>
+		<property name="com.jaspersoft.studio.field.label" value="JOIN_DT"/>
+	</field>
+	<variable name="V_HEADER" class="java.lang.String">
+		<variableExpression><![CDATA[$F{NAME}]]></variableExpression>
+	</variable>
+	<variable name="V_SEC_OFFDAY_QTY" class="java.math.BigDecimal" resetType="Group" resetGroup="Section" calculation="Sum">
+		<variableExpression><![CDATA[$F{OFFDAY_QTY}]]></variableExpression>
+	</variable>
+	<variable name="V_SEC_LUNCH_QTY" class="java.math.BigDecimal" resetType="Group" resetGroup="Section" calculation="Sum">
+		<variableExpression><![CDATA[$F{LUNCH_DIN_QTY}]]></variableExpression>
+	</variable>
+	<variable name="V_SEC_OFFDAY_AMT" class="java.math.BigDecimal" resetType="Group" resetGroup="Section" calculation="Sum">
+		<variableExpression><![CDATA[$F{OFFDAY_ALL}]]></variableExpression>
+	</variable>
+	<variable name="V_SEC_LUNCH_AMT" class="java.math.BigDecimal" resetType="Group" resetGroup="Section" calculation="Sum">
+		<variableExpression><![CDATA[$F{LUNCH_DIN_ALL}]]></variableExpression>
+	</variable>
+	<variable name="V_SEC_CASH" class="java.math.BigDecimal" resetType="Group" resetGroup="Section" calculation="Sum">
+		<variableExpression><![CDATA[$F{NET_PAYABLE_CASH}]]></variableExpression>
+	</variable>
+	<variable name="V_SEC_BANK" class="java.math.BigDecimal" resetType="Group" resetGroup="Section" calculation="Sum">
+		<variableExpression><![CDATA[$F{NET_PAYABLE_BANK}]]></variableExpression>
+	</variable>
+	<variable name="V_GRAND_OFFDAY_QTY" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{OFFDAY_QTY}]]></variableExpression>
+	</variable>
+	<variable name="V_GRAND_OFFDAY_LUNCH_QTY" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{LUNCH_DIN_QTY}]]></variableExpression>
+	</variable>
+	<variable name="V_GRAND_OFFDAY_AMT" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{OFFDAY_ALL}]]></variableExpression>
+	</variable>
+	<variable name="V_GRAND_LUNCH_AMt" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{LUNCH_DIN_ALL}]]></variableExpression>
+	</variable>
+	<variable name="V_GRAND_BANK" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{NET_PAYABLE_BANK}]]></variableExpression>
+	</variable>
+	<variable name="V_GRAND_CASH" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{NET_PAYABLE_CASH}]]></variableExpression>
+	</variable>
+	<group name="Section">
+		<groupExpression><![CDATA[$F{SECTION_NAME}]]></groupExpression>
+		<groupHeader>
+			<band height="18">
+				<frame>
+					<reportElement x="0" y="0" width="1010" height="18" uuid="cf84856c-ac36-4ff2-974f-255d5c4c693a">
+						<property name="com.jaspersoft.studio.unit.height" value="px"/>
+						<property name="com.jaspersoft.studio.layout" value="com.jaspersoft.studio.editor.layout.FreeLayout"/>
+					</reportElement>
+					<box>
+						<pen lineWidth="1.0"/>
+					</box>
+					<staticText>
+						<reportElement x="40" y="0" width="84" height="18" uuid="603044e4-2091-4249-a7cb-51bb1fcbb713">
+							<property name="com.jaspersoft.studio.unit.height" value="px"/>
+							<property name="com.jaspersoft.studio.unit.width" value="px"/>
+						</reportElement>
+						<textElement textAlignment="Left" verticalAlignment="Middle">
+							<font size="11" isBold="true"/>
+						</textElement>
+						<text><![CDATA[Department:]]></text>
+					</staticText>
+					<textField>
+						<reportElement x="125" y="0" width="252" height="18" uuid="1b8f1892-ec24-487d-9af8-b1a754fad197">
+							<property name="com.jaspersoft.studio.unit.height" value="px"/>
+						</reportElement>
+						<textElement textAlignment="Left" verticalAlignment="Middle">
+							<font size="11" isBold="true"/>
+						</textElement>
+						<textFieldExpression><![CDATA[$F{DEPARTMENT}]]></textFieldExpression>
+					</textField>
+					<staticText>
+						<reportElement x="400" y="0" width="64" height="18" uuid="abd0fde7-8b0d-4520-8cdd-f61586bf984b">
+							<property name="com.jaspersoft.studio.unit.height" value="px"/>
+						</reportElement>
+						<textElement textAlignment="Left" verticalAlignment="Middle">
+							<font size="11" isBold="true"/>
+						</textElement>
+						<text><![CDATA[Section:]]></text>
+					</staticText>
+					<textField>
+						<reportElement x="464" y="0" width="252" height="18" uuid="6721eab8-d6e2-4c04-992b-6e7634ed7c27">
+							<property name="com.jaspersoft.studio.unit.height" value="px"/>
+						</reportElement>
+						<textElement textAlignment="Left" verticalAlignment="Middle">
+							<font size="11" isBold="true"/>
+						</textElement>
+						<textFieldExpression><![CDATA[$F{SECTION_NAME}]]></textFieldExpression>
+					</textField>
+				</frame>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band height="18">
+				<frame>
+					<reportElement x="0" y="0" width="1010" height="18" uuid="4e96921a-cae6-42d1-9d4b-72312a4db88c">
+						<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					</reportElement>
+					<box>
+						<pen lineWidth="1.0"/>
+					</box>
+					<textField pattern="#,##0.###;#,##0.###-">
+						<reportElement x="450" y="0" width="60" height="18" uuid="42c16e32-8c1c-44b0-a05b-9eb1ce354b5c">
+							<property name="com.jaspersoft.studio.unit.height" value="px"/>
+						</reportElement>
+						<box>
+							<pen lineWidth="1.0"/>
+						</box>
+						<textElement textAlignment="Center">
+							<font isBold="true"/>
+						</textElement>
+						<textFieldExpression><![CDATA[$V{V_SEC_OFFDAY_QTY}]]></textFieldExpression>
+					</textField>
+					<textField pattern="#,##0.###;#,##0.###-">
+						<reportElement x="510" y="0" width="58" height="18" uuid="a6be2246-e536-48e2-8515-2443bed6c191">
+							<property name="com.jaspersoft.studio.unit.height" value="px"/>
+						</reportElement>
+						<box>
+							<pen lineWidth="1.0"/>
+						</box>
+						<textElement textAlignment="Center">
+							<font isBold="true"/>
+						</textElement>
+						<textFieldExpression><![CDATA[$V{V_SEC_LUNCH_QTY}]]></textFieldExpression>
+					</textField>
+					<textField pattern="#,##0.###;#,##0.###-">
+						<reportElement x="670" y="0" width="50" height="18" uuid="8364a9ff-d32c-445e-8432-59f285bdc8a5">
+							<property name="com.jaspersoft.studio.unit.height" value="px"/>
+						</reportElement>
+						<box>
+							<pen lineWidth="1.0"/>
+						</box>
+						<textElement textAlignment="Center">
+							<font isBold="true"/>
+						</textElement>
+						<textFieldExpression><![CDATA[$V{V_SEC_OFFDAY_AMT}]]></textFieldExpression>
+					</textField>
+					<textField pattern="#,##0.###;#,##0.###-">
+						<reportElement x="720" y="0" width="57" height="18" uuid="e9a0d896-f63a-4de1-a1e2-a570b80c589d">
+							<property name="com.jaspersoft.studio.unit.height" value="px"/>
+						</reportElement>
+						<box>
+							<pen lineWidth="1.0"/>
+						</box>
+						<textElement textAlignment="Center">
+							<font isBold="true"/>
+						</textElement>
+						<textFieldExpression><![CDATA[$V{V_SEC_LUNCH_AMT}]]></textFieldExpression>
+					</textField>
+					<textField pattern="#,##0.###;#,##0.###-">
+						<reportElement x="777" y="0" width="72" height="18" uuid="648c5755-8fca-434a-ac92-a13860af41f2">
+							<property name="com.jaspersoft.studio.unit.height" value="px"/>
+						</reportElement>
+						<box>
+							<pen lineWidth="1.0"/>
+						</box>
+						<textElement textAlignment="Right">
+							<font isBold="true"/>
+						</textElement>
+						<textFieldExpression><![CDATA[$V{V_SEC_BANK}]]></textFieldExpression>
+					</textField>
+					<textField pattern="#,##0.###;#,##0.###-">
+						<reportElement x="849" y="0" width="70" height="18" uuid="6e30d416-0221-4b94-8faa-d76104f01d09">
+							<property name="com.jaspersoft.studio.unit.height" value="px"/>
+						</reportElement>
+						<box>
+							<pen lineWidth="1.0"/>
+						</box>
+						<textElement textAlignment="Right">
+							<font isBold="true"/>
+						</textElement>
+						<textFieldExpression><![CDATA[$V{V_SEC_CASH}]]></textFieldExpression>
+					</textField>
+					<staticText>
+						<reportElement x="344" y="0" width="100" height="18" uuid="a0b719e9-30fe-484a-9422-32bba68ee3ce">
+							<property name="com.jaspersoft.studio.unit.height" value="px"/>
+						</reportElement>
+						<textElement textAlignment="Right">
+							<font isBold="true"/>
+						</textElement>
+						<text><![CDATA[Sub-Total:]]></text>
+					</staticText>
+				</frame>
+			</band>
+		</groupFooter>
+	</group>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="119" splitType="Stretch">
+			<textField>
+				<reportElement x="900" y="92" width="50" height="19" uuid="0f9fe99c-329e-4556-8472-af2edd789f5f"/>
+				<textElement textAlignment="Left">
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Page " + $V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+			<textField evaluationTime="Report">
+				<reportElement x="940" y="92" width="70" height="19" uuid="da059207-525b-43cd-8ca4-97d2f94f723f"/>
+				<textElement textAlignment="Left">
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[" of " + $V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+			<textField pattern="MMMMM dd, yyyy">
+				<reportElement x="55" y="91" width="150" height="19" uuid="89cfa26e-922d-4841-a8f8-53e3b39ea66a"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[new java.util.Date()]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="2" y="92" width="59" height="19" uuid="4c99120e-c9e2-435e-ac18-ba5d9bbc8125"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Print Date:]]></text>
+			</staticText>
+			<componentElement>
+				<reportElement x="154" y="3" width="700" height="100" uuid="58a317e0-8cb3-4910-ad56-36a75aee58de"/>
+				<jr:list xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd" printOrder="Vertical">
+					<datasetRun subDataset="COMPANY_INFO" uuid="f4f84f87-2c18-4c22-8c73-2b7ba73f7d98">
+						<datasetParameter name="P_COMPANY_CODE">
+							<datasetParameterExpression><![CDATA[$P{P_COMPANY_CODE}]]></datasetParameterExpression>
+						</datasetParameter>
+						<datasetParameter name="P_COMPANY_BRANCH_CODE">
+							<datasetParameterExpression><![CDATA[$P{P_COMPANY_BRANCH_CODE}]]></datasetParameterExpression>
+						</datasetParameter>
+						<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+					</datasetRun>
+					<jr:listContents height="100" width="700">
+						<textField>
+							<reportElement x="80" y="53" width="541" height="20" uuid="dec88727-2d9c-4d5f-8dd9-78139a884328"/>
+							<textElement textAlignment="Center">
+								<font size="14" isBold="true"/>
+							</textElement>
+							<textFieldExpression><![CDATA[$F{COMPANY_NAME}]]></textFieldExpression>
+						</textField>
+						<textField>
+							<reportElement x="80" y="76" width="541" height="20" uuid="e258c09b-5e88-4848-bb16-a480dc6f0b3a"/>
+							<textElement textAlignment="Center">
+								<font size="11"/>
+							</textElement>
+							<textFieldExpression><![CDATA[$F{ADDRESS}]]></textFieldExpression>
+						</textField>
+						<image hAlign="Center">
+							<reportElement x="320" y="6" width="50" height="42" uuid="d2823573-32e0-4b8b-8bd3-13e2792dd9b9"/>
+							<imageExpression><![CDATA[$F{COMPANY_LOGO}]]></imageExpression>
+						</image>
+					</jr:listContents>
+				</jr:list>
+			</componentElement>
+		</band>
+	</title>
+	<pageHeader>
+		<band height="32" splitType="Stretch">
+			<textField>
+				<reportElement mode="Opaque" x="0" y="0" width="1010" height="32" backcolor="#EDEDED" uuid="9702a3c9-8e6d-469d-b6e4-151f3ff1d28e"/>
+				<box>
+					<pen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="14" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Extra Hour Statement for the Month of  "+new SimpleDateFormat("MMMM-yyyy").format(new SimpleDateFormat("MM/yyyy").parse($P{P_MNYR}))]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageHeader>
+	<columnHeader>
+		<band height="44" splitType="Stretch">
+			<staticText>
+				<reportElement mode="Opaque" x="124" y="0" width="137" height="44" backcolor="#EDEDED" uuid="dbee5381-49b7-4e86-83da-779b2a2975ec"/>
+				<box>
+					<pen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Name]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="40" y="0" width="84" height="44" backcolor="#EDEDED" uuid="3165fd2f-21ba-4b0b-ba95-3e8062f7b347"/>
+				<box>
+					<pen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Employee ID]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="261" y="0" width="111" height="44" backcolor="#EDEDED" uuid="432dca13-4075-4278-9c96-a8127e222ad9"/>
+				<box>
+					<pen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Designation]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="372" y="0" width="78" height="44" backcolor="#EDEDED" uuid="589db788-98e9-40f2-b76a-e73a40ee83c6"/>
+				<box>
+					<pen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Ac No/Mobile Ac No]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="450" y="0" width="60" height="44" backcolor="#EDEDED" uuid="673a3b9f-d190-49c0-99f3-19312515219b"/>
+				<box>
+					<pen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Qty of Ext Hour Day]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="510" y="0" width="58" height="44" backcolor="#EDEDED" uuid="a94e3181-63bf-4818-b466-bdbbdfb0d606"/>
+				<box>
+					<pen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Qty of Lunch/Din]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="568" y="0" width="44" height="44" backcolor="#EDEDED" uuid="c9fa267e-9a3c-44fa-b54e-d5fd1dcbb7be"/>
+				<box>
+					<pen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Ext Hr Rate]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="612" y="0" width="58" height="44" backcolor="#EDEDED" uuid="abd2a25a-a384-4571-ab5f-dd35df96fb88"/>
+				<box>
+					<pen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Lunch/Din Rate]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="670" y="0" width="50" height="44" backcolor="#EDEDED" uuid="11516fd0-f6fe-42d8-90fc-dcea8a251cf5"/>
+				<box>
+					<pen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Ext Hr Amount]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="720" y="0" width="57" height="44" backcolor="#EDEDED" uuid="7d8dd142-b8d5-4404-a4db-96e651204c2c"/>
+				<box>
+					<pen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Lunch/Din Amount]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="777" y="19" width="72" height="25" backcolor="#EDEDED" uuid="dbe9fbb9-10a5-40ed-805c-ae52a5aa2819"/>
+				<box>
+					<pen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Bank]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="849" y="19" width="70" height="25" backcolor="#EDEDED" uuid="075ed5e2-24fc-4562-9784-83d9476c87b9"/>
+				<box>
+					<pen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Cash]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="919" y="0" width="91" height="44" backcolor="#EDEDED" uuid="caf56915-ac2b-4359-a879-4c2d1fd7ebfb"/>
+				<box>
+					<pen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Remarks]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="777" y="0" width="142" height="20" backcolor="#EDEDED" uuid="02854b24-604e-4d18-9f99-b94103813f9d"/>
+				<box>
+					<pen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Payable Amount]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="0" y="0" width="40" height="44" backcolor="#EDEDED" uuid="c6b8f4d7-98e2-4be4-8477-e30d59f29e29"/>
+				<box>
+					<pen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[SL]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="16" splitType="Stretch">
+			<textField>
+				<reportElement x="124" y="0" width="137" height="16" uuid="bb3ba4cc-5da2-405c-881d-0bd19bed71e4"/>
+				<box leftPadding="5">
+					<pen lineWidth="1.0"/>
+				</box>
+				<textFieldExpression><![CDATA[$F{NAME}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="40" y="0" width="84" height="16" uuid="9c0d5624-c900-4a01-a7cf-95665b35637b"/>
+				<box>
+					<pen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center"/>
+				<textFieldExpression><![CDATA[$F{EMP_ID}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="261" y="0" width="111" height="16" uuid="38b62393-97f9-44f1-a79a-8dec67c0c1da"/>
+				<box leftPadding="5">
+					<pen lineWidth="1.0"/>
+				</box>
+				<textFieldExpression><![CDATA[$F{DESIGNATION}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="372" y="0" width="78" height="16" uuid="e369e647-1fff-4878-bb18-7cefefee3232"/>
+				<box>
+					<pen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center"/>
+				<textFieldExpression><![CDATA[$F{ACCOUNT_NO}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.###;#,##0.###-">
+				<reportElement x="450" y="0" width="60" height="16" uuid="1d23e8e2-f60e-4a07-8049-e01d71badbbf">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<box>
+					<pen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center"/>
+				<textFieldExpression><![CDATA[$F{OFFDAY_QTY}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.###;#,##0.###-">
+				<reportElement x="510" y="0" width="58" height="16" uuid="a2952af8-0699-4687-90af-ba0281c60c69"/>
+				<box>
+					<pen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center"/>
+				<textFieldExpression><![CDATA[$F{LUNCH_DIN_QTY}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="568" y="0" width="43" height="16" uuid="8ac70755-b741-4b8e-858f-5e8c09e9945a"/>
+				<box>
+					<pen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center"/>
+				<textFieldExpression><![CDATA[$F{OFFDAY_RATE}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="611" y="0" width="59" height="16" uuid="ba47989b-9ce9-46ab-8014-7e65db8d1155"/>
+				<box>
+					<pen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center"/>
+				<textFieldExpression><![CDATA[$F{LUNCH_DIN_RATE}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.###;#,##0.###-">
+				<reportElement x="670" y="0" width="50" height="16" uuid="0ef513f8-3719-4ea2-bfb9-4db664ff20f8"/>
+				<box>
+					<pen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center"/>
+				<textFieldExpression><![CDATA[$F{OFFDAY_ALL}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.###;#,##0.###-">
+				<reportElement x="720" y="0" width="57" height="16" uuid="eaba095b-4f2c-4d67-841e-8852fa16bb1b"/>
+				<box>
+					<pen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center"/>
+				<textFieldExpression><![CDATA[$F{LUNCH_DIN_ALL}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.###;#,##0.###-">
+				<reportElement x="777" y="0" width="72" height="16" uuid="6b4c93d6-86e6-4d7f-90f2-e324f4927592"/>
+				<box>
+					<pen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression><![CDATA[$F{NET_PAYABLE_BANK}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.###;#,##0.###-">
+				<reportElement x="849" y="0" width="70" height="16" uuid="94c29667-e5b6-4556-8359-2f8fcbe72a9f"/>
+				<box>
+					<pen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression><![CDATA[$F{NET_PAYABLE_CASH}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="0" y="0" width="40" height="16" uuid="4634670b-9d27-4863-9aaf-76851064d50f"/>
+				<box>
+					<pen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center"/>
+				<textFieldExpression><![CDATA[$V{REPORT_COUNT}]]></textFieldExpression>
+			</textField>
+			<rectangle>
+				<reportElement x="919" y="0" width="91" height="16" uuid="deb18746-72e5-442d-ab53-77021b1f6e6f">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+			</rectangle>
+		</band>
+	</detail>
+	<pageFooter>
+		<band height="65" splitType="Stretch">
+			<componentElement>
+				<reportElement x="2" y="22" width="210" height="41" uuid="ba7b4d90-659d-4b20-80dd-ae371922d47f"/>
+				<jr:list xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd" printOrder="Vertical">
+					<datasetRun subDataset="PRE_BY" uuid="fc2dbd59-b03f-4c1d-bb88-5e373bac22c0">
+						<datasetParameter name="P_COMPANY_BRANCH_CODE">
+							<datasetParameterExpression><![CDATA[$P{P_COMPANY_BRANCH_CODE}]]></datasetParameterExpression>
+						</datasetParameter>
+						<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+					</datasetRun>
+					<jr:listContents height="41" width="210">
+						<textField>
+							<reportElement x="0" y="3" width="210" height="18" uuid="4310d0f4-5cad-4524-aca1-a652f1ae0f7e">
+								<property name="com.jaspersoft.studio.unit.height" value="px"/>
+								<property name="com.jaspersoft.studio.unit.width" value="px"/>
+							</reportElement>
+							<textElement textAlignment="Center">
+								<font size="11" isBold="true"/>
+							</textElement>
+							<textFieldExpression><![CDATA[$F{PRE_BY_NAME}]]></textFieldExpression>
+						</textField>
+						<textField>
+							<reportElement x="0" y="21" width="210" height="18" uuid="73d26525-3e04-4bf7-a11a-4984a769cabd">
+								<property name="com.jaspersoft.studio.unit.height" value="px"/>
+								<property name="com.jaspersoft.studio.unit.width" value="px"/>
+							</reportElement>
+							<textElement textAlignment="Center">
+								<font size="11" isBold="true"/>
+							</textElement>
+							<textFieldExpression><![CDATA[$F{PRE_BY_DESIG}]]></textFieldExpression>
+						</textField>
+					</jr:listContents>
+				</jr:list>
+			</componentElement>
+			<componentElement>
+				<reportElement x="260" y="23" width="210" height="41" uuid="8a6f542a-46a1-4573-a0c7-f9c9ae071c3f">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<jr:list xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd" printOrder="Vertical">
+					<datasetRun subDataset="CHK_BY" uuid="856cfcf2-03a4-4fc1-8c00-c03f7610905f">
+						<datasetParameter name="P_COMPANY_BRANCH_CODE">
+							<datasetParameterExpression><![CDATA[$P{P_COMPANY_BRANCH_CODE}]]></datasetParameterExpression>
+						</datasetParameter>
+						<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+					</datasetRun>
+					<jr:listContents height="41" width="210">
+						<textField>
+							<reportElement x="0" y="4" width="210" height="18" uuid="0d6097e2-fa48-4dac-80d9-ebec6b533b8f">
+								<property name="com.jaspersoft.studio.unit.height" value="px"/>
+								<property name="com.jaspersoft.studio.unit.width" value="px"/>
+							</reportElement>
+							<textElement textAlignment="Center">
+								<font size="11" isBold="true"/>
+							</textElement>
+							<textFieldExpression><![CDATA[$F{CHK_BY_NAME}]]></textFieldExpression>
+						</textField>
+						<textField>
+							<reportElement x="0" y="22" width="210" height="18" uuid="e50596f2-5649-4b5b-a9d7-36054bdb0824">
+								<property name="com.jaspersoft.studio.unit.height" value="px"/>
+								<property name="com.jaspersoft.studio.unit.width" value="px"/>
+							</reportElement>
+							<textElement textAlignment="Center">
+								<font size="11" isBold="true"/>
+							</textElement>
+							<textFieldExpression><![CDATA[$F{CHK_BY_DESIG}]]></textFieldExpression>
+						</textField>
+					</jr:listContents>
+				</jr:list>
+			</componentElement>
+			<componentElement>
+				<reportElement x="530" y="24" width="210" height="41" uuid="753e1bc2-c102-4c1f-a438-3c1b90b7746d">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<jr:list xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd" printOrder="Vertical">
+					<datasetRun subDataset="REC_BY" uuid="015db90b-9e54-4b76-a2cd-578f7f9c5914">
+						<datasetParameter name="P_COMPANY_BRANCH_CODE">
+							<datasetParameterExpression><![CDATA[$P{P_COMPANY_BRANCH_CODE}]]></datasetParameterExpression>
+						</datasetParameter>
+						<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+					</datasetRun>
+					<jr:listContents height="41" width="210">
+						<textField>
+							<reportElement x="0" y="3" width="210" height="18" uuid="61917edd-932e-40c4-a95e-7d0a247c1cfb">
+								<property name="com.jaspersoft.studio.unit.height" value="px"/>
+							</reportElement>
+							<textElement textAlignment="Center">
+								<font size="11" isBold="true"/>
+							</textElement>
+							<textFieldExpression><![CDATA[$F{REC_BY_NAME}]]></textFieldExpression>
+						</textField>
+						<textField>
+							<reportElement x="0" y="21" width="210" height="18" uuid="bc6830be-04eb-4700-8940-38cf0524cea2">
+								<property name="com.jaspersoft.studio.unit.height" value="px"/>
+							</reportElement>
+							<textElement textAlignment="Center">
+								<font size="11" isBold="true"/>
+							</textElement>
+							<textFieldExpression><![CDATA[$F{REC_BY_DESIG}]]></textFieldExpression>
+						</textField>
+					</jr:listContents>
+				</jr:list>
+			</componentElement>
+			<componentElement>
+				<reportElement x="799" y="24" width="210" height="41" uuid="ea8ae754-f075-467f-88c0-2c2bc3536bfe">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<jr:list xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd" printOrder="Vertical">
+					<datasetRun subDataset="AUD_BY" uuid="bf5c2565-a1e2-41d8-a8aa-969fcdcf6670">
+						<datasetParameter name="P_COMPANY_BRANCH_CODE">
+							<datasetParameterExpression><![CDATA[$P{P_COMPANY_BRANCH_CODE}]]></datasetParameterExpression>
+						</datasetParameter>
+						<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+					</datasetRun>
+					<jr:listContents height="41" width="210">
+						<textField>
+							<reportElement x="0" y="3" width="210" height="18" uuid="897f3682-28b0-47c3-9c39-7435f8a760ea">
+								<property name="com.jaspersoft.studio.unit.height" value="px"/>
+							</reportElement>
+							<textElement textAlignment="Center">
+								<font size="11" isBold="true"/>
+							</textElement>
+							<textFieldExpression><![CDATA[$F{AUD_BY_NAME}]]></textFieldExpression>
+						</textField>
+						<textField>
+							<reportElement x="0" y="20" width="210" height="18" uuid="639b31f4-33f1-4ae4-8c52-a737d5ed8dc8">
+								<property name="com.jaspersoft.studio.unit.height" value="px"/>
+							</reportElement>
+							<textElement textAlignment="Center">
+								<font size="11" isBold="true"/>
+							</textElement>
+							<textFieldExpression><![CDATA[$F{AUD_BY_DESIG}]]></textFieldExpression>
+						</textField>
+					</jr:listContents>
+				</jr:list>
+			</componentElement>
+		</band>
+	</pageFooter>
+	<summary>
+		<band height="42" splitType="Stretch">
+			<frame>
+				<reportElement x="0" y="1" width="1010" height="18" uuid="6204d6e9-d36a-4b5f-a209-4e08ce689971">
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+				</reportElement>
+				<box>
+					<pen lineWidth="1.0"/>
+				</box>
+				<staticText>
+					<reportElement x="346" y="0" width="100" height="18" uuid="d5659ce6-c887-44d2-8ab0-a28f5031fe81">
+						<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+					</reportElement>
+					<textElement textAlignment="Right">
+						<font isBold="true"/>
+					</textElement>
+					<text><![CDATA[Grand Total:]]></text>
+				</staticText>
+				<textField pattern="#,##0.###;#,##0.###-">
+					<reportElement x="450" y="0" width="60" height="18" uuid="91224978-ab4a-46c3-9f78-e2361bc324c8">
+						<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+					</reportElement>
+					<box>
+						<pen lineWidth="1.0"/>
+					</box>
+					<textElement textAlignment="Center">
+						<font isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{V_GRAND_OFFDAY_QTY}]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,##0.###;#,##0.###-">
+					<reportElement x="510" y="0" width="58" height="18" uuid="ad552de0-2940-481d-bc2f-e503e7f16a57">
+						<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+					</reportElement>
+					<box>
+						<pen lineWidth="1.0"/>
+					</box>
+					<textElement textAlignment="Center">
+						<font isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{V_GRAND_OFFDAY_LUNCH_QTY}]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,##0.###;#,##0.###-">
+					<reportElement x="670" y="0" width="50" height="18" uuid="302a48e5-f163-479a-ad8d-63ffffaa822c">
+						<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+					</reportElement>
+					<box>
+						<pen lineWidth="1.0"/>
+					</box>
+					<textElement textAlignment="Center">
+						<font isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{V_GRAND_OFFDAY_AMT}]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,##0.###;#,##0.###-">
+					<reportElement x="720" y="0" width="57" height="18" uuid="4c28ed05-b265-4102-8a16-e146f71f75d1">
+						<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+					</reportElement>
+					<box>
+						<pen lineWidth="1.0"/>
+					</box>
+					<textElement textAlignment="Center">
+						<font isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{V_GRAND_LUNCH_AMt}]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,##0.###;#,##0.###-">
+					<reportElement x="777" y="0" width="72" height="18" uuid="e4a1af68-ed8d-4a8a-9945-6fd3b0295e6e">
+						<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+					</reportElement>
+					<box>
+						<pen lineWidth="1.0"/>
+					</box>
+					<textElement textAlignment="Right">
+						<font isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{V_GRAND_BANK}]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,##0.###;#,##0.###-">
+					<reportElement x="849" y="0" width="70" height="18" uuid="31736a5f-e8f0-44d3-b5c0-48e7dfbb92cd">
+						<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+					</reportElement>
+					<box>
+						<pen lineWidth="1.0"/>
+					</box>
+					<textElement textAlignment="Right">
+						<font isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{V_GRAND_CASH}]]></textFieldExpression>
+				</textField>
+			</frame>
+		</band>
+	</summary>
+</jasperReport>

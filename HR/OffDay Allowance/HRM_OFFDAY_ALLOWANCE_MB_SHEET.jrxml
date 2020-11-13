@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Created with Jaspersoft Studio version 6.15.0.final using JasperReports Library version 6.15.0-dd49bfb94918336b8321d5507193f0169ead4e95  -->
-<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="OFFDAY_ALLOWANCE_CASH_SHEET" pageWidth="1050" pageHeight="750" orientation="Landscape" columnWidth="1010" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="62d0349b-7ae0-4e9d-9b93-e2c3e0b912f3">
+<!-- Created with Jaspersoft Studio version 6.3.1.final using JasperReports Library version 6.3.1  -->
+<!-- 2020-11-13T22:36:17 -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="HRM_OFFDAY_ALLOWANCE_MB_SHEET" pageWidth="1050" pageHeight="750" orientation="Landscape" columnWidth="1010" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="62d0349b-7ae0-4e9d-9b93-e2c3e0b912f3">
 	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
-	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="KALYAR "/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="KALYAR"/>
 	<property name="com.jaspersoft.studio.data.sql.SQLQueryDesigner.sash.w1" value="0"/>
 	<property name="com.jaspersoft.studio.data.sql.SQLQueryDesigner.sash.w2" value="1000"/>
 	<subDataset name="COMPANY_INFO" uuid="6e0d2f84-e900-408a-a061-7a1a8a07a779">
@@ -444,8 +445,9 @@ AND H.EMP_ID = X.EMP_ID
 AND H.HELDUP_FLAG='Y' 
 AND H.OFFDAY_FLAG='Y' 
 AND H.MNYR =$P{P_MNYR})
-AND (MOBILE_BANK_SAL_FLAG IS  NULL AND MOBILE_AC_NO IS  NULL ) 
-AND (BANK_SAL_FLAG IS  NULL AND EMP_AC_NO IS NULL ) ))) Y
+AND MOBILE_BANK_SAL_FLAG IS NOT NULL
+AND MOBILE_AC_NO IS NOT NULL ))) Y
+
 GROUP BY NAME, DESIGNATION, DEPARTMENT, SECTION_NAME, EMP_ID, 
 DEPT_GROUP, DEPT_CODE, DEPT_GROUP_SL, DESIG_CODE, DESIG_GROUP, JOIN_DT, EMP_AC_NO, MOBILE_AC_NO                      
 
@@ -685,13 +687,13 @@ EMP_ID]]>
 						<reportElement x="777" y="0" width="102" height="18" uuid="648c5755-8fca-434a-ac92-a13860af41f2">
 							<property name="com.jaspersoft.studio.unit.height" value="px"/>
 						</reportElement>
-						<box>
+						<box rightPadding="10">
 							<pen lineWidth="1.0"/>
 						</box>
 						<textElement textAlignment="Right">
 							<font isBold="true"/>
 						</textElement>
-						<textFieldExpression><![CDATA[$V{V_SEC_CASH}]]></textFieldExpression>
+						<textFieldExpression><![CDATA[$V{V_SEC_BANK}]]></textFieldExpression>
 					</textField>
 					<staticText>
 						<reportElement x="360" y="0" width="100" height="18" uuid="a0b719e9-30fe-484a-9422-32bba68ee3ce">
@@ -785,7 +787,7 @@ EMP_ID]]>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font size="14" isBold="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA["Offday Statement (Cash) for the Month of  "+new SimpleDateFormat("MMMM-yyyy").format(new SimpleDateFormat("MM/yyyy").parse($P{P_MNYR}))]]></textFieldExpression>
+				<textFieldExpression><![CDATA["Offday Statement (Mobile Bank) for the Month of  "+new SimpleDateFormat("MMMM-yyyy").format(new SimpleDateFormat("MM/yyyy").parse($P{P_MNYR}))]]></textFieldExpression>
 			</textField>
 		</band>
 	</pageHeader>
@@ -937,17 +939,17 @@ EMP_ID]]>
 		<band height="16" splitType="Stretch">
 			<textField>
 				<reportElement x="124" y="0" width="120" height="16" uuid="bb3ba4cc-5da2-405c-881d-0bd19bed71e4"/>
-				<box>
+				<box leftPadding="5">
 					<pen lineWidth="1.0"/>
 				</box>
 				<textFieldExpression><![CDATA[$F{NAME}]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement x="40" y="0" width="84" height="16" uuid="9c0d5624-c900-4a01-a7cf-95665b35637b"/>
-				<box>
+				<box leftPadding="5">
 					<pen lineWidth="1.0"/>
 				</box>
-				<textElement textAlignment="Center"/>
+				<textElement textAlignment="Left"/>
 				<textFieldExpression><![CDATA[$F{EMP_ID}]]></textFieldExpression>
 			</textField>
 			<textField>
@@ -1025,11 +1027,11 @@ EMP_ID]]>
 			</textField>
 			<textField pattern="#,##0.###;#,##0.###-">
 				<reportElement x="777" y="0" width="102" height="16" uuid="6b4c93d6-86e6-4d7f-90f2-e324f4927592"/>
-				<box>
+				<box rightPadding="10">
 					<pen lineWidth="1.0"/>
 				</box>
 				<textElement textAlignment="Right"/>
-				<textFieldExpression><![CDATA[$F{NET_PAYABLE_CASH}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{NET_PAYABLE_BANK}]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement x="0" y="0" width="40" height="16" uuid="4634670b-9d27-4863-9aaf-76851064d50f"/>
@@ -1256,13 +1258,13 @@ EMP_ID]]>
 					<reportElement x="777" y="0" width="102" height="18" uuid="e4a1af68-ed8d-4a8a-9945-6fd3b0295e6e">
 						<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
 					</reportElement>
-					<box>
+					<box rightPadding="10">
 						<pen lineWidth="1.0"/>
 					</box>
 					<textElement textAlignment="Right">
 						<font isBold="true"/>
 					</textElement>
-					<textFieldExpression><![CDATA[$V{V_GRAND_CASH}]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$V{V_GRAND_BANK}]]></textFieldExpression>
 				</textField>
 			</frame>
 		</band>

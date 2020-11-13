@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Created with Jaspersoft Studio version 6.15.0.final using JasperReports Library version 6.15.0-dd49bfb94918336b8321d5507193f0169ead4e95  -->
-<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="OFFDAY_ALL_COMPARE_SHEET" pageWidth="1050" pageHeight="750" orientation="Landscape" columnWidth="1010" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="62d0349b-7ae0-4e9d-9b93-e2c3e0b912f3">
+<!-- Created with Jaspersoft Studio version 6.3.1.final using JasperReports Library version 6.3.1  -->
+<!-- 2020-11-13T21:18:01 -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="HRM_OFFDAY_ALL_COMPARE_SHEET" pageWidth="1050" pageHeight="750" orientation="Landscape" columnWidth="1010" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="62d0349b-7ae0-4e9d-9b93-e2c3e0b912f3">
 	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
-	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="KALYAR "/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="KALYAR"/>
 	<property name="com.jaspersoft.studio.data.sql.SQLQueryDesigner.sash.w1" value="0"/>
 	<property name="com.jaspersoft.studio.data.sql.SQLQueryDesigner.sash.w2" value="1000"/>
 	<subDataset name="COMPANY_INFO" uuid="6e0d2f84-e900-408a-a061-7a1a8a07a779">
@@ -152,7 +153,7 @@ A.COMPANY_BRANCH_CODE = B.COMPANY_BRANCH_CODE AND
 A.EMP_ID = B.EMP_ID AND
 A.COMPANY_BRANCH_CODE = $P{P_COMPANY_BRANCH_CODE}  AND
 SIGNATORY_TYPE = 'AB' AND
-SIGNATORY_FOR   ='HRM'  ]]>
+SIGNATORY_FOR   ='HRM']]>
 		</queryString>
 		<field name="AUD_BY_NAME" class="java.lang.String">
 			<property name="com.jaspersoft.studio.field.name" value="AUD_BY_NAME"/>
@@ -779,8 +780,7 @@ GROUP BY DEPARTMENT, SECTION_NAME, DEPT_GROUP, DEPT_CODE, DEPT_GROUP_SL)
 GROUP BY SECTION_NAME, DEPT_GROUP, DEPT_CODE, DEPT_GROUP_SL        
 
 ORDER BY 
-DEPT_GROUP_SL, DEPT_GROUP, DEPT_CODE
-]]>
+DEPT_GROUP_SL, DEPT_GROUP, DEPT_CODE]]>
 	</queryString>
 	<field name="TOT_STAFF" class="java.math.BigDecimal">
 		<property name="com.jaspersoft.studio.field.name" value="TOT_STAFF"/>
@@ -1186,7 +1186,7 @@ DEPT_GROUP_SL, DEPT_GROUP, DEPT_CODE
 					<property name="com.jaspersoft.studio.unit.x" value="px"/>
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 				</reportElement>
-				<jr:list xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd">
+				<jr:list xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd" printOrder="Vertical">
 					<datasetRun subDataset="PRE_BY_F" uuid="c9f68f0a-e5ba-4b96-a374-6b693a8f4637">
 						<datasetParameter name="P_COMPANY_BRANCH_CODE">
 							<datasetParameterExpression><![CDATA[$P{P_COMPANY_BRANCH_CODE}]]></datasetParameterExpression>
@@ -1223,7 +1223,7 @@ DEPT_GROUP_SL, DEPT_GROUP, DEPT_CODE
 					<property name="com.jaspersoft.studio.unit.x" value="px"/>
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 				</reportElement>
-				<jr:list xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd">
+				<jr:list xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd" printOrder="Vertical">
 					<datasetRun subDataset="CHK_BY_F" uuid="b883de93-95ac-42cf-9d3c-3a605f8cf278">
 						<datasetParameter name="P_COMPANY_BRANCH_CODE">
 							<datasetParameterExpression><![CDATA[$P{P_COMPANY_BRANCH_CODE}]]></datasetParameterExpression>
@@ -1260,7 +1260,7 @@ DEPT_GROUP_SL, DEPT_GROUP, DEPT_CODE
 					<property name="com.jaspersoft.studio.unit.x" value="px"/>
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 				</reportElement>
-				<jr:list xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd">
+				<jr:list xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd" printOrder="Vertical">
 					<datasetRun subDataset="REC_BY_F" uuid="76cc8bb3-106f-4e3a-86db-64a92e235636">
 						<datasetParameter name="P_COMPANY_BRANCH_CODE">
 							<datasetParameterExpression><![CDATA[$P{P_COMPANY_BRANCH_CODE}]]></datasetParameterExpression>
@@ -1298,7 +1298,7 @@ DEPT_GROUP_SL, DEPT_GROUP, DEPT_CODE
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 				</reportElement>
-				<jr:list xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd">
+				<jr:list xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd" printOrder="Vertical">
 					<datasetRun subDataset="AUD_BY_F" uuid="375f6ae9-0f9b-4ffe-84c8-2626fd0e8dcf">
 						<datasetParameter name="P_COMPANY_BRANCH_CODE">
 							<datasetParameterExpression><![CDATA[$P{P_COMPANY_BRANCH_CODE}]]></datasetParameterExpression>
@@ -1337,7 +1337,7 @@ DEPT_GROUP_SL, DEPT_GROUP, DEPT_CODE
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 				</reportElement>
-				<jr:list xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd">
+				<jr:list xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd" printOrder="Vertical">
 					<datasetRun subDataset="AUD_BY" uuid="1a340f38-5b8a-4683-b811-7c7e5fee3bb1">
 						<datasetParameter name="P_COMPANY_CODE">
 							<datasetParameterExpression><![CDATA[$P{P_COMPANY_CODE}]]></datasetParameterExpression>
@@ -1376,7 +1376,7 @@ DEPT_GROUP_SL, DEPT_GROUP, DEPT_CODE
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 				</reportElement>
-				<jr:list xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd">
+				<jr:list xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd" printOrder="Vertical">
 					<datasetRun subDataset="PRE_BY" uuid="d828a233-3612-408e-b8a3-28a6a3f1812e">
 						<datasetParameter name="P_COMPANY_CODE">
 							<datasetParameterExpression><![CDATA[$P{P_COMPANY_CODE}]]></datasetParameterExpression>
@@ -1415,7 +1415,7 @@ DEPT_GROUP_SL, DEPT_GROUP, DEPT_CODE
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 				</reportElement>
-				<jr:list xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd">
+				<jr:list xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd" printOrder="Vertical">
 					<datasetRun subDataset="CHK_BY" uuid="5a83dbce-47c7-4700-9e18-ea140e3259b7">
 						<datasetParameter name="P_COMPANY_CODE">
 							<datasetParameterExpression><![CDATA[$P{P_COMPANY_CODE}]]></datasetParameterExpression>
@@ -1454,7 +1454,7 @@ DEPT_GROUP_SL, DEPT_GROUP, DEPT_CODE
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 				</reportElement>
-				<jr:list xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd">
+				<jr:list xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd" printOrder="Vertical">
 					<datasetRun subDataset="REC_BY" uuid="b8e054a8-c418-4d37-8c0b-e439ae031019">
 						<datasetParameter name="P_COMPANY_CODE">
 							<datasetParameterExpression><![CDATA[$P{P_COMPANY_CODE}]]></datasetParameterExpression>
@@ -1493,7 +1493,7 @@ DEPT_GROUP_SL, DEPT_GROUP, DEPT_CODE
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 				</reportElement>
-				<jr:list xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd">
+				<jr:list xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd" printOrder="Vertical">
 					<datasetRun subDataset="AUT_BY" uuid="1b697acf-1f2c-454d-8ad0-0082cf50bad2">
 						<datasetParameter name="P_COMPANY_CODE">
 							<datasetParameterExpression><![CDATA[$P{P_COMPANY_CODE}]]></datasetParameterExpression>

@@ -1,9 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Created with Jaspersoft Studio version 6.3.1.final using JasperReports Library version 6.3.1  -->
-<!-- 2020-11-10T02:51:54 -->
+<!-- Created with Jaspersoft Studio version 6.15.0.final using JasperReports Library version 6.15.0-dd49bfb94918336b8321d5507193f0169ead4e95  -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="OFFDAY_ALLOWANCE_SUMMARY" pageWidth="1050" pageHeight="750" orientation="Landscape" columnWidth="1010" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="62d0349b-7ae0-4e9d-9b93-e2c3e0b912f3">
 	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
-	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="Kalyar"/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="KALYAR "/>
 	<property name="com.jaspersoft.studio.data.sql.SQLQueryDesigner.sash.w1" value="0"/>
 	<property name="com.jaspersoft.studio.data.sql.SQLQueryDesigner.sash.w2" value="1000"/>
 	<subDataset name="COMPANY_INFO" uuid="6e0d2f84-e900-408a-a061-7a1a8a07a779">
@@ -380,6 +379,15 @@ DEPT_GROUP_SL, DEPT_GROUP, DEPT_CODE, DESIG_CODE, ATTEND_DATE]]>
 		<field name="OUT_TIME" class="java.lang.String"/>
 		<field name="NET_PAYABLE_BANK" class="java.math.BigDecimal"/>
 		<field name="NET_PAYABLE_CASH" class="java.math.BigDecimal"/>
+		<variable name="V_TOT_DAYS" class="java.math.BigDecimal" calculation="Count">
+			<variableExpression><![CDATA[$F{ATTEND_DATE}]]></variableExpression>
+		</variable>
+		<variable name="V_TOT_BANK" class="java.math.BigDecimal" calculation="Sum">
+			<variableExpression><![CDATA[$F{NET_PAYABLE_BANK}]]></variableExpression>
+		</variable>
+		<variable name="V_TOT_CASH" class="java.math.BigDecimal" calculation="Sum">
+			<variableExpression><![CDATA[$F{NET_PAYABLE_CASH}]]></variableExpression>
+		</variable>
 	</subDataset>
 	<parameter name="P_MNYR" class="java.lang.String"/>
 	<parameter name="P_COMPANY_CODE" class="java.lang.String"/>
@@ -682,6 +690,24 @@ EMP_ID]]>
 	<variable name="V_HEADER" class="java.lang.String">
 		<variableExpression><![CDATA[$F{NAME}]]></variableExpression>
 	</variable>
+	<variable name="V_SEC_ALL_DAY" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{OFFDAY_QTY}]]></variableExpression>
+	</variable>
+	<variable name="V_SEC_BANK" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{NET_PAYABLE_BANK}]]></variableExpression>
+	</variable>
+	<variable name="V_SEC_CASH" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{NET_PAYABLE_CASH}]]></variableExpression>
+	</variable>
+	<variable name="V_GRAND_ALL_DAY" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{OFFDAY_QTY}]]></variableExpression>
+	</variable>
+	<variable name="V_GRAND_BANK" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{NET_PAYABLE_BANK}]]></variableExpression>
+	</variable>
+	<variable name="V_GRAND_CASH" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{NET_PAYABLE_CASH}]]></variableExpression>
+	</variable>
 	<group name="Section">
 		<groupExpression><![CDATA[$F{SECTION_NAME}]]></groupExpression>
 		<groupHeader>
@@ -737,14 +763,14 @@ EMP_ID]]>
 		<groupFooter>
 			<band height="18">
 				<frame>
-					<reportElement x="0" y="0" width="1010" height="18" uuid="4e96921a-cae6-42d1-9d4b-72312a4db88c">
+					<reportElement mode="Opaque" x="0" y="0" width="1010" height="18" backcolor="#DBD9D9" uuid="4e96921a-cae6-42d1-9d4b-72312a4db88c">
 						<property name="com.jaspersoft.studio.unit.height" value="px"/>
 					</reportElement>
 					<box>
 						<pen lineWidth="1.0"/>
 					</box>
 					<staticText>
-						<reportElement x="410" y="0" width="100" height="18" uuid="a0b719e9-30fe-484a-9422-32bba68ee3ce">
+						<reportElement x="519" y="0" width="100" height="18" uuid="a0b719e9-30fe-484a-9422-32bba68ee3ce">
 							<property name="com.jaspersoft.studio.unit.height" value="px"/>
 						</reportElement>
 						<textElement textAlignment="Right">
@@ -752,6 +778,96 @@ EMP_ID]]>
 						</textElement>
 						<text><![CDATA[Sub-Total:]]></text>
 					</staticText>
+					<textField>
+						<reportElement x="634" y="1" width="59" height="16" uuid="fe235342-a075-4359-a99a-39cc929525d0">
+							<property name="com.jaspersoft.studio.unit.height" value="px"/>
+						</reportElement>
+						<textElement textAlignment="Center">
+							<font isBold="true"/>
+						</textElement>
+						<textFieldExpression><![CDATA[$V{V_SEC_ALL_DAY}]]></textFieldExpression>
+					</textField>
+					<textField>
+						<reportElement x="743" y="1" width="72" height="16" uuid="f520d6dc-97be-4f1f-8c12-0d019425db1f">
+							<property name="com.jaspersoft.studio.unit.height" value="px"/>
+						</reportElement>
+						<box rightPadding="5"/>
+						<textElement textAlignment="Right">
+							<font isBold="true"/>
+						</textElement>
+						<textFieldExpression><![CDATA[$V{V_SEC_BANK}]]></textFieldExpression>
+					</textField>
+					<textField>
+						<reportElement x="815" y="1" width="70" height="16" uuid="4aba0360-5ebb-43ea-b340-cf9f91ff44dc">
+							<property name="com.jaspersoft.studio.unit.height" value="px"/>
+						</reportElement>
+						<box rightPadding="5"/>
+						<textElement textAlignment="Right">
+							<font isBold="true"/>
+						</textElement>
+						<textFieldExpression><![CDATA[$V{V_SEC_CASH}]]></textFieldExpression>
+					</textField>
+				</frame>
+			</band>
+		</groupFooter>
+	</group>
+	<group name="EMPLOYEE_SUM">
+		<groupExpression><![CDATA[$F{EMP_ID}]]></groupExpression>
+		<groupFooter>
+			<band height="16">
+				<frame>
+					<reportElement mode="Opaque" x="0" y="0" width="1010" height="16" backcolor="#EDEDED" uuid="58c4f289-6abd-4931-98f3-c7ef2e885041">
+						<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					</reportElement>
+					<box>
+						<pen lineWidth="1.0"/>
+					</box>
+					<staticText>
+						<reportElement x="469" y="0" width="150" height="16" uuid="757a2659-1467-4328-8969-6afd4fcf3b3e">
+							<property name="com.jaspersoft.studio.unit.height" value="px"/>
+						</reportElement>
+						<textElement textAlignment="Right">
+							<font isBold="true"/>
+						</textElement>
+						<text><![CDATA[Payable Days and Amount:]]></text>
+					</staticText>
+					<textField>
+						<reportElement x="634" y="0" width="59" height="16" uuid="10fd3241-1f0a-4569-b261-75aab6ab3c50">
+							<property name="com.jaspersoft.studio.unit.height" value="px"/>
+							<property name="com.jaspersoft.studio.unit.width" value="px"/>
+						</reportElement>
+						<box>
+							<pen lineWidth="0.0"/>
+						</box>
+						<textElement textAlignment="Center">
+							<font isBold="true"/>
+						</textElement>
+						<textFieldExpression><![CDATA[$F{OFFDAY_QTY}]]></textFieldExpression>
+					</textField>
+					<textField>
+						<reportElement x="743" y="0" width="72" height="16" uuid="548ca5bf-ef73-41b3-8206-9023146e963c">
+							<property name="com.jaspersoft.studio.unit.height" value="px"/>
+						</reportElement>
+						<box rightPadding="5">
+							<pen lineWidth="0.0"/>
+						</box>
+						<textElement textAlignment="Right">
+							<font isBold="true"/>
+						</textElement>
+						<textFieldExpression><![CDATA[$F{NET_PAYABLE_BANK}]]></textFieldExpression>
+					</textField>
+					<textField>
+						<reportElement x="815" y="0" width="70" height="16" uuid="42c68a77-ea3f-43c8-8d0f-1325dcadf4b2">
+							<property name="com.jaspersoft.studio.unit.height" value="px"/>
+						</reportElement>
+						<box rightPadding="5">
+							<pen lineWidth="0.0"/>
+						</box>
+						<textElement textAlignment="Right">
+							<font isBold="true"/>
+						</textElement>
+						<textFieldExpression><![CDATA[$F{NET_PAYABLE_CASH}]]></textFieldExpression>
+					</textField>
 				</frame>
 			</band>
 		</groupFooter>
@@ -760,35 +876,7 @@ EMP_ID]]>
 		<band splitType="Stretch"/>
 	</background>
 	<title>
-		<band height="119" splitType="Stretch">
-			<textField>
-				<reportElement x="900" y="92" width="50" height="19" uuid="0f9fe99c-329e-4556-8472-af2edd789f5f"/>
-				<textElement textAlignment="Left">
-					<font isBold="true"/>
-				</textElement>
-				<textFieldExpression><![CDATA["Page " + $V{PAGE_NUMBER}]]></textFieldExpression>
-			</textField>
-			<textField evaluationTime="Report">
-				<reportElement x="940" y="92" width="70" height="19" uuid="da059207-525b-43cd-8ca4-97d2f94f723f"/>
-				<textElement textAlignment="Left">
-					<font isBold="true"/>
-				</textElement>
-				<textFieldExpression><![CDATA[" of " + $V{PAGE_NUMBER}]]></textFieldExpression>
-			</textField>
-			<textField pattern="MMMMM dd, yyyy">
-				<reportElement x="55" y="91" width="150" height="19" uuid="89cfa26e-922d-4841-a8f8-53e3b39ea66a"/>
-				<textElement textAlignment="Left" verticalAlignment="Middle">
-					<font isBold="true"/>
-				</textElement>
-				<textFieldExpression><![CDATA[new java.util.Date()]]></textFieldExpression>
-			</textField>
-			<staticText>
-				<reportElement x="2" y="92" width="59" height="19" uuid="4c99120e-c9e2-435e-ac18-ba5d9bbc8125"/>
-				<textElement textAlignment="Left" verticalAlignment="Middle">
-					<font isBold="true"/>
-				</textElement>
-				<text><![CDATA[Print Date:]]></text>
-			</staticText>
+		<band height="120" splitType="Stretch">
 			<componentElement>
 				<reportElement x="154" y="3" width="700" height="100" uuid="58a317e0-8cb3-4910-ad56-36a75aee58de"/>
 				<jr:list xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd" printOrder="Vertical">
@@ -823,6 +911,47 @@ EMP_ID]]>
 					</jr:listContents>
 				</jr:list>
 			</componentElement>
+			<frame>
+				<reportElement x="0" y="99" width="1010" height="21" uuid="ed56e3ab-27ec-4638-9245-e0932dd90e5a">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<textField>
+					<reportElement x="896" y="0" width="50" height="19" uuid="0f9fe99c-329e-4556-8472-af2edd789f5f">
+						<property name="com.jaspersoft.studio.unit.y" value="px"/>
+					</reportElement>
+					<textElement textAlignment="Left">
+						<font isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA["Page " + $V{PAGE_NUMBER}]]></textFieldExpression>
+				</textField>
+				<textField evaluationTime="Report">
+					<reportElement x="940" y="0" width="70" height="19" uuid="da059207-525b-43cd-8ca4-97d2f94f723f">
+						<property name="com.jaspersoft.studio.unit.y" value="px"/>
+					</reportElement>
+					<textElement textAlignment="Left">
+						<font isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[" of " + $V{PAGE_NUMBER}]]></textFieldExpression>
+				</textField>
+				<textField pattern="MMMMM dd, yyyy">
+					<reportElement x="55" y="0" width="150" height="19" uuid="89cfa26e-922d-4841-a8f8-53e3b39ea66a">
+						<property name="com.jaspersoft.studio.unit.y" value="px"/>
+					</reportElement>
+					<textElement textAlignment="Left" verticalAlignment="Middle">
+						<font isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[new java.util.Date()]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement x="2" y="0" width="59" height="19" uuid="4c99120e-c9e2-435e-ac18-ba5d9bbc8125">
+						<property name="com.jaspersoft.studio.unit.y" value="px"/>
+					</reportElement>
+					<textElement textAlignment="Left" verticalAlignment="Middle">
+						<font isBold="true"/>
+					</textElement>
+					<text><![CDATA[Print Date:]]></text>
+				</staticText>
+			</frame>
 		</band>
 	</title>
 	<pageHeader>
@@ -872,7 +1001,7 @@ EMP_ID]]>
 				<text><![CDATA[Designation]]></text>
 			</staticText>
 			<staticText>
-				<reportElement mode="Opaque" x="353" y="0" width="78" height="44" backcolor="#EDEDED" uuid="589db788-98e9-40f2-b76a-e73a40ee83c6"/>
+				<reportElement mode="Opaque" x="352" y="0" width="80" height="44" backcolor="#EDEDED" uuid="589db788-98e9-40f2-b76a-e73a40ee83c6"/>
 				<box>
 					<pen lineWidth="1.0"/>
 				</box>
@@ -998,19 +1127,23 @@ EMP_ID]]>
 		</band>
 	</columnHeader>
 	<detail>
-		<band height="32" splitType="Stretch">
+		<band height="16" splitType="Stretch">
 			<frame>
-				<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="0" y="0" width="1010" height="15" uuid="b4e98e44-17a9-4530-9b83-527b9381c773">
+				<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="0" y="0" width="1010" height="16" uuid="b4e98e44-17a9-4530-9b83-527b9381c773">
 					<property name="com.jaspersoft.studio.unit.y" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 				</reportElement>
-				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<box>
+					<pen lineWidth="0.0"/>
+				</box>
+				<textField textAdjust="StretchHeight" isBlankWhenNull="true">
 					<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="119" y="0" width="125" height="16" uuid="bb3ba4cc-5da2-405c-881d-0bd19bed71e4"/>
 					<box leftPadding="5">
 						<pen lineWidth="1.0"/>
 					</box>
 					<textFieldExpression><![CDATA[$F{NAME}]]></textFieldExpression>
 				</textField>
-				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<textField textAdjust="StretchHeight" isBlankWhenNull="true">
 					<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="40" y="0" width="79" height="16" uuid="9c0d5624-c900-4a01-a7cf-95665b35637b"/>
 					<box leftPadding="5" rightPadding="0">
 						<pen lineWidth="1.0"/>
@@ -1018,22 +1151,22 @@ EMP_ID]]>
 					<textElement textAlignment="Left"/>
 					<textFieldExpression><![CDATA[$F{EMP_ID}]]></textFieldExpression>
 				</textField>
-				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<textField textAdjust="StretchHeight" isBlankWhenNull="true">
 					<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="244" y="0" width="108" height="16" uuid="38b62393-97f9-44f1-a79a-8dec67c0c1da"/>
 					<box>
 						<pen lineWidth="1.0"/>
 					</box>
 					<textFieldExpression><![CDATA[$F{DESIGNATION}]]></textFieldExpression>
 				</textField>
-				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-					<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="353" y="0" width="78" height="16" uuid="e369e647-1fff-4878-bb18-7cefefee3232"/>
+				<textField textAdjust="StretchHeight" isBlankWhenNull="true">
+					<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="352" y="0" width="80" height="16" uuid="e369e647-1fff-4878-bb18-7cefefee3232"/>
 					<box>
 						<pen lineWidth="1.0"/>
 					</box>
 					<textElement textAlignment="Center"/>
 					<textFieldExpression><![CDATA[$F{ACCOUNT_NO}]]></textFieldExpression>
 				</textField>
-				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<textField textAdjust="StretchHeight" isBlankWhenNull="true">
 					<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="0" y="0" width="40" height="16" uuid="4634670b-9d27-4863-9aaf-76851064d50f"/>
 					<box>
 						<pen lineWidth="1.0"/>
@@ -1042,10 +1175,10 @@ EMP_ID]]>
 					<textFieldExpression><![CDATA[$V{REPORT_COUNT}]]></textFieldExpression>
 				</textField>
 				<componentElement>
-					<reportElement x="432" y="0" width="577" height="16" uuid="65573583-8d75-401b-ae50-ddd4ff2a1f59">
-						<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+					<reportElement x="432" y="0" width="578" height="16" uuid="65573583-8d75-401b-ae50-ddd4ff2a1f59">
+						<property name="com.jaspersoft.studio.unit.height" value="px"/>
 					</reportElement>
-					<jr:list xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd">
+					<jr:list xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd" printOrder="Vertical">
 						<datasetRun subDataset="Offday_All_Details" uuid="db866c07-7e35-473b-915b-a0cf5bb61218">
 							<datasetParameter name="P_COMPANY_CODE">
 								<datasetParameterExpression><![CDATA[$P{P_COMPANY_CODE}]]></datasetParameterExpression>
@@ -1067,7 +1200,7 @@ EMP_ID]]>
 							</datasetParameter>
 							<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
 						</datasetRun>
-						<jr:listContents height="16" width="577">
+						<jr:listContents height="16" width="578">
 							<textField pattern="#,##0.###;#,##0.###-" isBlankWhenNull="true">
 								<reportElement x="100" y="0" width="50" height="16" uuid="41d73fa3-ce76-49e2-ba0a-dec02ba4fce7"/>
 								<box>
@@ -1135,55 +1268,14 @@ EMP_ID]]>
 								<textFieldExpression><![CDATA[$F{ATTEND_DATE}]]></textFieldExpression>
 							</textField>
 							<rectangle>
-								<reportElement x="452" y="0" width="125" height="16" uuid="38efbc46-3d7e-4bd1-8283-fdf5f0d49732">
+								<reportElement x="452" y="0" width="126" height="16" uuid="38efbc46-3d7e-4bd1-8283-fdf5f0d49732">
 									<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+									<property name="com.jaspersoft.studio.unit.width" value="px"/>
 								</reportElement>
 							</rectangle>
 						</jr:listContents>
 					</jr:list>
 				</componentElement>
-			</frame>
-			<frame>
-				<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="432" y="16" width="578" height="16" uuid="cef62153-9c00-4410-965d-e7b6b05153b2">
-					<property name="com.jaspersoft.studio.unit.y" value="pixel"/>
-					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
-				</reportElement>
-				<box>
-					<pen lineWidth="1.0"/>
-				</box>
-				<staticText>
-					<reportElement x="10" y="0" width="140" height="16" uuid="1f343f2e-eed9-4313-b87a-e55d29570739"/>
-					<textElement>
-						<font isBold="true"/>
-					</textElement>
-					<text><![CDATA[Payable Days and Amount:]]></text>
-				</staticText>
-				<textField>
-					<reportElement x="201" y="0" width="59" height="16" uuid="a424bbaa-c457-4f93-9011-2b8c7c817dfa">
-						<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
-					</reportElement>
-					<box>
-						<pen lineWidth="1.0"/>
-					</box>
-					<textElement textAlignment="Center"/>
-					<textFieldExpression><![CDATA[$F{OFFDAY_QTY}]]></textFieldExpression>
-				</textField>
-				<textField>
-					<reportElement x="310" y="-1" width="72" height="17" uuid="0d8c94f0-94e0-4353-8dfb-6c56e8393bf9"/>
-					<box rightPadding="5">
-						<pen lineWidth="1.0"/>
-					</box>
-					<textElement textAlignment="Right"/>
-					<textFieldExpression><![CDATA[$F{NET_PAYABLE_BANK}]]></textFieldExpression>
-				</textField>
-				<textField>
-					<reportElement x="382" y="0" width="70" height="16" uuid="1d505539-5f8d-4015-8e6c-8304f0b88172"/>
-					<box rightPadding="5">
-						<pen lineWidth="1.0"/>
-					</box>
-					<textElement textAlignment="Right"/>
-					<textFieldExpression><![CDATA[$F{NET_PAYABLE_CASH}]]></textFieldExpression>
-				</textField>
 			</frame>
 		</band>
 	</detail>
@@ -1328,16 +1420,16 @@ EMP_ID]]>
 		</band>
 	</pageFooter>
 	<summary>
-		<band height="42" splitType="Stretch">
+		<band height="19" splitType="Stretch">
 			<frame>
-				<reportElement x="0" y="1" width="1010" height="18" uuid="6204d6e9-d36a-4b5f-a209-4e08ce689971">
+				<reportElement mode="Opaque" x="0" y="1" width="1010" height="18" backcolor="#D1CFCF" uuid="6204d6e9-d36a-4b5f-a209-4e08ce689971">
 					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
 				</reportElement>
 				<box>
 					<pen lineWidth="1.0"/>
 				</box>
 				<staticText>
-					<reportElement x="362" y="0" width="100" height="18" uuid="d5659ce6-c887-44d2-8ab0-a28f5031fe81">
+					<reportElement x="520" y="0" width="100" height="18" uuid="d5659ce6-c887-44d2-8ab0-a28f5031fe81">
 						<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
 					</reportElement>
 					<textElement textAlignment="Right">
@@ -1345,6 +1437,39 @@ EMP_ID]]>
 					</textElement>
 					<text><![CDATA[Grand Total:]]></text>
 				</staticText>
+				<textField>
+					<reportElement x="634" y="1" width="59" height="16" uuid="8796e337-92f1-44da-84a7-2be4d55b1732">
+						<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					</reportElement>
+					<textElement textAlignment="Center">
+						<font isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{V_GRAND_ALL_DAY}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="743" y="1" width="72" height="16" uuid="0d843aa6-c857-46de-aad9-0e2f68d833f8">
+						<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					</reportElement>
+					<box rightPadding="5">
+						<pen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Right">
+						<font isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{V_GRAND_BANK}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="815" y="1" width="70" height="16" uuid="d5ceed95-6f68-48be-840d-62cb1bc25e8b">
+						<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					</reportElement>
+					<box rightPadding="5">
+						<pen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Right">
+						<font isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{V_GRAND_CASH}]]></textFieldExpression>
+				</textField>
 			</frame>
 		</band>
 	</summary>

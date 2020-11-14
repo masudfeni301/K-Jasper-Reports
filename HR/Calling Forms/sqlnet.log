@@ -1,0 +1,18 @@
+
+
+***********************************************************************
+Fatal NI connect error 12514, connecting to:
+ (DESCRIPTION=(CONNECT_DATA=(SERVICE_NAME=KALAYR)(CID=(PROGRAM=D:\DevSuiteHome_1\bin\frmbld.exe)(HOST=DESKTOP-2DUSRDR)(USER=Oracle)))(ADDRESS=(PROTOCOL=TCP)(HOST=202.84.32.137)(PORT=2150)))
+
+  VERSION INFORMATION:
+	TNS for 32-bit Windows: Version 10.1.0.4.0 - Production
+	Windows NT TCP/IP NT Protocol Adapter for 32-bit Windows: Version 10.1.0.4.0 - Production
+  Time: 14-NOV-2020 17:17:26
+  Tracing not turned on.
+  Tns error struct:
+    ns main err code: 12564
+    TNS-12564: TNS:connection refused
+    ns secondary err code: 0
+    nt main err code: 0
+    nt secondary err code: 0
+    nt OS err code: 0

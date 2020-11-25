@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Created with Jaspersoft Studio version 6.15.0.final using JasperReports Library version 6.15.0-dd49bfb94918336b8321d5507193f0169ead4e95  -->
+<!-- Created with Jaspersoft Studio version 6.3.1.final using JasperReports Library version 6.3.1  -->
+<!-- 2020-11-14T19:57:36 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="HRM_NIGHT_ALL_COMPARE_SHEET" pageWidth="1050" pageHeight="750" orientation="Landscape" columnWidth="1010" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="62d0349b-7ae0-4e9d-9b93-e2c3e0b912f3">
 	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
-	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="KALYAR "/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="KALYAR"/>
 	<property name="com.jaspersoft.studio.data.sql.SQLQueryDesigner.sash.w1" value="0"/>
 	<property name="com.jaspersoft.studio.data.sql.SQLQueryDesigner.sash.w2" value="1000"/>
 	<subDataset name="COMPANY_INFO" uuid="6e0d2f84-e900-408a-a061-7a1a8a07a779">
@@ -517,9 +518,7 @@ DEPT_CODE  ) X)
 GROUP BY 
 DEPT_GROUP, DEPARTMENT, DEPT_CODE, SECTION_NAME))  
 GROUP BY DEPT_GROUP, DEPARTMENT, DEPT_CODE, SECTION_NAME
-ORDER BY  DEPT_GROUP, DEPT_CODE
-
-]]>
+ORDER BY  DEPT_GROUP, DEPT_CODE]]>
 	</queryString>
 	<field name="DEPT_GROUP" class="java.lang.String">
 		<property name="com.jaspersoft.studio.field.name" value="DEPT_GROUP"/>
@@ -596,40 +595,6 @@ ORDER BY  DEPT_GROUP, DEPT_CODE
 	</background>
 	<title>
 		<band height="121" splitType="Stretch">
-			<componentElement>
-				<reportElement x="154" y="3" width="700" height="100" uuid="58a317e0-8cb3-4910-ad56-36a75aee58de"/>
-				<jr:list xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd" printOrder="Vertical">
-					<datasetRun subDataset="COMPANY_INFO" uuid="f4f84f87-2c18-4c22-8c73-2b7ba73f7d98">
-						<datasetParameter name="P_COMPANY_CODE">
-							<datasetParameterExpression><![CDATA[$P{P_COMPANY_CODE}]]></datasetParameterExpression>
-						</datasetParameter>
-						<datasetParameter name="P_COMPANY_BRANCH_CODE">
-							<datasetParameterExpression><![CDATA[$P{P_COMPANY_BRANCH_CODE}]]></datasetParameterExpression>
-						</datasetParameter>
-						<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
-					</datasetRun>
-					<jr:listContents height="100" width="700">
-						<textField>
-							<reportElement x="80" y="53" width="541" height="20" uuid="dec88727-2d9c-4d5f-8dd9-78139a884328"/>
-							<textElement textAlignment="Center">
-								<font size="14" isBold="true"/>
-							</textElement>
-							<textFieldExpression><![CDATA[$F{COMPANY_NAME}]]></textFieldExpression>
-						</textField>
-						<textField>
-							<reportElement x="80" y="76" width="541" height="20" uuid="e258c09b-5e88-4848-bb16-a480dc6f0b3a"/>
-							<textElement textAlignment="Center">
-								<font size="11"/>
-							</textElement>
-							<textFieldExpression><![CDATA[$F{ADDRESS}]]></textFieldExpression>
-						</textField>
-						<image hAlign="Center">
-							<reportElement x="320" y="6" width="50" height="42" uuid="d2823573-32e0-4b8b-8bd3-13e2792dd9b9"/>
-							<imageExpression><![CDATA[$F{COMPANY_LOGO}]]></imageExpression>
-						</image>
-					</jr:listContents>
-				</jr:list>
-			</componentElement>
 			<frame>
 				<reportElement x="0" y="100" width="1010" height="21" uuid="718782bc-6b42-415d-9691-79712e287ad3"/>
 				<textField pattern="MMMMM dd, yyyy">
@@ -669,6 +634,40 @@ ORDER BY  DEPT_GROUP, DEPT_CODE
 					<textFieldExpression><![CDATA[" of " + $V{PAGE_NUMBER}]]></textFieldExpression>
 				</textField>
 			</frame>
+			<componentElement>
+				<reportElement x="154" y="3" width="700" height="100" uuid="58a317e0-8cb3-4910-ad56-36a75aee58de"/>
+				<jr:list xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd" printOrder="Vertical">
+					<datasetRun subDataset="COMPANY_INFO" uuid="f4f84f87-2c18-4c22-8c73-2b7ba73f7d98">
+						<datasetParameter name="P_COMPANY_CODE">
+							<datasetParameterExpression><![CDATA[$P{P_COMPANY_CODE}]]></datasetParameterExpression>
+						</datasetParameter>
+						<datasetParameter name="P_COMPANY_BRANCH_CODE">
+							<datasetParameterExpression><![CDATA[$P{P_COMPANY_BRANCH_CODE}]]></datasetParameterExpression>
+						</datasetParameter>
+						<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+					</datasetRun>
+					<jr:listContents height="100" width="700">
+						<textField>
+							<reportElement x="80" y="53" width="541" height="20" uuid="dec88727-2d9c-4d5f-8dd9-78139a884328"/>
+							<textElement textAlignment="Center">
+								<font size="14" isBold="true"/>
+							</textElement>
+							<textFieldExpression><![CDATA[$F{COMPANY_NAME}]]></textFieldExpression>
+						</textField>
+						<textField>
+							<reportElement x="80" y="76" width="541" height="20" uuid="e258c09b-5e88-4848-bb16-a480dc6f0b3a"/>
+							<textElement textAlignment="Center">
+								<font size="11"/>
+							</textElement>
+							<textFieldExpression><![CDATA[$F{ADDRESS}]]></textFieldExpression>
+						</textField>
+						<image hAlign="Center">
+							<reportElement x="320" y="6" width="50" height="42" uuid="d2823573-32e0-4b8b-8bd3-13e2792dd9b9"/>
+							<imageExpression><![CDATA[$F{COMPANY_LOGO}]]></imageExpression>
+						</image>
+					</jr:listContents>
+				</jr:list>
+			</componentElement>
 		</band>
 	</title>
 	<pageHeader>

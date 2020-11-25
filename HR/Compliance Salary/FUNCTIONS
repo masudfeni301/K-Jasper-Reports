@@ -1,0 +1,718 @@
+
+
+========================================function CF_DESIG_DESCFormula return Char is
+  x VARCHAR2(100);
+begin
+  select DESIG_DESC 
+  into x
+  from DESIGNATION
+  where
+  DEPT_GROUP = :DEPT_GROUP AND
+  DEPT_CODE = :DEPT_CODE AND
+  DESIG_code = :DESIG_CODE ;
+  
+  return(x);
+  
+exception
+	WHEN NO_DATA_FOUND THEN
+	RETURN(NULL);
+	
+	when others then
+	srw.message(1000, SQLERRM(SQLCODE));
+
+end;
+======================================================function CF_GRADEFormula return Number is
+  x VARCHAR2(100);
+begin
+  select GRADE 
+  into x
+  from DESIGNATION
+  where
+  DEPT_GROUP = :DEPT_GROUP AND
+  DEPT_CODE = :DEPT_CODE AND
+  DESIG_code = :DESIG_CODE ;
+  
+  return(x);
+  
+exception
+	WHEN NO_DATA_FOUND THEN
+	RETURN(NULL);
+	
+	when others then
+	srw.message(1000, SQLERRM(SQLCODE));
+
+end;
+===========================================function CF_PBASIC_SALARYFormula return Number is
+P NUMBER;
+begin
+  P := (NVL(:GROSS_SAL,0)-(:CF_PMEDICAL_ALL+:CF_PCONVEYANCE_ALL+:CF_PFOOD_ALL))/1.4;	
+	RETURN P;  
+  
+end;
+===================================function CF_PHOUSE_RENTFormula return Number is
+P NUMBER;
+begin
+  P := ROUND(NVL(:CF_PBASIC_SALARY,0)*.40);
+	RETURN P;  
+end;
+======================================function CF_PMEDICAL_ALLFormula return Number is
+P NUMBER;
+begin
+	P := 250;
+	return P;
+end;
+======================================function CF_PCONVEYANCE_ALLFormula return Number is
+P NUMBER;
+begin
+ P := 200;	
+ RETURN P;  
+  
+end;
+===============================function CF_PFOOD_ALLFormula return Number is
+P NUMBER;
+begin
+ P := 650;	
+ RETURN P;  
+  
+end;
+=================================
+function CF_WEEK_HOLIDAYFormula return Number is
+P NUMBER(15);
+P_WEEKLY_HOLIDAY NUMBER(15);
+BEGIN
+	IF TO_CHAR(:JOIN_DT,'MM/YYYY') = :P_MNYR THEN
+  SELECT COUNT(*) 
+  INTO P_WEEKLY_HOLIDAY 
+  FROM HOLIDAY_WEEK
+  WHERE 
+  COMPANY_CODE           = :P_COMPANY_CODE AND
+  COMPANY_BRANCH_CODE    = :P_COMPANY_BRANCH_CODE AND
+  TO_CHAR(HOLIDAY_DATE,'MM/YYYY') = :P_MNYR
+  AND HOLIDAY_DATE >= :JOIN_DT
+  AND HOLIDAY_DATE NOT IN 
+	(SELECT LEAVE_DT
+   FROM   LEAVE_APPLICATION_DTL
+   WHERE 
+   COMPANY_CODE           = :P_COMPANY_CODE AND
+   COMPANY_BRANCH_CODE    = :P_COMPANY_BRANCH_CODE AND
+   EMP_ID                 = :EMP_ID AND
+   TO_CHAR(LEAVE_DT,'MM/YYYY')= :P_MNYR
+   UNION
+   SELECT FROM_DATE
+	 FROM EMP_HOLIDAY_CANCEL_LIST
+	 WHERE 
+	 COMPANY_CODE           = :P_COMPANY_CODE AND
+   COMPANY_BRANCH_CODE    = :P_COMPANY_BRANCH_CODE AND
+	 TO_CHAR(FROM_DATE,'MM/YYYY') = :P_MNYR AND
+	 EMP_ID = :EMP_ID
+);
+
+------------------------------------------------------------------------
+ELSE
+------------------------------------------------------------------------
+	IF TO_CHAR(:EMP_INACTIVE_DT,'MM/YYYY') = :P_MNYR THEN
+------------------------------------------------------------------------
+ SELECT COUNT(*) 
+ INTO P_WEEKLY_HOLIDAY 
+ FROM HOLIDAY_WEEK
+ WHERE 
+ COMPANY_CODE           = :P_COMPANY_CODE AND
+ COMPANY_BRANCH_CODE    = :P_COMPANY_BRANCH_CODE AND
+ TO_CHAR(HOLIDAY_DATE,'MM/YYYY') =  :P_MNYR
+ AND HOLIDAY_DATE <= :EMP_INACTIVE_DT
+ AND HOLIDAY_DATE NOT IN 
+	(SELECT LEAVE_DT
+   FROM   LEAVE_APPLICATION_DTL
+   WHERE 
+   COMPANY_CODE           = :P_COMPANY_CODE AND
+   COMPANY_BRANCH_CODE    = :P_COMPANY_BRANCH_CODE AND
+   EMP_ID                 = :EMP_ID AND
+   TO_CHAR(LEAVE_DT,'MM/YYYY')= :P_MNYR
+   UNION
+   SELECT FROM_DATE
+	 FROM EMP_HOLIDAY_CANCEL_LIST
+	 WHERE 
+	 COMPANY_CODE           = :P_COMPANY_CODE AND
+   COMPANY_BRANCH_CODE    = :P_COMPANY_BRANCH_CODE AND
+	 TO_CHAR(FROM_DATE,'MM/YYYY') = :P_MNYR AND
+	 EMP_ID = :EMP_ID
+   );
+  
+-------------------------------------------------------------------
+ELSE
+-------------------------------------------------------------------
+--BEGIN
+ SELECT COUNT(*) 
+ INTO P_WEEKLY_HOLIDAY 
+ FROM HOLIDAY_WEEK
+ WHERE 
+ COMPANY_CODE           = :P_COMPANY_CODE AND
+ COMPANY_BRANCH_CODE    = :P_COMPANY_BRANCH_CODE AND
+ TO_CHAR(HOLIDAY_DATE,'MM/YYYY') = :P_MNYR
+ AND HOLIDAY_DATE NOT IN 
+	(SELECT LEAVE_DT
+   FROM   LEAVE_APPLICATION_DTL
+   WHERE 
+   COMPANY_CODE           = :P_COMPANY_CODE AND
+   COMPANY_BRANCH_CODE    = :P_COMPANY_BRANCH_CODE AND
+   EMP_ID                 = :EMP_ID AND
+   TO_CHAR(LEAVE_DT,'MM/YYYY')= :P_MNYR
+   UNION
+   SELECT FROM_DATE
+	 FROM EMP_HOLIDAY_CANCEL_LIST
+	 WHERE 
+	 COMPANY_CODE           = :P_COMPANY_CODE AND
+   COMPANY_BRANCH_CODE    = :P_COMPANY_BRANCH_CODE AND
+	 TO_CHAR(FROM_DATE,'MM/YYYY') = :P_MNYR AND
+	 EMP_ID = :EMP_ID
+   );
+   
+   END IF;
+END IF;
+RETURN P_WEEKLY_HOLIDAY;
+EXCEPTION
+	WHEN OTHERS THEN
+	RETURN NULL;
+END;
+=======================function CF_GOV_HOLIDAYFormula return Number is
+ P NUMBER(10);
+ P_OTHER_HOLIDAY NUMBER(10);
+begin	
+	
+	IF TO_CHAR(:JOIN_DT,'MM/YYYY') =  :P_MNYR THEN
+	SELECT COUNT(*) 
+	INTO P_OTHER_HOLIDAY
+	FROM HOLIDAY
+	WHERE 
+	COMPANY_CODE           = :P_COMPANY_CODE AND
+  COMPANY_BRANCH_CODE    = :P_COMPANY_BRANCH_CODE AND
+  TO_CHAR(DATE_TO,'MM/YYYY') = :P_MNYR
+	--AND TO_CHAR(DATE_TO,'DY') != 'FRI'
+	AND FROM_DATE >= :JOIN_DT
+	AND FROM_DATE NOT IN 
+				(
+				SELECT FROM_DATE
+				FROM EMP_HOLIDAY_CANCEL_LIST
+				WHERE 
+				COMPANY_CODE           = :P_COMPANY_CODE AND
+    		COMPANY_BRANCH_CODE    = :P_COMPANY_BRANCH_CODE AND
+				TO_CHAR(FROM_DATE,'MM/YYYY') = :P_MNYR AND
+				EMP_ID = :EMP_ID
+				UNION
+				SELECT HOLIDAY_DATE
+				FROM HOLIDAY_WEEK
+				WHERE 
+				COMPANY_CODE           = :P_COMPANY_CODE AND
+    		COMPANY_BRANCH_CODE    = :P_COMPANY_BRANCH_CODE AND
+    		TO_CHAR(HOLIDAY_DATE,'MM/YYYY') = :P_MNYR
+				UNION
+				SELECT LEAVE_DT
+   			FROM   LEAVE_APPLICATION_DTL
+   			WHERE 
+   			COMPANY_CODE           = :P_COMPANY_CODE AND
+   			COMPANY_BRANCH_CODE    = :P_COMPANY_BRANCH_CODE AND
+   			EMP_ID                 = :EMP_ID AND
+   			TO_CHAR(LEAVE_DT,'MM/YYYY')= :P_MNYR
+				);
+	
+-------------------------------------------------------------------------
+ELSE
+-------------------------------------------------------------------------
+		IF TO_CHAR(:EMP_INACTIVE_DT,'MM/YYYY') =  :P_MNYR THEN
+-------------------------------------------------------------------------
+			SELECT COUNT(*) 
+			INTO P_OTHER_HOLIDAY
+			FROM HOLIDAY
+			WHERE 
+			COMPANY_CODE           = :P_COMPANY_CODE 
+  		AND COMPANY_BRANCH_CODE    = :P_COMPANY_BRANCH_CODE 
+  		AND TO_CHAR(FROM_DATE,'MM/YYYY') = :P_MNYR 
+			--AND TO_CHAR(DATE_TO,'DY') != 'FRI'
+			AND FROM_DATE <= :EMP_INACTIVE_DT
+			AND FROM_DATE NOT IN 
+			(
+			SELECT FROM_DATE
+			FROM EMP_HOLIDAY_CANCEL_LIST
+			WHERE 
+			COMPANY_CODE           = :P_COMPANY_CODE AND
+    	COMPANY_BRANCH_CODE    = :P_COMPANY_BRANCH_CODE AND
+    	TO_CHAR(FROM_DATE,'MM/YYYY') = :P_MNYR
+			AND EMP_ID = :EMP_ID
+			UNION
+			SELECT HOLIDAY_DATE
+			FROM HOLIDAY_WEEK
+			WHERE
+    	COMPANY_CODE           = :P_COMPANY_CODE AND
+    	COMPANY_BRANCH_CODE    = :P_COMPANY_BRANCH_CODE AND
+    	TO_CHAR(HOLIDAY_DATE,'MM/YYYY')= :P_MNYR
+    	UNION
+			SELECT LEAVE_DT
+   		FROM   LEAVE_APPLICATION_DTL
+   		WHERE 
+   		COMPANY_CODE           = :P_COMPANY_CODE AND
+   		COMPANY_BRANCH_CODE    = :P_COMPANY_BRANCH_CODE AND
+   		EMP_ID                 = :EMP_ID AND
+   		TO_CHAR(LEAVE_DT,'MM/YYYY')= :P_MNYR
+    	);
+	/*
+		EXCEPTION
+			WHEN OTHERS THEN
+			P_OTHER_HOLIDAY := 0;
+	
+		END;
+		*/
+		----------------------------------------------------------
+		ELSE
+		----------------------------------------------------------
+			SELECT COUNT(*) 
+			INTO P_OTHER_HOLIDAY
+			FROM HOLIDAY
+			WHERE 
+			COMPANY_CODE           = :P_COMPANY_CODE AND
+    	COMPANY_BRANCH_CODE    = :P_COMPANY_BRANCH_CODE AND
+    	TO_CHAR(FROM_DATE,'MM/YYYY') = :P_MNYR
+			--AND TO_CHAR(DATE_TO,'DY') != 'FRI'
+			AND FROM_DATE NOT IN 
+			(
+			SELECT FROM_DATE
+			FROM EMP_HOLIDAY_CANCEL_LIST
+			WHERE 
+			COMPANY_CODE           = :P_COMPANY_CODE AND
+    	COMPANY_BRANCH_CODE    = :P_COMPANY_BRANCH_CODE AND
+    	TO_CHAR(FROM_DATE,'MM/YYYY') = :P_MNYR AND
+			EMP_ID = :EMP_ID
+			UNION
+			SELECT HOLIDAY_DATE
+			FROM HOLIDAY_WEEK
+			WHERE 
+			COMPANY_CODE           = :P_COMPANY_CODE AND
+    	COMPANY_BRANCH_CODE    = :P_COMPANY_BRANCH_CODE AND
+    	TO_CHAR(HOLIDAY_DATE,'MM/YYYY') = :P_MNYR
+    	UNION
+			SELECT LEAVE_DT
+   		FROM   LEAVE_APPLICATION_DTL
+   		WHERE 
+   		COMPANY_CODE           = :P_COMPANY_CODE AND
+   		COMPANY_BRANCH_CODE    = :P_COMPANY_BRANCH_CODE AND
+   		EMP_ID                 = :EMP_ID AND
+   		TO_CHAR(LEAVE_DT,'MM/YYYY')= :P_MNYR
+			)	;
+	END IF;
+END IF;
+RETURN P_OTHER_HOLIDAY;
+EXCEPTION
+	WHEN OTHERS THEN
+	RETURN  0;
+END;
+	================================function CF_WEEK_GOV_HOLIDAYFormula return Number is
+x number;
+begin
+	x := NVL(:CF_WEEK_HOLIDAY,0)+NVL(:CF_GOV_HOLIDAY,0);
+	return x;
+exception
+	WHEN OTHERS THEN
+	return null;  
+end;
+===============================function CF_CASUAL_LEAVEFormula return Number is
+P NUMBER(10);
+begin
+  SELECT COUNT(B.LEAVE_DT)LEAVE_DAYS
+  INTO P
+  FROM LEAVE_APPLICATION A, LEAVE_APPLICATION_DTL B
+  WHERE
+  A.COMPANY_CODE       =B.COMPANY_CODE AND
+  A.COMPANY_BRANCH_CODE=B.COMPANY_BRANCH_CODE AND
+  A.EMP_ID             =B.EMP_ID AND
+  A.APPLICATION_DT     =B.APPLICATION_DT AND
+  A.LEAVE_TYPE_CODE    ='01' AND
+  A.EMP_ID             = :EMP_ID AND
+  SUBSTR(TO_CHAR(B.LEAVE_DT,'DD/MM/YYYY'),4,8)=:P_MNYR;
+  RETURN P;
+EXCEPTION
+	WHEN OTHERS THEN 
+	RETURN NULL;
+end;
+==================================function CF_EARN_LEAVEFormula return Number is
+P NUMBER(10);
+begin
+  SELECT COUNT(B.LEAVE_DT)LEAVE_DAYS
+  INTO P
+  FROM LEAVE_APPLICATION A, LEAVE_APPLICATION_DTL B
+  WHERE
+  A.COMPANY_CODE       =B.COMPANY_CODE AND
+  A.COMPANY_BRANCH_CODE=B.COMPANY_BRANCH_CODE AND
+  A.EMP_ID             =B.EMP_ID AND
+  A.APPLICATION_DT     =B.APPLICATION_DT AND
+  A.LEAVE_TYPE_CODE  IN ('03') AND
+  A.EMP_ID             = :EMP_ID AND
+  SUBSTR(TO_CHAR(B.LEAVE_DT,'DD/MM/YYYY'),4,8)=:P_MNYR;
+  RETURN P;
+EXCEPTION
+	WHEN OTHERS THEN 
+	RETURN NULL;
+end;
+=====================================function CF_MEDICAL_LEAVEFormula return Number is
+P NUMBER(10);
+begin
+  SELECT COUNT(B.LEAVE_DT)LEAVE_DAYS
+  INTO P
+  FROM LEAVE_APPLICATION A, LEAVE_APPLICATION_DTL B
+  WHERE
+  A.COMPANY_CODE       =B.COMPANY_CODE AND
+  A.COMPANY_BRANCH_CODE=B.COMPANY_BRANCH_CODE AND
+  A.EMP_ID             =B.EMP_ID AND
+  A.APPLICATION_DT     =B.APPLICATION_DT AND
+  A.LEAVE_TYPE_CODE    ='02' AND
+  A.EMP_ID             = :EMP_ID AND
+  SUBSTR(TO_CHAR(B.LEAVE_DT,'DD/MM/YYYY'),4,8)=:P_MNYR;
+  RETURN P;
+EXCEPTION
+	WHEN OTHERS THEN 
+	RETURN NULL;
+end;function CF_EL_PLUS_CLFormula return Number is
+x number;
+begin
+  x := NVL(:CF_EARN_LEAVE,0)+NVL(:CF_CASUAL_LEAVE,0);
+  return x;
+exception
+	when others then
+	return 0;
+end;
+======================================function CF_EL_PLUS_CLFormula return Number is
+x number;
+begin
+  x := NVL(:CF_EARN_LEAVE,0)+NVL(:CF_CASUAL_LEAVE,0);
+  return x;
+exception
+	when others then
+	return 0;
+end;
+=====================================function CF_OTHERS_LEAVEFormula return Number is
+P NUMBER(10);
+begin
+  SELECT COUNT(B.LEAVE_DT)LEAVE_DAYS
+  INTO P
+  FROM LEAVE_APPLICATION A, LEAVE_APPLICATION_DTL B
+  WHERE
+  A.COMPANY_CODE       =B.COMPANY_CODE AND
+  A.COMPANY_BRANCH_CODE=B.COMPANY_BRANCH_CODE AND
+  A.EMP_ID             =B.EMP_ID AND
+  A.APPLICATION_DT     =B.APPLICATION_DT AND
+  A.LEAVE_TYPE_CODE  IN ('04','05') AND
+  A.EMP_ID             = :EMP_ID AND
+  SUBSTR(TO_CHAR(B.LEAVE_DT,'DD/MM/YYYY'),4,8)=:P_MNYR;
+  RETURN P;
+EXCEPTION
+	WHEN OTHERS THEN 
+	RETURN NULL;
+end;
+==========================function CF_TOTAL_LEAVE_DAYFormula return Number is
+begin
+  RETURN (NVL(:CF_CASUAL_LEAVE,0)+NVL(:CF_MEDICAL_LEAVE,0)+NVL(:CF_EARN_LEAVE,0)+NVL(:CF_OTHERS_LEAVE,0));
+end;
+================================function CF_PRESENT_DAYSFormula return Number is
+P NUMBER(10);
+BEGIN
+	SELECT COUNT(ATTEND_DATE)
+	INTO P
+	FROM   DAILY_ATTENDANCE
+	WHERE 
+        COMPANY_CODE           = :P_COMPANY_CODE AND
+        COMPANY_BRANCH_CODE    = :P_COMPANY_BRANCH_CODE AND
+        EMP_ID                 = :EMP_ID AND
+        IN_TIME IS NOT NULL AND
+				TO_CHAR(ATTEND_DATE,'MM/YYYY')= :P_MNYR AND
+        ATTEND_DATE NOT IN 
+				(
+				SELECT FROM_DATE
+				FROM EMP_HOLIDAY_CANCEL_LIST
+				WHERE 
+				COMPANY_CODE           = :P_COMPANY_CODE 
+        AND COMPANY_BRANCH_CODE    = :P_COMPANY_BRANCH_CODE
+    		AND TO_CHAR(FROM_DATE,'MM/YYYY') = :P_MNYR
+				AND EMP_ID = :EMP_ID
+				UNION
+				SELECT ATTEND_DATE
+			  FROM HR_AUTHORIZED_ABSENT_SAL
+  			WHERE 
+				COMPANY_CODE               = :P_COMPANY_CODE 
+        AND COMPANY_BRANCH_CODE    = :P_COMPANY_BRANCH_CODE
+    		AND TO_CHAR(ATTEND_DATE,'MM/YYYY') = :P_MNYR
+				AND EMP_ID = :EMP_ID
+				UNION
+				SELECT MISCONDUCT_DT
+        FROM HR_DISCIPLINARY_ACTION 
+        WHERE
+        COMPANY_CODE = :P_COMPANY_CODE 
+        AND COMPANY_BRANCH_CODE = :P_COMPANY_BRANCH_CODE
+        AND EMP_ID = :EMP_ID
+        AND TO_CHAR(MISCONDUCT_DT,'MM/YYYY')= :P_MNYR
+				UNION
+				SELECT HOLIDAY_DATE
+				FROM HOLIDAY_WEEK
+				WHERE 
+				COMPANY_CODE           = :P_COMPANY_CODE 
+        AND COMPANY_BRANCH_CODE    = :P_COMPANY_BRANCH_CODE
+    		AND TO_CHAR(HOLIDAY_DATE,'MM/YYYY') = :P_MNYR
+				UNION
+				SELECT FROM_DATE
+        FROM HOLIDAY
+        WHERE
+        COMPANY_CODE           = :P_COMPANY_CODE 
+        AND COMPANY_BRANCH_CODE    = :P_COMPANY_BRANCH_CODE
+    		AND TO_CHAR(FROM_DATE,'MM/YYYY') = :P_MNYR      
+        UNION 
+        SELECT L.LEAVE_DT
+    		FROM LEAVE_APPLICATION B, LEAVE_APPLICATION_DTL L
+    		WHERE
+    		B.COMPANY_CODE = L.COMPANY_CODE 
+    		AND B.COMPANY_BRANCH_CODE = L.COMPANY_BRANCH_CODE
+    		AND B.EMP_ID = L.EMP_ID
+    		AND B.APPLICATION_DT = L.APPLICATION_DT
+    		AND B.EMP_ID = :EMP_ID
+    		AND B.COMPANY_CODE           = :P_COMPANY_CODE 
+        AND B.COMPANY_BRANCH_CODE    = :P_COMPANY_BRANCH_CODE
+    		AND TO_CHAR(L.LEAVE_DT,'MM/YYYY')= :P_MNYR    
+				) ;
+				RETURN P;
+EXCEPTION
+	WHEN OTHERS THEN 
+	RETURN (NULL);
+END;
+
+======================================function CF_AUTHORIZE_PRESENTFormula return Number is
+P NUMBER(10);
+begin
+  SELECT COUNT(ATTEND_DATE)
+  INTO P
+  FROM 
+  (  
+  SELECT ATTEND_DATE
+  FROM HR_AUTHORIZED_ABSENT
+  WHERE 
+  COMPANY_CODE           = :P_COMPANY_CODE AND
+  COMPANY_BRANCH_CODE    = :P_COMPANY_BRANCH_CODE AND
+  EMP_ID                 = :EMP_ID AND
+  TO_CHAR(ATTEND_DATE,'MM/YYYY') = :P_MNYR  
+  UNION
+  SELECT ATTEND_DATE
+  FROM HR_AUTHORIZED_PRESENT_SAL
+  WHERE 
+  COMPANY_CODE           = :P_COMPANY_CODE AND
+  COMPANY_BRANCH_CODE    = :P_COMPANY_BRANCH_CODE AND
+  EMP_ID                 = :EMP_ID AND
+  TO_CHAR(ATTEND_DATE,'MM/YYYY') = :P_MNYR  
+  );
+  RETURN P;
+EXCEPTION
+	WHEN OTHERS THEN 
+	RETURN (NULL);
+end;
+==================================function CF_TOTAL_WORKING_DAYSFormula return Number is
+p number;
+begin
+  p := NVL(:CF_PRESENT_DAYS,0)+NVL(:CF_AUTHORIZE_PRESENT,0);
+  return p;
+end;
+=========================function CF_TOTAL_PAYABLE_DAYSFormula return Number is
+p number;
+begin
+  p := NVL(:CF_WEEK_GOV_HOLIDAY,0)+NVL(:CF_TOTAL_LEAVE_DAY,0)+NVL(:CF_PRESENT_DAYS,0)+NVL(:CF_TOTAL_WORKING_DAYS,0);
+  return p;
+end;
+=========================function CF_month_daysFormula return Number is
+  x				number(2);
+begin	
+  select last_day(to_date('01/'||:P_MNYR,'DD/MM/YYYY'))
+           - to_date('01/'||:P_MNYR,'DD/MM/YYYY')+1
+  into x
+  from dual;
+  return(x);	
+exception 
+	when others then
+	return(0);
+end;
+====================================function CF_TOTAL_ABSENTFormula return Number is
+ P    NUMBER(10,2);
+BEGIN
+	IF TO_CHAR(:JOIN_DT,'MM/YYYY') = :P_MNYR THEN
+		P := NVL(NVL(:CF_MONTH_DAYS,0)-(TO_NUMBER(TO_CHAR(:JOIN_DT,'DD'))-1),0)-(NVL(:CF_TOTAL_PAYABLE_DAYS,0));	  
+	ELSIF TO_CHAR(:EMP_INACTIVE_DT,'MM/YYYY') = :P_MNYR THEN
+		P := NVL(NVL(:CF_MONTH_DAYS,0)-(TO_NUMBER(TO_CHAR(:EMP_INACTIVE_DT,'DD'))+1),0)-(NVL(:CF_TOTAL_PAYABLE_DAYS,0));			
+	ELSE
+		P :=  (NVL(:CF_MONTH_DAYS,0) -(NVL(:CF_TOTAL_PAYABLE_DAYS,0)));	
+	END IF;
+ RETURN(P);
+END;
+ =========================function CF_PFFormula return Number is
+x number;
+begin
+	IF TRUNC(:CONFIRM_DT) <= TO_DATE(:P_MNYR,'MM/YYYY') THEN 
+   x := ROUND((NVL(:CF_PBASIC_SALARY, 0)*.07),2);
+	ELSE
+	 x := 0;
+	END IF;	
+  return x;
+exception
+	WHEN OTHERS THEN
+	return 0;
+end;
+================================function CF_ABSENT_DEDUCT_AMTFormula return Number is
+x number;
+begin
+	IF NVL(:CF_TOTAL_ABSENT, 0) > 0 THEN		
+	    x :=	ROUND((NVL(:CF_PBASIC_SALARY,0)/30)*NVL(:CF_TOTAL_ABSENT, 0),2); 
+	ELSE 
+		  x := NULL;
+	END IF;
+return	x;  
+end;
+
+======================function CF_TOTAL_DEDUCT_AMTFormula return Number is
+x number;
+begin
+	x := NVL(:CF_PF,0)+NVL(:CF_ABSENT_DEDUCT_AMT,0);
+	IF x > 0 THEN
+		return x;
+	ELSE
+		return null;
+	END IF;	 
+end;
+==================================function CF_PAYABLE_AMTFormula return Number is
+p number(10,2);
+begin
+  p := ROUND(((NVL(:GROSS_SAL,0)/NVL(:CF_MONTH_DAYS,0))*NVL(:CF_TOTAL_PAYABLE_DAYS,0))+((NVL(:GROSS_SAL,0)/NVL(:CF_MONTH_DAYS,0)*NVL(:CF_TOTAL_ABSENT,0)) - NVL(:CF_ABSENT_DEDUCT_AMT,0)), 2);
+  return p;
+end;
+
+===========================function CF_NET_PAYABLE_AMOUNTFormula return Number is
+P NUMBER(15,2);
+begin
+ P := NVL(:CF_PAYABLE_AMT,0)-NVL(:CF_PF,0);  
+ RETURN P;
+end;
+
+
+=============================function CF_OT_RATEFormula return Number is
+x number(5,2);
+begin
+x := ((NVL(:CF_PBASIC_SALARY,0)/208)*2);
+return x;
+exception
+when others then
+return null;
+end;
+==============================function CF_OT_HOURFormula return Number is
+x number(6,2);
+begin
+SELECT 
+ROUND(A.OT) OT
+INTO x
+FROM 
+(
+SELECT
+COMPANY_CODE, 
+COMPANY_BRANCH_CODE,
+EMP_ID,  
+SUM(NVL(OT,0)) OT, 
+SUM(NVL(EXT_OT,0)) EXT_OT
+FROM 
+(
+SELECT 
+COMPANY_CODE, 
+COMPANY_BRANCH_CODE,
+EMP_ID,
+SUM(NVL(OT_HR,0)) OT,
+SUM(NVL(OT_EXT_HR,0)) EXT_OT
+FROM DAILY_ATTENDANCE 
+WHERE 
+COMPANY_CODE                           = :P_COMPANY_CODE AND
+COMPANY_BRANCH_CODE          = :P_COMPANY_BRANCH_CODE AND
+(EMP_ID                                          =:EMP_ID)  AND
+
+ ((OT_HR >0)  OR
+(OT_EXT_HR >0)) AND
+TO_CHAR(ATTEND_DATE,'MM/YYYY') =:P_MNYR
+GROUP BY COMPANY_CODE, COMPANY_BRANCH_CODE, EMP_ID
+UNION
+SELECT 
+COMPANY_CODE, 
+COMPANY_BRANCH_CODE,
+EMP_ID,
+SUM(NVL(OT_HOUR,0)) OT,
+SUM(NVL(OT_EXT_HOUR,0)) EXT_OT
+FROM MONTHLY_ATTENDANCE_ADJUST
+WHERE
+COMPANY_CODE                            =:P_COMPANY_CODE AND
+COMPANY_BRANCH_CODE           =:P_COMPANY_BRANCH_CODE AND
+(EMP_ID                                           =:EMP_ID)  AND
+TO_CHAR(ADJ_DATE,'MM/YYYY') =:P_MNYR
+AND ((OT_HOUR >0)  OR
+(OT_EXT_HOUR >0)) 
+GROUP BY COMPANY_CODE, COMPANY_BRANCH_CODE, EMP_ID
+)
+GROUP BY COMPANY_CODE, COMPANY_BRANCH_CODE, EMP_ID
+) A, EMP B ,DESIGNATION S
+WHERE
+A.COMPANY_CODE                           = B.COMPANY_CODE AND
+A.COMPANY_BRANCH_CODE          = B.COMPANY_BRANCH_CODE AND
+A.EMP_ID                                           = B.EMP_ID AND
+A.EMP_ID IN
+(SELECT EMP_ID 
+ FROM EMP
+ WHERE
+ (DESIG_CODE, DEPT_CODE, DEPT_GROUP)
+ IN 
+  (SELECT DESIG_CODE, DEPT_CODE, DEPT_GROUP 
+  FROM USER_VS_DESIG 
+  WHERE USER_ID=USER)
+ ) AND
+
+(B.DEPT_GROUP                                =:DEPT_GROUP ) AND
+(B.DEPT_CODE                                   =:DEPT_CODE)   AND
+(A.EMP_ID                                           =:EMP_ID ) AND
+
+(NVL(A.OT,0)+NVL(A.EXT_OT,0))>0 AND
+B.DEPT_GROUP                               = S.DEPT_GROUP AND
+B.DEPT_CODE                                  = S.DEPT_CODE    AND
+B.DESIG_CODE                                 = S.DESIG_CODE  AND
+S.OT_FLAG                                        = 'Y'  ; 
+
+if x <= :CF_TOTAL_WORKING_DAYS*2 then
+	return x;
+else 
+ return (:CF_TOTAL_WORKING_DAYS*2)-1;
+end if;
+exception
+	when no_data_found then
+
+	declare
+		v_present_days number := :CF_TOTAL_WORKING_DAYS;
+		y number;
+	begin
+	--	x := TO_NUMBER(SUBSTR(v_emp_id,2,1))* TO_NUMBER(SUBSTR(v_emp_id,-2,1));
+		if v_present_days*2 < 52 then
+			y := (v_present_days*2)-1;
+		else
+			y := 52;
+		end if;
+		return y;
+	end;
+when others then
+	return null;
+end;
+===============================function CF_OT_AMTFormula return Number is
+x number(10,2);
+begin
+x := ROUND(NVL(:CF_OT_RATE,0)*NVL(:CF_OT_HOUR,0));
+return x;
+exception
+	when others then
+	return null;
+end;
+===========================function CF_TOT_PAYABLE_AMTFormula return Number is
+x number;
+begin
+  x := NVL(:CF_NET_PAYABLE_AMOUNT,0)+NVL(:CF_OT_AMT,0);
+  return x;
+end;

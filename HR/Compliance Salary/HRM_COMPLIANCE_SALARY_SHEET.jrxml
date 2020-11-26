@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Created with Jaspersoft Studio version 6.3.0.final using JasperReports Library version 6.3.0  -->
-<!-- 2020-11-25T19:53:19 -->
-<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="HRM_COMPLIANCE_SALARY_SHEET" pageWidth="1404" pageHeight="1008" orientation="Landscape" columnWidth="1364" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="62d0349b-7ae0-4e9d-9b93-e2c3e0b912f3">
+<!-- 2020-11-26T13:43:55 -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="HRM_COMPLIANCE_SALARY_SHEET" pageWidth="1404" pageHeight="1008" orientation="Landscape" columnWidth="1364" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" isIgnorePagination="true" uuid="62d0349b-7ae0-4e9d-9b93-e2c3e0b912f3">
 	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
-	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="KALYAR "/>
 	<property name="com.jaspersoft.studio.data.sql.SQLQueryDesigner.sash.w1" value="0"/>
 	<property name="com.jaspersoft.studio.data.sql.SQLQueryDesigner.sash.w2" value="1000"/>
 	<property name="com.jaspersoft.studio.unit." value="pixel"/>
 	<property name="com.jaspersoft.studio.unit.pageHeight" value="inch"/>
 	<property name="com.jaspersoft.studio.unit.pageWidth" value="inch"/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="KALYAR "/>
 	<subDataset name="COMPANY_INFO" uuid="6e0d2f84-e900-408a-a061-7a1a8a07a779">
 		<property name="com.jaspersoft.studio.data.defaultdataadapter" value="KALYAR "/>
 		<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
@@ -175,394 +175,492 @@ SIGNATORY_FOR   ='HRM']]>
 	<parameter name="P_EMP" class="java.lang.String"/>
 	<parameter name="P_DEPT_GROUP" class="java.lang.String"/>
 	<queryString>
-		<![CDATA[SELECT '  '||NAME as NAME, EMP_ID, DESIGNATION,
-
-(CASE 
-WHEN DESIG_GROUP ='OF' THEN EMP_AC_NO 
-WHEN DESIG_GROUP ='FW' THEN MOBILE_AC_NO
-WHEN DESIG_GROUP ='OS' THEN MOBILE_AC_NO
-ELSE NULL END) as ACCOUNT_NO,
-
-(SELECT COUNT(HOLIDAY_DATE) 
-FROM ( SELECT HOLIDAY_DATE HOLIDAY_DATE
-FROM HOLIDAY_WEEK
-WHERE 
-COMPANY_CODE        = $P{P_COMPANY_CODE} AND
-COMPANY_BRANCH_CODE = $P{P_COMPANY_BRANCH_CODE} AND
-TO_CHAR(HOLIDAY_DATE,'MM/YYYY') = $P{P_MNYR}
-UNION
-SELECT DATE_TO HOLIDAY_DATE
-FROM HOLIDAY
-WHERE 
-COMPANY_CODE        = $P{P_COMPANY_CODE} AND
-COMPANY_BRANCH_CODE = $P{P_COMPANY_BRANCH_CODE} AND
-TO_CHAR(FROM_DATE,'MM/YYYY')   = $P{P_MNYR}
-)) as OFFDAY_THIS_MONTH, 
-
-COUNT(ATTEND_DATE) as OFFDAY_QTY, SUM(LUNCH_QTY) as LUNCH_DIN_QTY,
-
-(SELECT NVL(O.OFFDAY_ALL,0) FROM HR_TNOFF_ALLOWANCE O
-WHERE O.DEPT_GROUP  = Y.DEPT_GROUP 
-AND O.DEPT_CODE   =  Y.DEPT_CODE  
-AND O.DESIG_CODE  = Y.DESIG_CODE 
-AND O.EFFECTIVE_DATE  = (SELECT MAX(EFFECTIVE_DATE) 
-                     FROM HR_TNOFF_ALLOWANCE 
-                     WHERE DEPT_GROUP = Y.DEPT_GROUP AND
-                     DEPT_CODE        = Y.DEPT_CODE  AND
-                     DESIG_CODE      = Y.DESIG_CODE AND
-                     EFFECTIVE_DATE  <= TO_DATE($P{P_MNYR},'MM/YYYY'))) as OFFDAY_RATE,
-
-(SELECT NVL(O.OFFDAY_LUNCH_BILL,0) FROM HR_TNOFF_ALLOWANCE O
-  WHERE O.DEPT_GROUP  = Y.DEPT_GROUP 
-  AND O.DEPT_CODE   =  Y.DEPT_CODE  
-  AND O.DESIG_CODE  = Y.DESIG_CODE 
-  AND O.EFFECTIVE_DATE  = (SELECT MAX(EFFECTIVE_DATE) 
-         FROM HR_TNOFF_ALLOWANCE 
-         WHERE DEPT_GROUP = Y.DEPT_GROUP AND
-         DEPT_CODE        = Y.DEPT_CODE  AND
-         DESIG_CODE      = Y.DESIG_CODE AND
-         EFFECTIVE_DATE  <= TO_DATE($P{P_MNYR},'MM/YYYY'))) as LUNCH_DIN_RATE,
-		 
-SUM(OFFDAY_ALL) as OFFDAY_ALL , SUM(OFFDAY_LUNCH_DIN_ALL) as LUNCH_DIN_ALL, SUM(TOTAL_PAY_AMT) AS TOT_PAY_AMT, 
-SUM(NET_PAYABLE_BANK) as NET_PAYABLE_BANK, SUM(NET_PAYABLE_CASH) as NET_PAYABLE_CASH,
-DEPARTMENT, SECTION_NAME, DEPT_GROUP, DEPT_CODE, DEPT_GROUP_SL, JOIN_DT
-FROM (SELECT 
-NAME, DESIGNATION, DEPARTMENT, SECTION_NAME, ATTEND_DATE , DD, EMP_ID,DUTY,
-BASIC_SALARY, JOIN_DT, BANK_SAL_FLAG, EMP_AC_NO, EMP_AC_DATE, MOBILE_BANK_SAL_FLAG, MOBILE_AC_NO, MOBILE_AC_DATE, DEPT_GROUP, DEPT_CODE, 
-DESIG_CODE, SALARY_TYPE, DESIG_GROUP, DEPT_GROUP_SL, OFFDAY_ALL, OFFDAY_LUNCH_DIN_ALL, ACTUAL_TIME, 
-IN_TIME, OUT_TIME, NVL(OFFDAY_ALL, 0)+NVL(OFFDAY_LUNCH_DIN_ALL, 0) as TOTAL_PAY_AMT,
-(CASE
-When NVL(OFFDAY_LUNCH_DIN_ALL, 0)  = 0 THEN 0
-ELSE
-1
-END) as LUNCH_QTY,
-(CASE 
-WHEN EMP_AC_NO IS NOT NULL AND BANK_SAL_FLAG IS NOT NULL 
-    OR MOBILE_AC_NO IS NOT NULL AND MOBILE_BANK_SAL_FLAG IS NOT NULL THEN
-    NVL(OFFDAY_ALL, 0)+NVL(OFFDAY_LUNCH_DIN_ALL, 0)
-ELSE 0
-END) as NET_PAYABLE_BANK,
-
-(CASE
-WHEN EMP_AC_NO IS NULL AND BANK_SAL_FLAG IS NULL AND MOBILE_AC_NO IS NULL AND MOBILE_BANK_SAL_FLAG IS NULL THEN
-    NVL(OFFDAY_ALL, 0)+NVL(OFFDAY_LUNCH_DIN_ALL, 0)
-ELSE 0
-END) as NET_PAYABLE_CASH 
+		<![CDATA[SELECT
+EMP_ID,
+NAME,
+DESIGNATION,
+SECTION_NAME,
+JOIN_DATE,
+GRADE,
+ROUND(PBASIC_SALARY) PBASIC_SALARY,
+PHOUSE_RENT,
+PMEDICAL_ALL,
+PCONVEYANCE_ALL,
+FOOD_ALL,
+GROSS_SAL,
+WEEK_GOV_HOLIDAY,
+CASUAL_LEAVE, 
+EARN_LEAVE, 
+MEDICAL_LEAVE,
+OTHERS_LEAVE,
+EL_PLUS_CL,
+TOTAL_WORKING_DAYS,
+TOTAL_PAYABLE_DAYS,
+CF_PF,
+OT_RATE,
+OT_HOUR,
+MONTH_DAYS,
+TOTAL_ABSENT,
+ROUND((NVL(PBASIC_SALARY,0)/30)*NVL(TOTAL_ABSENT, 0)) AS ABSENT_DEDUCT_AMT,
+NVL(CF_PF,0)+NVL(ROUND((NVL(PBASIC_SALARY,0)/30)*NVL(TOTAL_ABSENT, 0),2),0) AS TOTAL_DEDUCT_AMT,
+ROUND(((NVL(GROSS_SAL,0)/NVL(MONTH_DAYS,0))*NVL(TOTAL_PAYABLE_DAYS,0))+((NVL(GROSS_SAL,0)/NVL(MONTH_DAYS,0)*NVL(TOTAL_ABSENT,0)) - NVL(ROUND((NVL(PBASIC_SALARY,0)/30)*NVL(TOTAL_ABSENT, 0),2),0)), 2) AS PAYABLE_AMT,
+NVL(ROUND(((NVL(GROSS_SAL,0)/NVL(MONTH_DAYS,0))*NVL(TOTAL_PAYABLE_DAYS,0))+((NVL(GROSS_SAL,0)/NVL(MONTH_DAYS,0)*NVL(TOTAL_ABSENT,0)) - NVL(ROUND((NVL(PBASIC_SALARY,0)/30)*NVL(TOTAL_ABSENT, 0),2),0)), 2),0)-NVL(CF_PF,0) AS NET_PAYABLE_AMOUNT,
+ROUND(NVL(OT_RATE,0)*NVL(OT_HOUR,0)) AS OT_AMT,
+NVL(NVL(ROUND(((NVL(GROSS_SAL,0)/NVL(MONTH_DAYS,0))*NVL(TOTAL_PAYABLE_DAYS,0))+((NVL(GROSS_SAL,0)/NVL(MONTH_DAYS,0)*NVL(TOTAL_ABSENT,0)) - NVL(ROUND((NVL(PBASIC_SALARY,0)/30)*NVL(TOTAL_ABSENT, 0),2),0)), 2),0)-NVL(CF_PF,0),0)+NVL(ROUND(NVL(OT_RATE,0)*NVL(OT_HOUR,0)),0) AS TOT_PAYABLE_AMT
 FROM (SELECT
-NAME, DESIGNATION, DEPARTMENT, SECTION_NAME, ATTEND_DATE , DD, EMP_ID,DUTY,
-BASIC_SALARY, JOIN_DT, EMP_AC_NO, EMP_AC_DATE, MOBILE_AC_NO, MOBILE_AC_DATE, DEPT_GROUP, DEPT_CODE, 
-DESIG_CODE, SALARY_TYPE, DESIG_GROUP, DEPT_GROUP_SL, BANK_SAL_FLAG, MOBILE_BANK_SAL_FLAG,
-(CASE 
-WHEN PRE_ADJ_OFFDAY_ALL > 0 THEN 0
-    ELSE PRE_OFFDAY_ALL
-END) as OFFDAY_ALL,
+EMP_ID,
+NAME,
+DESIGNATION,
+SECTION_NAME,
+JOIN_DT JOIN_DATE,
+GRADE,
+PBASIC_SALARY,
+PHOUSE_RENT,
+PMEDICAL_ALL,
+PCONVEYANCE_ALL,
+FOOD_ALL,
+GROSS_SAL,
+NVL(WEEKLY_HOLIDAY,0)+NVL(GOV_HOLIDAY,0) AS WEEK_GOV_HOLIDAY,
+CASUAL_LEAVE, 
+EARN_LEAVE, 
+MEDICAL_LEAVE,
+OTHERS_LEAVE,
+NVL(EARN_LEAVE,0)+NVL(CASUAL_LEAVE,0) AS EL_PLUS_CL,
+NVL(CASUAL_LEAVE,0)+NVL(MEDICAL_LEAVE,0)+NVL(EARN_LEAVE,0)+NVL(OTHERS_LEAVE,0) AS TOTAL_LEAVE_DAY,
+NVL(PRESENT_DAYS,0)+NVL(AUTHORIZE_PRESENT,0) AS TOTAL_WORKING_DAYS,
+
+NVL(WEEKLY_HOLIDAY,0)+NVL(GOV_HOLIDAY,0)+NVL(CASUAL_LEAVE,0)+NVL(MEDICAL_LEAVE,0)+NVL(EARN_LEAVE,0)+NVL(OTHERS_LEAVE,0)+
+NVL(PRESENT_DAYS,0)+NVL(AUTHORIZE_PRESENT,0) AS TOTAL_PAYABLE_DAYS,
 
 (CASE 
-WHEN PRE_ADJ_OFFDAY_LUNCH_ALL > 0 THEN 0
-ELSE 
- CASE WHEN OUT_TIME1 IS NOT NULL AND OUT_TIME1>= TO_CHAR(TO_DATE('1400','HH24:MI'),'HH24:MI')  AND OUT_TIME1< TO_CHAR(TO_DATE('23:00','HH24:MI'),'HH24:MI') OR
- DUTY > 4 THEN 
-  PRE_OFFDAY_LUNCH_ALL
+WHEN TO_CHAR(JOIN_DT,'MM/YYYY') = $P{P_MNYR} THEN
+    NVL(NVL(MONTH_DAYS,0)-(TO_NUMBER(TO_CHAR(JOIN_DT,'DD'))-1),0)-(NVL(WEEKLY_HOLIDAY,0)+NVL(GOV_HOLIDAY,0)+NVL(CASUAL_LEAVE,0)+NVL(MEDICAL_LEAVE,0)+NVL(EARN_LEAVE,0)+NVL(OTHERS_LEAVE,0)+
+NVL(PRESENT_DAYS,0)+NVL(AUTHORIZE_PRESENT,0))
+WHEN TO_CHAR(EMP_INACTIVE_DT,'MM/YYYY') = $P{P_MNYR} THEN
+   	NVL(NVL(MONTH_DAYS,0)-(TO_NUMBER(TO_CHAR(EMP_INACTIVE_DT,'DD'))+1),0)-(NVL(WEEKLY_HOLIDAY,0)+NVL(GOV_HOLIDAY,0)+NVL(CASUAL_LEAVE,0)+NVL(MEDICAL_LEAVE,0)+NVL(EARN_LEAVE,0)+NVL(OTHERS_LEAVE,0)+
+NVL(PRESENT_DAYS,0)+NVL(AUTHORIZE_PRESENT,0))
+ELSE
+    (NVL(MONTH_DAYS,0) -(NVL(WEEKLY_HOLIDAY,0)+NVL(GOV_HOLIDAY,0)+NVL(CASUAL_LEAVE,0)+NVL(MEDICAL_LEAVE,0)+NVL(EARN_LEAVE,0)+NVL(OTHERS_LEAVE,0)+
+NVL(PRESENT_DAYS,0)+NVL(AUTHORIZE_PRESENT,0)))
+END) AS TOTAL_ABSENT,
+
+(CASE WHEN TRUNC(CONFIRM_DT) <= TO_DATE($P{P_MNYR},'MM/YYYY') THEN 
+   ROUND((NVL(PBASIC_SALARY, 0)*.07),2)
+ELSE
+	 NULL
+END)AS CF_PF,
+
+ROUND(((NVL(PBASIC_SALARY,0)/208)*2),2) AS OT_RATE,
+(CASE 
+WHEN OT_HOUR IS NOT NULL THEN 
+  CASE WHEN OT_HOUR <= NVL(PRESENT_DAYS,0)+NVL(AUTHORIZE_PRESENT,0)*2 THEN
+	OT_HOUR
+  ELSE 
+   (NVL(PRESENT_DAYS,0)+NVL(AUTHORIZE_PRESENT,0)*2)-1
+  END
+ELSE
+ CASE WHEN NVL(PRESENT_DAYS,0)+NVL(AUTHORIZE_PRESENT,0)*2 < 52 then
+  (NVL(PRESENT_DAYS,0)+NVL(AUTHORIZE_PRESENT,0)*2)-1
  ELSE
-    CASE WHEN ADJ_OFFDAY_LUNCH_ALL > 0 THEN PRE_OFFDAY_LUNCH_ALL
-    ELSE 0
-    END
- END    
-END) as OFFDAY_LUNCH_DIN_ALL,
-
+	52
+ END
+END)OT_HOUR,
+JOIN_DT,
+EMP_INACTIVE_DT,
+MONTH_DAYS
+FROM (SELECT     
+X.EMP_ID,
+X.NAME,
+(select DESIG_DESC 
+  from DESIGNATION
+  where
+  DEPT_GROUP = X.DEPT_GROUP AND
+  DEPT_CODE = X.DEPT_CODE AND
+  DESIG_code = X.DESIG_CODE) DESIGNATION,
+X.DEPT_DESC SECTION_NAME,
+X.JOIN_DT,
+( select GRADE 
+  from DESIGNATION
+  where
+  DEPT_GROUP = X.DEPT_GROUP AND
+  DEPT_CODE = X.DEPT_CODE AND
+  DESIG_code = X.DESIG_CODE) GRADE,
+((NVL(X.GROSS_SAL,0)-(X.PMEDICAL_ALL+X.PCONVEYANCE_ALL+X.FOOD_ALL))/1.4) PBASIC_SALARY,
+ROUND(((NVL(X.GROSS_SAL,0)-(X.PMEDICAL_ALL+X.PCONVEYANCE_ALL+X.FOOD_ALL))/1.4)*.40) PHOUSE_RENT,
+X.PMEDICAL_ALL,
+X.PCONVEYANCE_ALL,
+X.FOOD_ALL,
+X.GROSS_SAL,
 (CASE 
-  WHEN OUT_TIME_DATE> IN_TIME_DATE THEN 
-    ROUND(24*(OUT_TIME_DATE-IN_TIME_DATE))
-  WHEN IN_TIME_DATE > OUT_TIME_DATE  THEN 
-    ROUND(24*(IN_TIME_DATE-OUT_TIME_DATE))
-  WHEN OUT_TIME_DATE IS NULL  THEN 1
-END) as ACTUAL_TIME, 
-(CASE
-WHEN PRE_IN_TIME > 0 THEN ORIGIN_IN_TIME
+WHEN TO_CHAR(X.JOIN_DT,'MM/YYYY') = $P{P_MNYR} THEN
+  (SELECT COUNT(*) FROM HOLIDAY_WEEK
+  WHERE 
+  COMPANY_CODE           = $P{P_COMPANY_CODE} AND
+  COMPANY_BRANCH_CODE    = $P{P_COMPANY_BRANCH_CODE} AND
+  TO_CHAR(HOLIDAY_DATE,'MM/YYYY') = $P{P_MNYR}
+  AND HOLIDAY_DATE >= X.JOIN_DT
+  AND HOLIDAY_DATE NOT IN 
+	(SELECT LEAVE_DT
+   FROM   LEAVE_APPLICATION_DTL
+   WHERE 
+   COMPANY_CODE           = $P{P_COMPANY_CODE} AND
+   COMPANY_BRANCH_CODE    = $P{P_COMPANY_BRANCH_CODE} AND
+   EMP_ID                 = X.EMP_ID AND
+   TO_CHAR(LEAVE_DT,'MM/YYYY')= $P{P_MNYR}   
+  ))
+WHEN TO_CHAR(X.EMP_INACTIVE_DT,'MM/YYYY') = $P{P_MNYR} THEN
+ (SELECT COUNT(*) FROM HOLIDAY_WEEK
+ WHERE 
+ COMPANY_CODE           = $P{P_COMPANY_CODE} AND
+ COMPANY_BRANCH_CODE    = $P{P_COMPANY_BRANCH_CODE} AND
+ TO_CHAR(HOLIDAY_DATE,'MM/YYYY') =  $P{P_MNYR}
+ AND HOLIDAY_DATE <= X.EMP_INACTIVE_DT
+ AND HOLIDAY_DATE NOT IN 
+	(SELECT LEAVE_DT
+   FROM   LEAVE_APPLICATION_DTL
+   WHERE 
+   COMPANY_CODE           = $P{P_COMPANY_CODE} AND
+   COMPANY_BRANCH_CODE    = $P{P_COMPANY_BRANCH_CODE} AND
+   EMP_ID                 = X.EMP_ID AND
+   TO_CHAR(LEAVE_DT,'MM/YYYY')= $P{P_MNYR}   
+   ))  
 ELSE
-IN_TIME1
-END) as IN_TIME,
+ (SELECT COUNT(*) FROM HOLIDAY_WEEK
+ WHERE 
+ COMPANY_CODE           = $P{P_COMPANY_CODE} AND
+ COMPANY_BRANCH_CODE    = $P{P_COMPANY_BRANCH_CODE} AND
+ TO_CHAR(HOLIDAY_DATE,'MM/YYYY') = $P{P_MNYR}
+ AND HOLIDAY_DATE NOT IN 
+	(SELECT LEAVE_DT
+   FROM   LEAVE_APPLICATION_DTL
+   WHERE 
+   COMPANY_CODE           = $P{P_COMPANY_CODE} AND
+   COMPANY_BRANCH_CODE    = $P{P_COMPANY_BRANCH_CODE} AND
+   EMP_ID                 = X.EMP_ID AND
+   TO_CHAR(LEAVE_DT,'MM/YYYY')= $P{P_MNYR}   
+   ))
+END) AS WEEKLY_HOLIDAY,
 
 (CASE
-WHEN PRE_IN_TIME > 0 THEN ORIGIN_OUT_TIME
+WHEN TO_CHAR(X.JOIN_DT,'MM/YYYY') =  $P{P_MNYR} THEN
+	(SELECT COUNT(*)FROM HOLIDAY
+	WHERE 
+	COMPANY_CODE           = $P{P_COMPANY_CODE} AND
+    COMPANY_BRANCH_CODE    = $P{P_COMPANY_BRANCH_CODE} AND
+    TO_CHAR(DATE_TO,'MM/YYYY') = $P{P_MNYR}
+	AND FROM_DATE >= X.JOIN_DT
+	AND FROM_DATE NOT IN 
+			(
+			SELECT HOLIDAY_DATE
+			FROM HOLIDAY_WEEK
+			WHERE 
+			COMPANY_CODE           = $P{P_COMPANY_CODE} AND
+    		COMPANY_BRANCH_CODE    = $P{P_COMPANY_BRANCH_CODE} AND
+    		TO_CHAR(HOLIDAY_DATE,'MM/YYYY') = $P{P_MNYR}
+			UNION
+			SELECT LEAVE_DT
+   			FROM   LEAVE_APPLICATION_DTL
+   			WHERE 
+   			COMPANY_CODE           = $P{P_COMPANY_CODE} AND
+   			COMPANY_BRANCH_CODE    = $P{P_COMPANY_BRANCH_CODE} AND
+   			EMP_ID                 = X.EMP_ID AND
+   			TO_CHAR(LEAVE_DT,'MM/YYYY')= $P{P_MNYR}
+	))
+
+WHEN TO_CHAR(X.EMP_INACTIVE_DT,'MM/YYYY') =  $P{P_MNYR} THEN
+			(SELECT COUNT(*) FROM HOLIDAY
+			WHERE 
+			COMPANY_CODE           = $P{P_COMPANY_CODE} 
+  		    AND COMPANY_BRANCH_CODE    = $P{P_COMPANY_BRANCH_CODE} 
+  		    AND TO_CHAR(FROM_DATE,'MM/YYYY') = $P{P_MNYR} 
+			AND FROM_DATE <= X.EMP_INACTIVE_DT
+			AND FROM_DATE NOT IN 
+			(
+			SELECT HOLIDAY_DATE
+			FROM HOLIDAY_WEEK
+			WHERE
+    	COMPANY_CODE           = $P{P_COMPANY_CODE} AND
+    	COMPANY_BRANCH_CODE    = $P{P_COMPANY_BRANCH_CODE} AND
+    	TO_CHAR(HOLIDAY_DATE,'MM/YYYY')= $P{P_MNYR}
+    	UNION
+			SELECT LEAVE_DT
+   		FROM   LEAVE_APPLICATION_DTL
+   		WHERE 
+   		COMPANY_CODE           = $P{P_COMPANY_CODE} AND
+   		COMPANY_BRANCH_CODE    = $P{P_COMPANY_BRANCH_CODE} AND
+   		EMP_ID                 = X.EMP_ID AND
+   		TO_CHAR(LEAVE_DT,'MM/YYYY')= $P{P_MNYR}
+    	))
 ELSE
-OUT_TIME1
-END) as OUT_TIME
-FROM (SELECT 
-(SELECT ' '||O.DESIG_DESC FROM DESIGNATION O WHERE O.DEPT_GROUP = X.DEPT_GROUP AND O.DEPT_CODE  = X.DEPT_CODE AND O.DESIG_CODE = X.DESIG_CODE) as DESIGNATION,
-(SELECT ' '||O.DEPT_GROUP_NAME FROM DEPT_GROUP O WHERE O.DEPT_GROUP_CODE = X.DEPT_GROUP) as DEPARTMENT,
-(SELECT ' '||O.DEPT_DESC FROM DEPT O WHERE O.DEPT_GROUP = X.DEPT_GROUP AND O.DEPT_CODE  = X.DEPT_CODE) as SECTION_NAME,
-ATTEND_DATE , DD, EMP_ID, NAME, IN_TIME as IN_TIME_DATE, OUT_TIME as OUT_TIME_DATE, IN_TIME1, OUT_TIME1, ABS(TO_NUMBER(TO_CHAR(IN_TIME,'HH24'))- TO_NUMBER(TO_CHAR(OUT_TIME,'HH24'))) DUTY,
-BASIC_SALARY, JOIN_DT,BANK_SAL_FLAG,EMP_AC_NO,EMP_AC_DATE,MOBILE_BANK_SAL_FLAG,MOBILE_AC_NO,
-MOBILE_AC_DATE, DEPT_GROUP, DEPT_CODE, DESIG_CODE, SALARY_TYPE, DESIG_GROUP, DEPT_GROUP_SL,
-(SELECT NVL(O.OFFDAY_ALL,0) FROM HR_TNOFF_ALLOWANCE O
-WHERE O.DEPT_GROUP  = X.DEPT_GROUP 
-AND O.DEPT_CODE   =  X.DEPT_CODE  
-AND O.DESIG_CODE  = X.DESIG_CODE 
-AND O.EFFECTIVE_DATE  = (SELECT MAX(EFFECTIVE_DATE) 
-                     FROM HR_TNOFF_ALLOWANCE 
-                     WHERE DEPT_GROUP = X.DEPT_GROUP AND
-                     DEPT_CODE        = X.DEPT_CODE  AND
-                     DESIG_CODE      = X.DESIG_CODE AND
-                     EFFECTIVE_DATE  <= TO_DATE($P{P_MNYR},'MM/YYYY'))) PRE_OFFDAY_ALL,
-                     
-(SELECT COUNT(O.EMP_ID) FROM HR_OFFDAY_ADJUST O
-        WHERE O.COMPANY_CODE=$P{P_COMPANY_CODE}
-        AND O.COMPANY_BRANCH_CODE=$P{P_COMPANY_BRANCH_CODE}
-        AND O.EMP_ID = X.EMP_ID 
-        AND O.ADJ_DATE = X.ATTEND_DATE 
-        AND O.OFFDAY_ADJUST ='C' 
-        AND INIT_YR(TO_CHAR(O.ADJ_DATE,'MM/YYYY')) =  INIT_YR($P{P_MNYR})) as PRE_ADJ_OFFDAY_ALL,
-        
-(SELECT NVL(O.OFFDAY_LUNCH_BILL,0) FROM HR_TNOFF_ALLOWANCE O
-  WHERE O.DEPT_GROUP  = X.DEPT_GROUP 
-  AND O.DEPT_CODE   =  X.DEPT_CODE  
-  AND O.DESIG_CODE  = X.DESIG_CODE 
-  AND O.EFFECTIVE_DATE  = (SELECT MAX(EFFECTIVE_DATE) 
-         FROM HR_TNOFF_ALLOWANCE 
-         WHERE DEPT_GROUP = X.DEPT_GROUP AND
-         DEPT_CODE        = X.DEPT_CODE  AND
-         DESIG_CODE      = x.DESIG_CODE AND
-         EFFECTIVE_DATE  <= TO_DATE($P{P_MNYR},'MM/YYYY'))) as PRE_OFFDAY_LUNCH_ALL,
-         
-(SELECT COUNT(O.EMP_ID) FROM HR_OFFDAY_ADJUST O
-        WHERE O.COMPANY_CODE=$P{P_COMPANY_CODE}
-        AND O.COMPANY_BRANCH_CODE=$P{P_COMPANY_BRANCH_CODE}
-        AND O.EMP_ID = X.EMP_ID 
-        AND O.ADJ_DATE = X.ATTEND_DATE 
-        AND O.LUNCH_ADJUST ='C' 
-        AND INIT_YR(TO_CHAR(O.ADJ_DATE,'MM/YYYY')) =  INIT_YR($P{P_MNYR})) as PRE_ADJ_OFFDAY_LUNCH_ALL,
-        
-(SELECT COUNT(EMP_ID) FROM HR_OFFDAY_ADJUST O
-        WHERE O.COMPANY_CODE=$P{P_COMPANY_CODE} 
-        AND O.COMPANY_BRANCH_CODE=$P{P_COMPANY_BRANCH_CODE}
-        AND O.EMP_ID = X.EMP_ID 
-        AND O.ADJ_DATE = X.ATTEND_DATE 
-        AND O.LUNCH_ADJUST ='A' 
-        AND INIT_YR(TO_CHAR(O.ADJ_DATE,'MM/YYYY')) =  INIT_YR($P{P_MNYR})) as ADJ_OFFDAY_LUNCH_ALL,
-        
-(SELECT COUNT(attend_date) from daily_attendance O
- WHERE O.EMP_ID = X.EMP_ID AND to_char(O.attend_date, 'MM/YYYY') = $P{P_MNYR}
- AND O.attend_date = (SELECT adj_date FROM HR_OFFDAY_ADJUST WHERE emp_id = X.emp_id AND to_char(adj_date, 'MM/YYYY') = $P{P_MNYR} and adj_date = X.attend_date )) as PRE_IN_TIME,
- 
-(SELECT to_char(O.in_time, 'HH24:MI') from daily_attendance O
- WHERE O.EMP_ID = X.EMP_ID
- AND to_char(O.attend_date, 'MM/YYYY') = $P{P_MNYR}
- AND O.attend_date = X.attend_date) as ORIGIN_IN_TIME,
- 
- (SELECT to_char(O.out_time, 'HH24:MI') from daily_attendance O
- WHERE O.EMP_ID = X.EMP_ID
- AND to_char(O.attend_date, 'MM/YYYY') = $P{P_MNYR}
- AND O.attend_date = X.attend_date) as ORIGIN_OUT_TIME
- 
-FROM (SELECT DISTINCT A.ATTEND_DATE ,TO_CHAR(A.ATTEND_DATE,'DY') DD,A.EMP_ID,B.NAME,A.IN_TIME,A.OUT_TIME,TO_CHAR(A.IN_TIME,'HH24:MI') IN_TIME1,
-B.BASIC_SALARY,TO_CHAR(A.OUT_TIME,'HH24:MI') OUT_TIME1,B.JOIN_DT,B.BANK_SAL_FLAG,B.EMP_AC_NO,B.EMP_AC_DATE,B.MOBILE_BANK_SAL_FLAG,B.MOBILE_AC_NO,
-B.MOBILE_AC_DATE, B.DEPT_GROUP,B.DEPT_CODE,B.DESIG_CODE,B.SALARY_TYPE,S.DESIG_GROUP ,G.DEPT_GROUP_SL
-FROM DAILY_ATTENDANCE A, EMP B, DESIGNATION S, DEPT_GROUP G
-WHERE 
-(B.DEPT_GROUP = G.DEPT_GROUP_CODE) AND
-A.COMPANY_CODE =B.COMPANY_CODE AND
-A.COMPANY_BRANCH_CODE=B.COMPANY_BRANCH_CODE AND
-A.EMP_ID=B.EMP_ID AND
-A.ATTEND_DATE IN 
-        (
-        SELECT HOLIDAY_DATE
-        FROM HOLIDAY_WEEK
-        WHERE COMPANY_CODE = $P{P_COMPANY_CODE} AND
-        COMPANY_BRANCH_CODE = $P{P_COMPANY_BRANCH_CODE} AND
-        INIT_YR(TO_CHAR(HOLIDAY_DATE,'MM/YYYY')) = INIT_YR($P{P_MNYR})
-        UNION
-        SELECT DATE_TO
+		(SELECT COUNT(*) FROM HOLIDAY
+		WHERE 
+		COMPANY_CODE           = $P{P_COMPANY_CODE} AND
+    	COMPANY_BRANCH_CODE    = $P{P_COMPANY_BRANCH_CODE} AND
+    	TO_CHAR(FROM_DATE,'MM/YYYY') = $P{P_MNYR}
+		AND FROM_DATE NOT IN 
+			(
+			SELECT HOLIDAY_DATE
+			FROM HOLIDAY_WEEK
+			WHERE 
+			COMPANY_CODE           = $P{P_COMPANY_CODE} AND
+    	COMPANY_BRANCH_CODE    = $P{P_COMPANY_BRANCH_CODE} AND
+    	TO_CHAR(HOLIDAY_DATE,'MM/YYYY') = $P{P_MNYR}
+    	UNION
+			SELECT LEAVE_DT
+   		FROM   LEAVE_APPLICATION_DTL
+   		WHERE 
+   		COMPANY_CODE           = $P{P_COMPANY_CODE} AND
+   		COMPANY_BRANCH_CODE    = $P{P_COMPANY_BRANCH_CODE} AND
+   		EMP_ID                 = X.EMP_ID AND
+   		TO_CHAR(LEAVE_DT,'MM/YYYY')= $P{P_MNYR}
+			))
+END) AS GOV_HOLIDAY,
+
+(SELECT COUNT(B.LEAVE_DT)LEAVE_DAYS
+  FROM LEAVE_APPLICATION A, LEAVE_APPLICATION_DTL B
+  WHERE
+  A.COMPANY_CODE       =B.COMPANY_CODE AND
+  A.COMPANY_BRANCH_CODE=B.COMPANY_BRANCH_CODE AND
+  A.EMP_ID             =B.EMP_ID AND
+  A.APPLICATION_DT     =B.APPLICATION_DT AND
+  A.LEAVE_TYPE_CODE    ='01' AND
+  A.EMP_ID             = X.EMP_ID AND
+  SUBSTR(TO_CHAR(B.LEAVE_DT,'DD/MM/YYYY'),4,8)=$P{P_MNYR}) AS CASUAL_LEAVE,
+  
+(SELECT COUNT(B.LEAVE_DT)LEAVE_DAYS
+  FROM LEAVE_APPLICATION A, LEAVE_APPLICATION_DTL B
+  WHERE
+  A.COMPANY_CODE       =B.COMPANY_CODE AND
+  A.COMPANY_BRANCH_CODE=B.COMPANY_BRANCH_CODE AND
+  A.EMP_ID             =B.EMP_ID AND
+  A.APPLICATION_DT     =B.APPLICATION_DT AND
+  A.LEAVE_TYPE_CODE  IN ('03') AND
+  A.EMP_ID             = X.EMP_ID AND
+  SUBSTR(TO_CHAR(B.LEAVE_DT,'DD/MM/YYYY'),4,8)=$P{P_MNYR}) AS EARN_LEAVE,
+  
+(SELECT COUNT(B.LEAVE_DT)LEAVE_DAYS
+  FROM LEAVE_APPLICATION A, LEAVE_APPLICATION_DTL B
+  WHERE
+  A.COMPANY_CODE       =B.COMPANY_CODE AND
+  A.COMPANY_BRANCH_CODE=B.COMPANY_BRANCH_CODE AND
+  A.EMP_ID             =B.EMP_ID AND
+  A.APPLICATION_DT     =B.APPLICATION_DT AND
+  A.LEAVE_TYPE_CODE    ='02' AND
+  A.EMP_ID             = X.EMP_ID AND
+  SUBSTR(TO_CHAR(B.LEAVE_DT,'DD/MM/YYYY'),4,8)=$P{P_MNYR}) AS MEDICAL_LEAVE,
+  
+(SELECT COUNT(B.LEAVE_DT)LEAVE_DAYS
+  FROM LEAVE_APPLICATION A, LEAVE_APPLICATION_DTL B
+  WHERE
+  A.COMPANY_CODE       =B.COMPANY_CODE AND
+  A.COMPANY_BRANCH_CODE=B.COMPANY_BRANCH_CODE AND
+  A.EMP_ID             =B.EMP_ID AND
+  A.APPLICATION_DT     =B.APPLICATION_DT AND
+  A.LEAVE_TYPE_CODE  IN ('04','05') AND
+  A.EMP_ID             = X.EMP_ID AND
+  SUBSTR(TO_CHAR(B.LEAVE_DT,'DD/MM/YYYY'),4,8)=$P{P_MNYR}) AS OTHERS_LEAVE,
+  
+(SELECT COUNT(ATTEND_DATE)
+	FROM   DAILY_ATTENDANCE
+	WHERE 
+        COMPANY_CODE           = $P{P_COMPANY_CODE} AND
+        COMPANY_BRANCH_CODE    = $P{P_COMPANY_BRANCH_CODE} AND
+        EMP_ID                 = X.EMP_ID AND
+        IN_TIME IS NOT NULL AND
+				TO_CHAR(ATTEND_DATE,'MM/YYYY')= $P{P_MNYR} AND
+        ATTEND_DATE NOT IN 
+				(
+			SELECT ATTEND_DATE
+			FROM HR_AUTHORIZED_ABSENT_SAL
+  			WHERE 
+			COMPANY_CODE               = $P{P_COMPANY_CODE} 
+			AND COMPANY_BRANCH_CODE    = $P{P_COMPANY_BRANCH_CODE}
+    		AND TO_CHAR(ATTEND_DATE,'MM/YYYY') = $P{P_MNYR}
+			AND EMP_ID = X.EMP_ID
+			UNION
+			SELECT MISCONDUCT_DT
+        FROM HR_DISCIPLINARY_ACTION 
+        WHERE
+        COMPANY_CODE = $P{P_COMPANY_CODE} 
+        AND COMPANY_BRANCH_CODE = $P{P_COMPANY_BRANCH_CODE}
+        AND EMP_ID = X.EMP_ID
+        AND TO_CHAR(MISCONDUCT_DT,'MM/YYYY')= $P{P_MNYR}
+				UNION
+				SELECT HOLIDAY_DATE
+				FROM HOLIDAY_WEEK
+				WHERE 
+				COMPANY_CODE           = $P{P_COMPANY_CODE} 
+        AND COMPANY_BRANCH_CODE    = $P{P_COMPANY_BRANCH_CODE}
+    		AND TO_CHAR(HOLIDAY_DATE,'MM/YYYY') = $P{P_MNYR}
+				UNION
+				SELECT FROM_DATE
         FROM HOLIDAY
-        WHERE 
-        COMPANY_CODE = $P{P_COMPANY_CODE} AND
-        COMPANY_BRANCH_CODE = $P{P_COMPANY_BRANCH_CODE} AND
-        INIT_YR(TO_CHAR(FROM_DATE,'MM/YYYY'))   = INIT_YR($P{P_MNYR})
-        ) AND
-(A.EMP_ID, A.ATTEND_DATE) NOT IN (
-        SELECT EMP_ID, ADJ_DATE
-        FROM HR_OFFDAY_ADJUST
-        WHERE 
-        COMPANY_CODE=$P{P_COMPANY_CODE} AND
-        COMPANY_BRANCH_CODE=$P{P_COMPANY_BRANCH_CODE} AND
-        INIT_YR(TO_CHAR(ADJ_DATE,'MM/YYYY')) =  INIT_YR($P{P_MNYR})
-) AND
-B.DEPT_GROUP = S.DEPT_GROUP  AND
-B.DEPT_CODE  = S.DEPT_CODE  AND
-B.DESIG_CODE = S.DESIG_CODE AND
-A.COMPANY_CODE = $P{P_COMPANY_CODE} AND
-A.COMPANY_BRANCH_CODE = $P{P_COMPANY_BRANCH_CODE} AND
-S.DESIG_GROUP   NOT IN ('FW') AND
-(S.DESIG_GROUP = $P{P_DESIG_GROUP} OR $P{P_DESIG_GROUP} IS NULL) AND
-(B.DEPT_GROUP  = $P{P_DEPT_GROUP} OR $P{P_DEPT_GROUP} IS NULL) AND
-(B.DEPT_CODE = $P{P_DEPT_CODE} OR $P{P_DEPT_CODE} IS NULL) AND
---(B.BLOCK_CODE = :P_BLOCK OR :P_BLOCK IS NULL) AND
-(A.EMP_ID = $P{P_EMP} OR $P{P_EMP} IS NULL) AND
-(B.EMP_STATUS IN('A') OR B.EMP_STATUS IN('I') AND 
-B.EMP_INACTIVE_DT > (TO_DATE('01/'||$P{P_MNYR},'DD/MM/YYYY'))) AND
-INIT_YR(TO_CHAR(A.ATTEND_DATE,'MM/YYYY')) = INIT_YR($P{P_MNYR})    
+        WHERE
+        COMPANY_CODE           = $P{P_COMPANY_CODE} 
+        AND COMPANY_BRANCH_CODE    = $P{P_COMPANY_BRANCH_CODE}
+    		AND TO_CHAR(FROM_DATE,'MM/YYYY') = $P{P_MNYR}      
+        UNION 
+        SELECT L.LEAVE_DT
+    		FROM LEAVE_APPLICATION B, LEAVE_APPLICATION_DTL L
+    		WHERE
+    		B.COMPANY_CODE = L.COMPANY_CODE 
+    		AND B.COMPANY_BRANCH_CODE = L.COMPANY_BRANCH_CODE
+    		AND B.EMP_ID = L.EMP_ID
+    		AND B.APPLICATION_DT = L.APPLICATION_DT
+    		AND B.EMP_ID = X.EMP_ID
+    		AND B.COMPANY_CODE           = $P{P_COMPANY_CODE} 
+        AND B.COMPANY_BRANCH_CODE    = $P{P_COMPANY_BRANCH_CODE}
+    		AND TO_CHAR(L.LEAVE_DT,'MM/YYYY')= $P{P_MNYR}    
+)) AS PRESENT_DAYS,
+GET_AUTHORIZE_PRESENT($P{P_COMPANY_CODE},$P{P_COMPANY_BRANCH_CODE}, X.EMP_ID, $P{P_MNYR}) as AUTHORIZE_PRESENT, 
+GET_OT_HOUR ($P{P_COMPANY_CODE},$P{P_COMPANY_BRANCH_CODE}, X.EMP_ID, X.DEPT_GROUP, X.DEPT_CODE,$P{P_MNYR}) as OT_HOUR, 
+X.MONTH_DAYS,
+X.CONFIRM_DT,
+X.EMP_INACTIVE_DT
+FROM (SELECT
+(last_day(to_date('01/'||$P{P_MNYR},'DD/MM/YYYY'))-to_date('01/'||$P{P_MNYR},'DD/MM/YYYY')+1) MONTH_DAYS,                  
+A.EMP_ID,
+B.DEPT_GROUP,
+B.CONFIRM_DT,
+B.DESIG_CODE,
+B.SALGRADE,
+250 PMEDICAL_ALL,
+200 PCONVEYANCE_ALL,
+650 FOOD_ALL,
+ROUND(NVL(A.PBASIC_SALARY,0) + NVL(A.PHOUSE_RENT,0) + nvl(A.PMEDICAL_ALL,0)+NVL(A.PCONVEYANCE_ALL,0)+NVL(A.FOOD_ALL,0)) GROSS_SAL,
+(B.name)  name,
+B.DEPT_CODE  ,
+D.dept_desc,
+B.JOIN_DT,
+B.EMP_INACTIVE_DT
+FROM MONTHLY_SALARY A, EMP B, DEPT D, DESIGNATION S, DEPT_GROUP G
 
-UNION
-
-SELECT DISTINCT A.ADJ_DATE ,TO_CHAR(A.ADJ_DATE,'DY') DD, A.EMP_ID,B.NAME, NULL,NULL, NULL,
-B.BASIC_SALARY, NULL,B.JOIN_DT,B.BANK_SAL_FLAG,B.EMP_AC_NO,B.EMP_AC_DATE,B.MOBILE_BANK_SAL_FLAG,B.MOBILE_AC_NO,
-B.MOBILE_AC_DATE, B.DEPT_GROUP,B.DEPT_CODE,B.DESIG_CODE,B.SALARY_TYPE,S.DESIG_GROUP ,G.DEPT_GROUP_SL
-FROM HR_OFFDAY_ADJUST A, EMP B, DESIGNATION S, DEPT_GROUP G
 WHERE 
-(B.DEPT_GROUP = G.DEPT_GROUP_CODE) AND
-A.COMPANY_CODE  =B.COMPANY_CODE AND
-A.COMPANY_BRANCH_CODE =B.COMPANY_BRANCH_CODE AND
-A.EMP_ID=B.EMP_ID AND
-B.DEPT_GROUP = S.DEPT_GROUP  AND
-B.DEPT_CODE = S.DEPT_CODE  AND
-B.DESIG_CODE = S.DESIG_CODE AND
-A.COMPANY_CODE = $P{P_COMPANY_CODE} AND
-A.COMPANY_BRANCH_CODE = $P{P_COMPANY_BRANCH_CODE} AND
-------S.DESIG_GROUP   NOT IN ('FW') AND
-(S.DESIG_GROUP = $P{P_DESIG_GROUP} OR $P{P_DESIG_GROUP} IS NULL) AND
-(B.DEPT_GROUP = $P{P_DEPT_GROUP} OR $P{P_DEPT_GROUP} IS NULL) AND
-(B.DEPT_CODE = $P{P_DEPT_CODE} OR $P{P_DEPT_CODE} IS NULL) AND
---(B.BLOCK_CODE   = :P_BLOCK OR :P_BLOCK IS NULL) AND
-(A.EMP_ID = $P{P_EMP} OR $P{P_EMP} IS NULL) AND
-(A.EMP_ID,A.ADJ_DATE) NOT IN (
-        SELECT EMP_ID,ADJ_DATE
-        FROM HR_OFFDAY_ADJUST
-        WHERE 
-        COMPANY_CODE=$P{P_COMPANY_CODE} AND
-        COMPANY_BRANCH_CODE=$P{P_COMPANY_BRANCH_CODE} AND
-        (OFFDAY_ADJUST IS NULL AND  LUNCH_ADJUST IS NULL) OR
-        (OFFDAY_ADJUST ='C' AND  LUNCH_ADJUST ='C') AND
-        INIT_YR(TO_CHAR(ADJ_DATE,'MM/YYYY')) =  INIT_YR($P{P_MNYR})
-) AND
-(B.EMP_STATUS IN('A') OR B.EMP_STATUS IN('I') AND 
-B.EMP_INACTIVE_DT > (TO_DATE('01/'||$P{P_MNYR},'DD/MM/YYYY'))) AND
-INIT_YR(TO_CHAR(A.ADJ_DATE ,'MM/YYYY')) = INIT_YR($P{P_MNYR})   ) X))) Y
+A.COMPANY_CODE = B.COMPANY_CODE 
+AND A.COMPANY_BRANCH_CODE = B.COMPANY_BRANCH_CODE 
+AND A.EMP_ID = B.EMP_ID
+AND B.dept_group = S.dept_group 
+AND B.dept_code  = S.dept_code
+AND B.desig_code = S.desig_code 
+AND S.DESIG_GROUP IN ('OS','FW') 
+AND S.DESIG_DESC  NOT IN ('Supervisor', 'Incharge', 'Security Guard', 'Security Asst. Supervisor', 'Security in Charge', 'Security Supervisor', 'Helper(TROLLY)', 'Cook', 'Office Asst.', 'Imam', 'Helper(COVER VAN)', 'Dellivery Man','Asst. Incharge')
+AND UPPER(S.DESIG_DESC) NOT LIKE '%DRIVER%'
+AND B.DEPT_GROUP = G.DEPT_GROUP_CODE
+AND B.DEPT_GROUP = D.DEPT_GROUP
+AND B.DEPT_CODE    = D.DEPT_CODE  
+AND A.COMPANY_CODE                          = $P{P_COMPANY_CODE}
+AND A.COMPANY_BRANCH_CODE         = $P{P_COMPANY_BRANCH_CODE}
+AND INIT_YR(A.MNYR)                             = INIT_YR($P{P_MNYR})
+AND (b.dept_group                                     = $P{P_DEPT_GROUP} or $P{P_DEPT_GROUP} is null)
+AND (b.dept_code                                      = $P{P_DEPT_CODE} or $P{P_DEPT_CODE} is null)
+AND (a.emp_id                                            = $P{P_EMP} or $P{P_EMP} is null)
+AND  A.EMP_ID IN
+(SELECT EMP_ID 
+ FROM EMP
+ WHERE
+ (DESIG_CODE, DEPT_CODE, DEPT_GROUP)
+ IN 
+  (SELECT DESIG_CODE, DEPT_CODE, DEPT_GROUP 
+  FROM USER_VS_DESIG 
+  WHERE USER_ID=USER)
+ )
 
-GROUP BY NAME, DESIGNATION, DEPARTMENT, SECTION_NAME, EMP_ID, 
-DEPT_GROUP, DEPT_CODE, DEPT_GROUP_SL, DESIG_CODE, DESIG_GROUP, JOIN_DT, EMP_AC_NO, MOBILE_AC_NO                      
+AND A.EMP_ID  NOT IN 
+(
+SELECT DISTINCT  P.EMP_ID 
+FROM LEAVE_APPLICATION P, LEAVE_APPLICATION_DTL R
+WHERE 
+P.COMPANY_CODE = R.COMPANY_CODE 
+AND P.COMPANY_BRANCH_CODE = R.COMPANY_BRANCH_CODE
+AND P.EMP_ID = R.EMP_ID
+AND P.APPLICATION_DT = R.APPLICATION_DT
+AND P.COMPANY_CODE               = $P{P_COMPANY_CODE}
+AND P.COMPANY_BRANCH_CODE  = $P{P_COMPANY_BRANCH_CODE}
+AND (P.EMP_ID = $P{P_EMP} OR $P{P_EMP} IS NULL)
+AND P.LEAVE_TYPE_CODE = '06'
+AND INIT_YR(TO_CHAR(R.LEAVE_DT,'MM/YYYY')) = INIT_YR($P{P_MNYR})
+)
 
-ORDER BY 
-DEPT_GROUP_SL, DEPT_GROUP, DEPT_CODE, DESIG_CODE, JOIN_DT,
-EMP_ID]]>
+ORDER BY G.DEPT_GROUP_SL, B.DEPT_GROUP, B.DEPT_CODE, B.DESIG_CODE,B.JOIN_DT, A.EMP_ID) X))]]>
 	</queryString>
-	<field name="NAME" class="java.lang.String">
-		<property name="com.jaspersoft.studio.field.name" value="NAME"/>
-		<property name="com.jaspersoft.studio.field.label" value="NAME"/>
-	</field>
-	<field name="EMP_ID" class="java.lang.String">
-		<property name="com.jaspersoft.studio.field.name" value="EMP_ID"/>
-		<property name="com.jaspersoft.studio.field.label" value="EMP_ID"/>
-	</field>
-	<field name="DESIGNATION" class="java.lang.String">
-		<property name="com.jaspersoft.studio.field.name" value="DESIGNATION"/>
-		<property name="com.jaspersoft.studio.field.label" value="DESIGNATION"/>
-	</field>
-	<field name="ACCOUNT_NO" class="java.lang.String">
-		<property name="com.jaspersoft.studio.field.name" value="ACCOUNT_NO"/>
-		<property name="com.jaspersoft.studio.field.label" value="ACCOUNT_NO"/>
-	</field>
-	<field name="OFFDAY_THIS_MONTH" class="java.math.BigDecimal">
-		<property name="com.jaspersoft.studio.field.name" value="OFFDAY_THIS_MONTH"/>
-		<property name="com.jaspersoft.studio.field.label" value="OFFDAY_THIS_MONTH"/>
-	</field>
-	<field name="OFFDAY_QTY" class="java.math.BigDecimal">
-		<property name="com.jaspersoft.studio.field.name" value="OFFDAY_QTY"/>
-		<property name="com.jaspersoft.studio.field.label" value="OFFDAY_QTY"/>
-	</field>
-	<field name="LUNCH_DIN_QTY" class="java.math.BigDecimal">
-		<property name="com.jaspersoft.studio.field.name" value="LUNCH_DIN_QTY"/>
-		<property name="com.jaspersoft.studio.field.label" value="LUNCH_DIN_QTY"/>
-	</field>
-	<field name="OFFDAY_RATE" class="java.math.BigDecimal">
-		<property name="com.jaspersoft.studio.field.name" value="OFFDAY_RATE"/>
-		<property name="com.jaspersoft.studio.field.label" value="OFFDAY_RATE"/>
-	</field>
-	<field name="LUNCH_DIN_RATE" class="java.math.BigDecimal">
-		<property name="com.jaspersoft.studio.field.name" value="LUNCH_DIN_RATE"/>
-		<property name="com.jaspersoft.studio.field.label" value="LUNCH_DIN_RATE"/>
-	</field>
-	<field name="OFFDAY_ALL" class="java.math.BigDecimal">
-		<property name="com.jaspersoft.studio.field.name" value="OFFDAY_ALL"/>
-		<property name="com.jaspersoft.studio.field.label" value="OFFDAY_ALL"/>
-	</field>
-	<field name="LUNCH_DIN_ALL" class="java.math.BigDecimal">
-		<property name="com.jaspersoft.studio.field.name" value="LUNCH_DIN_ALL"/>
-		<property name="com.jaspersoft.studio.field.label" value="LUNCH_DIN_ALL"/>
-	</field>
-	<field name="TOT_PAY_AMT" class="java.math.BigDecimal">
-		<property name="com.jaspersoft.studio.field.name" value="TOT_PAY_AMT"/>
-		<property name="com.jaspersoft.studio.field.label" value="TOT_PAY_AMT"/>
-	</field>
-	<field name="NET_PAYABLE_BANK" class="java.math.BigDecimal">
-		<property name="com.jaspersoft.studio.field.name" value="NET_PAYABLE_BANK"/>
-		<property name="com.jaspersoft.studio.field.label" value="NET_PAYABLE_BANK"/>
-	</field>
-	<field name="NET_PAYABLE_CASH" class="java.math.BigDecimal">
-		<property name="com.jaspersoft.studio.field.name" value="NET_PAYABLE_CASH"/>
-		<property name="com.jaspersoft.studio.field.label" value="NET_PAYABLE_CASH"/>
-	</field>
-	<field name="DEPARTMENT" class="java.lang.String">
-		<property name="com.jaspersoft.studio.field.name" value="DEPARTMENT"/>
-		<property name="com.jaspersoft.studio.field.label" value="DEPARTMENT"/>
-	</field>
-	<field name="SECTION_NAME" class="java.lang.String">
-		<property name="com.jaspersoft.studio.field.name" value="SECTION_NAME"/>
-		<property name="com.jaspersoft.studio.field.label" value="SECTION_NAME"/>
-	</field>
-	<field name="DEPT_GROUP" class="java.lang.String">
-		<property name="com.jaspersoft.studio.field.name" value="DEPT_GROUP"/>
-		<property name="com.jaspersoft.studio.field.label" value="DEPT_GROUP"/>
-	</field>
-	<field name="DEPT_CODE" class="java.lang.String">
-		<property name="com.jaspersoft.studio.field.name" value="DEPT_CODE"/>
-		<property name="com.jaspersoft.studio.field.label" value="DEPT_CODE"/>
-	</field>
-	<field name="DEPT_GROUP_SL" class="java.math.BigDecimal">
-		<property name="com.jaspersoft.studio.field.name" value="DEPT_GROUP_SL"/>
-		<property name="com.jaspersoft.studio.field.label" value="DEPT_GROUP_SL"/>
-	</field>
-	<field name="JOIN_DT" class="java.sql.Timestamp">
-		<property name="com.jaspersoft.studio.field.name" value="JOIN_DT"/>
-		<property name="com.jaspersoft.studio.field.label" value="JOIN_DT"/>
-	</field>
+	<field name="EMP_ID" class="java.lang.String"/>
+	<field name="NAME" class="java.lang.String"/>
+	<field name="DESIGNATION" class="java.lang.String"/>
+	<field name="SECTION_NAME" class="java.lang.String"/>
+	<field name="JOIN_DATE" class="java.sql.Timestamp"/>
+	<field name="GRADE" class="java.math.BigDecimal"/>
+	<field name="PBASIC_SALARY" class="java.math.BigDecimal"/>
+	<field name="PHOUSE_RENT" class="java.math.BigDecimal"/>
+	<field name="PMEDICAL_ALL" class="java.math.BigDecimal"/>
+	<field name="PCONVEYANCE_ALL" class="java.math.BigDecimal"/>
+	<field name="FOOD_ALL" class="java.math.BigDecimal"/>
+	<field name="GROSS_SAL" class="java.math.BigDecimal"/>
+	<field name="WEEK_GOV_HOLIDAY" class="java.math.BigDecimal"/>
+	<field name="CASUAL_LEAVE" class="java.math.BigDecimal"/>
+	<field name="EARN_LEAVE" class="java.math.BigDecimal"/>
+	<field name="MEDICAL_LEAVE" class="java.math.BigDecimal"/>
+	<field name="OTHERS_LEAVE" class="java.math.BigDecimal"/>
+	<field name="EL_PLUS_CL" class="java.math.BigDecimal"/>
+	<field name="TOTAL_WORKING_DAYS" class="java.math.BigDecimal"/>
+	<field name="TOTAL_PAYABLE_DAYS" class="java.math.BigDecimal"/>
+	<field name="CF_PF" class="java.math.BigDecimal"/>
+	<field name="OT_RATE" class="java.math.BigDecimal"/>
+	<field name="OT_HOUR" class="java.math.BigDecimal"/>
+	<field name="MONTH_DAYS" class="java.math.BigDecimal"/>
+	<field name="TOTAL_ABSENT" class="java.math.BigDecimal"/>
+	<field name="ABSENT_DEDUCT_AMT" class="java.math.BigDecimal"/>
+	<field name="TOTAL_DEDUCT_AMT" class="java.math.BigDecimal"/>
+	<field name="PAYABLE_AMT" class="java.math.BigDecimal"/>
+	<field name="NET_PAYABLE_AMOUNT" class="java.math.BigDecimal"/>
+	<field name="OT_AMT" class="java.math.BigDecimal"/>
+	<field name="TOT_PAYABLE_AMT" class="java.math.BigDecimal"/>
 	<variable name="V_HEADER" class="java.lang.String">
 		<variableExpression><![CDATA[$F{NAME}]]></variableExpression>
 	</variable>
-	<variable name="V_SEC_OFFDAY_QTY" class="java.math.BigDecimal" resetType="Group" resetGroup="Section" calculation="Sum">
-		<variableExpression><![CDATA[$F{OFFDAY_QTY}]]></variableExpression>
+	<variable name="V_TOT_BASIC" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{PBASIC_SALARY}]]></variableExpression>
 	</variable>
-	<variable name="V_SEC_LUNCH_QTY" class="java.math.BigDecimal" resetType="Group" resetGroup="Section" calculation="Sum">
-		<variableExpression><![CDATA[$F{LUNCH_DIN_QTY}]]></variableExpression>
+	<variable name="V_TOT_HOUSE_RENT" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{PHOUSE_RENT}]]></variableExpression>
 	</variable>
-	<variable name="V_SEC_OFFDAY_AMT" class="java.math.BigDecimal" resetType="Group" resetGroup="Section" calculation="Sum">
-		<variableExpression><![CDATA[$F{OFFDAY_ALL}]]></variableExpression>
+	<variable name="V_TOT_MEDICAL" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{PMEDICAL_ALL}]]></variableExpression>
 	</variable>
-	<variable name="V_SEC_LUNCH_AMT" class="java.math.BigDecimal" resetType="Group" resetGroup="Section" calculation="Sum">
-		<variableExpression><![CDATA[$F{LUNCH_DIN_ALL}]]></variableExpression>
+	<variable name="V_TOT_CONVEYANCE" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{PCONVEYANCE_ALL}]]></variableExpression>
 	</variable>
-	<variable name="V_SEC_CASH" class="java.math.BigDecimal" resetType="Group" resetGroup="Section" calculation="Sum">
-		<variableExpression><![CDATA[$F{NET_PAYABLE_CASH}]]></variableExpression>
+	<variable name="V_TOT_FOOD" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{FOOD_ALL}]]></variableExpression>
 	</variable>
-	<variable name="V_SEC_BANK" class="java.math.BigDecimal" resetType="Group" resetGroup="Section" calculation="Sum">
-		<variableExpression><![CDATA[$F{NET_PAYABLE_BANK}]]></variableExpression>
+	<variable name="V_TOT_GROSS" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{GROSS_SAL}]]></variableExpression>
 	</variable>
-	<variable name="V_GRAND_OFFDAY_QTY" class="java.math.BigDecimal" calculation="Sum">
-		<variableExpression><![CDATA[$F{OFFDAY_QTY}]]></variableExpression>
+	<variable name="V_TOT_PAYABLE_DAYS" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{TOTAL_PAYABLE_DAYS}]]></variableExpression>
 	</variable>
-	<variable name="V_GRAND_OFFDAY_LUNCH_QTY" class="java.math.BigDecimal" calculation="Sum">
-		<variableExpression><![CDATA[$F{LUNCH_DIN_QTY}]]></variableExpression>
+	<variable name="V_TOT_PF" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{CF_PF}]]></variableExpression>
 	</variable>
-	<variable name="V_GRAND_OFFDAY_AMT" class="java.math.BigDecimal" calculation="Sum">
-		<variableExpression><![CDATA[$F{OFFDAY_ALL}]]></variableExpression>
+	<variable name="V_TOT_ABSENT_DEDUCT" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{ABSENT_DEDUCT_AMT}]]></variableExpression>
 	</variable>
-	<variable name="V_GRAND_LUNCH_AMt" class="java.math.BigDecimal" calculation="Sum">
-		<variableExpression><![CDATA[$F{LUNCH_DIN_ALL}]]></variableExpression>
+	<variable name="V_TOT_DEDUCT_AMT" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{TOTAL_DEDUCT_AMT}]]></variableExpression>
 	</variable>
-	<variable name="V_GRAND_BANK" class="java.math.BigDecimal" calculation="Sum">
-		<variableExpression><![CDATA[$F{NET_PAYABLE_BANK}]]></variableExpression>
+	<variable name="V_TOT_NET_PAYABLE_AMT" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{NET_PAYABLE_AMOUNT}]]></variableExpression>
 	</variable>
-	<variable name="V_GRAND_CASH" class="java.math.BigDecimal" calculation="Sum">
-		<variableExpression><![CDATA[$F{NET_PAYABLE_CASH}]]></variableExpression>
+	<variable name="V_AVG_OT_RATE" class="java.math.BigDecimal" calculation="Average">
+		<variableExpression><![CDATA[$F{OT_RATE}]]></variableExpression>
+	</variable>
+	<variable name="V_TOT_OT_HOUR" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{OT_HOUR}]]></variableExpression>
+	</variable>
+	<variable name="V_TOT_PAYABLE_AMT" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{TOT_PAYABLE_AMT}]]></variableExpression>
+	</variable>
+	<variable name="V_TOT_OT_AMT" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{OT_AMT}]]></variableExpression>
 	</variable>
 	<group name="Section">
 		<groupExpression><![CDATA[$F{SECTION_NAME}]]></groupExpression>
@@ -573,14 +671,14 @@ EMP_ID]]>
 	<title>
 		<band height="119" splitType="Stretch">
 			<textField>
-				<reportElement x="900" y="92" width="50" height="19" uuid="0f9fe99c-329e-4556-8472-af2edd789f5f"/>
+				<reportElement x="1250" y="92" width="50" height="19" uuid="0f9fe99c-329e-4556-8472-af2edd789f5f"/>
 				<textElement textAlignment="Left">
 					<font isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA["Page " + $V{PAGE_NUMBER}]]></textFieldExpression>
 			</textField>
 			<textField evaluationTime="Report">
-				<reportElement x="940" y="92" width="70" height="19" uuid="da059207-525b-43cd-8ca4-97d2f94f723f"/>
+				<reportElement x="1290" y="92" width="70" height="19" uuid="da059207-525b-43cd-8ca4-97d2f94f723f"/>
 				<textElement textAlignment="Left">
 					<font isBold="true"/>
 				</textElement>
@@ -601,7 +699,7 @@ EMP_ID]]>
 				<text><![CDATA[Print Date:]]></text>
 			</staticText>
 			<componentElement>
-				<reportElement x="154" y="3" width="700" height="100" uuid="58a317e0-8cb3-4910-ad56-36a75aee58de"/>
+				<reportElement x="326" y="3" width="700" height="100" uuid="58a317e0-8cb3-4910-ad56-36a75aee58de"/>
 				<jr:list xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd" printOrder="Vertical">
 					<datasetRun subDataset="COMPANY_INFO" uuid="f4f84f87-2c18-4c22-8c73-2b7ba73f7d98">
 						<datasetParameter name="P_COMPANY_CODE">
@@ -653,7 +751,7 @@ EMP_ID]]>
 	<columnHeader>
 		<band height="44" splitType="Stretch">
 			<staticText>
-				<reportElement mode="Opaque" x="101" y="0" width="120" height="44" backcolor="#EDEDED" uuid="dbee5381-49b7-4e86-83da-779b2a2975ec"/>
+				<reportElement mode="Opaque" x="100" y="0" width="120" height="44" backcolor="#EDEDED" uuid="dbee5381-49b7-4e86-83da-779b2a2975ec"/>
 				<box>
 					<pen lineWidth="1.0"/>
 				</box>
@@ -663,7 +761,7 @@ EMP_ID]]>
 				<text><![CDATA[bvg]]></text>
 			</staticText>
 			<staticText>
-				<reportElement mode="Opaque" x="31" y="0" width="70" height="44" backcolor="#EDEDED" uuid="3165fd2f-21ba-4b0b-ba95-3e8062f7b347"/>
+				<reportElement mode="Opaque" x="30" y="0" width="70" height="44" backcolor="#EDEDED" uuid="3165fd2f-21ba-4b0b-ba95-3e8062f7b347"/>
 				<box>
 					<pen lineWidth="1.0"/>
 				</box>
@@ -673,7 +771,7 @@ EMP_ID]]>
 				<text><![CDATA[KvW© bv¤^vi]]></text>
 			</staticText>
 			<staticText>
-				<reportElement mode="Opaque" x="222" y="0" width="88" height="44" backcolor="#EDEDED" uuid="432dca13-4075-4278-9c96-a8127e222ad9"/>
+				<reportElement mode="Opaque" x="220" y="0" width="88" height="44" backcolor="#EDEDED" uuid="432dca13-4075-4278-9c96-a8127e222ad9"/>
 				<box>
 					<pen lineWidth="1.0"/>
 				</box>
@@ -683,7 +781,7 @@ EMP_ID]]>
 				<text><![CDATA[c`ex]]></text>
 			</staticText>
 			<staticText>
-				<reportElement mode="Opaque" x="310" y="0" width="72" height="44" backcolor="#EDEDED" uuid="589db788-98e9-40f2-b76a-e73a40ee83c6"/>
+				<reportElement mode="Opaque" x="308" y="0" width="72" height="44" backcolor="#EDEDED" uuid="589db788-98e9-40f2-b76a-e73a40ee83c6"/>
 				<box>
 					<pen lineWidth="1.0"/>
 				</box>
@@ -693,7 +791,7 @@ EMP_ID]]>
 				<text><![CDATA[‡mKkb]]></text>
 			</staticText>
 			<staticText>
-				<reportElement mode="Opaque" x="382" y="0" width="48" height="44" backcolor="#EDEDED" uuid="64e5e9df-752b-4033-b9c6-e6883e49c47b"/>
+				<reportElement mode="Opaque" x="380" y="0" width="48" height="44" backcolor="#EDEDED" uuid="64e5e9df-752b-4033-b9c6-e6883e49c47b"/>
 				<box>
 					<pen lineWidth="1.0"/>
 				</box>
@@ -704,7 +802,7 @@ EMP_ID]]>
 				<text><![CDATA[‡hvM`v‡bi ZvwiL]]></text>
 			</staticText>
 			<staticText>
-				<reportElement mode="Opaque" x="430" y="0" width="26" height="44" backcolor="#EDEDED" uuid="673a3b9f-d190-49c0-99f3-19312515219b"/>
+				<reportElement mode="Opaque" x="428" y="0" width="26" height="44" backcolor="#EDEDED" uuid="673a3b9f-d190-49c0-99f3-19312515219b"/>
 				<box>
 					<pen lineWidth="1.0"/>
 				</box>
@@ -714,7 +812,7 @@ EMP_ID]]>
 				<text><![CDATA[‡MÖW]]></text>
 			</staticText>
 			<staticText>
-				<reportElement mode="Opaque" x="456" y="0" width="50" height="44" backcolor="#EDEDED" uuid="a94e3181-63bf-4818-b466-bdbbdfb0d606"/>
+				<reportElement mode="Opaque" x="454" y="0" width="52" height="44" backcolor="#EDEDED" uuid="a94e3181-63bf-4818-b466-bdbbdfb0d606"/>
 				<box>
 					<pen lineWidth="1.0"/>
 				</box>
@@ -827,7 +925,7 @@ EMP_ID]]>
 					<font fontName="SutonnyMJ" isBold="true"/>
 					<paragraph lineSpacing="Double"/>
 				</textElement>
-				<text><![CDATA[mvßvwnK QzwU]]></text>
+				<text><![CDATA[mvßvwnKQzwU]]></text>
 			</staticText>
 			<staticText>
 				<reportElement mode="Opaque" x="804" y="0" width="80" height="18" backcolor="#EDEDED" uuid="81aa16ac-6ab5-4103-93a8-84f1807be079"/>
@@ -884,7 +982,7 @@ EMP_ID]]>
 				<text><![CDATA[we./Qz]]></text>
 			</staticText>
 			<staticText>
-				<reportElement mode="Opaque" x="916" y="0" width="40" height="44" backcolor="#EDEDED" uuid="249f557b-6e45-4ce4-bc40-a8aeeca38412"/>
+				<reportElement mode="Opaque" x="916" y="0" width="34" height="44" backcolor="#EDEDED" uuid="249f557b-6e45-4ce4-bc40-a8aeeca38412"/>
 				<box>
 					<pen lineWidth="1.0"/>
 				</box>
@@ -895,7 +993,7 @@ EMP_ID]]>
 				<text><![CDATA[‡gvU cÖ‡`q w`b]]></text>
 			</staticText>
 			<staticText>
-				<reportElement mode="Opaque" x="956" y="0" width="38" height="44" backcolor="#EDEDED" uuid="a65d882c-dce8-461d-9b87-a69453d4f38d"/>
+				<reportElement mode="Opaque" x="950" y="0" width="34" height="44" backcolor="#EDEDED" uuid="a65d882c-dce8-461d-9b87-a69453d4f38d"/>
 				<box>
 					<pen lineWidth="1.0"/>
 				</box>
@@ -906,7 +1004,7 @@ EMP_ID]]>
 				<text><![CDATA[cÖwf‡W›U dvÛ]]></text>
 			</staticText>
 			<staticText>
-				<reportElement mode="Opaque" x="994" y="0" width="124" height="18" backcolor="#EDEDED" uuid="c50ccc3d-6cc4-48ab-8a70-6f2e696eec08"/>
+				<reportElement mode="Opaque" x="984" y="0" width="118" height="18" backcolor="#EDEDED" uuid="c50ccc3d-6cc4-48ab-8a70-6f2e696eec08"/>
 				<box>
 					<pen lineWidth="1.0"/>
 				</box>
@@ -916,7 +1014,7 @@ EMP_ID]]>
 				<text><![CDATA[KZ©b ]]></text>
 			</staticText>
 			<staticText>
-				<reportElement mode="Opaque" x="994" y="18" width="38" height="26" backcolor="#EDEDED" uuid="5831ba3a-f6fa-4282-a4ca-95c9c3c63793"/>
+				<reportElement mode="Opaque" x="984" y="18" width="32" height="26" backcolor="#EDEDED" uuid="5831ba3a-f6fa-4282-a4ca-95c9c3c63793"/>
 				<box>
 					<pen lineWidth="1.0"/>
 				</box>
@@ -927,7 +1025,7 @@ EMP_ID]]>
 				<text><![CDATA[cÖwf‡W›U dvÛ]]></text>
 			</staticText>
 			<staticText>
-				<reportElement mode="Opaque" x="1032" y="18" width="38" height="26" backcolor="#EDEDED" uuid="70fc2478-4440-4b55-b122-7ad8e8b6258b"/>
+				<reportElement mode="Opaque" x="1016" y="18" width="38" height="26" backcolor="#EDEDED" uuid="70fc2478-4440-4b55-b122-7ad8e8b6258b"/>
 				<box>
 					<pen lineWidth="1.0"/>
 				</box>
@@ -938,7 +1036,7 @@ EMP_ID]]>
 				<text><![CDATA[Aby: RwbZ KZ©b]]></text>
 			</staticText>
 			<staticText>
-				<reportElement mode="Opaque" x="1070" y="18" width="48" height="26" backcolor="#EDEDED" uuid="aff25611-bccf-4d40-aa2e-15b4d2e4e2f2"/>
+				<reportElement mode="Opaque" x="1054" y="18" width="48" height="26" backcolor="#EDEDED" uuid="aff25611-bccf-4d40-aa2e-15b4d2e4e2f2"/>
 				<box>
 					<pen lineWidth="1.0"/>
 				</box>
@@ -949,7 +1047,7 @@ EMP_ID]]>
 				<text><![CDATA[‡gvU KZ©b (UvKv)]]></text>
 			</staticText>
 			<staticText>
-				<reportElement mode="Opaque" x="1118" y="0" width="46" height="44" backcolor="#EDEDED" uuid="c8e79eaf-ad61-4ea6-92bd-118194528f78"/>
+				<reportElement mode="Opaque" x="1102" y="0" width="54" height="44" backcolor="#EDEDED" uuid="c8e79eaf-ad61-4ea6-92bd-118194528f78"/>
 				<box>
 					<pen lineWidth="1.0"/>
 				</box>
@@ -971,7 +1069,7 @@ EMP_ID]]>
 				<text><![CDATA[IwU. N›Uv]]></text>
 			</staticText>
 			<staticText>
-				<reportElement mode="Opaque" x="1164" y="0" width="80" height="18" backcolor="#EDEDED" uuid="27bb757e-7040-4090-8def-f2f22c568b93"/>
+				<reportElement mode="Opaque" x="1156" y="0" width="88" height="18" backcolor="#EDEDED" uuid="27bb757e-7040-4090-8def-f2f22c568b93"/>
 				<box>
 					<pen lineWidth="1.0"/>
 				</box>
@@ -992,7 +1090,7 @@ EMP_ID]]>
 				<text><![CDATA[IwU UvKv]]></text>
 			</staticText>
 			<staticText>
-				<reportElement mode="Opaque" x="1164" y="18" width="20" height="26" backcolor="#EDEDED" uuid="b3d477ab-3bad-494e-8ef7-2fffff99ebe6"/>
+				<reportElement mode="Opaque" x="1156" y="18" width="28" height="26" backcolor="#EDEDED" uuid="b3d477ab-3bad-494e-8ef7-2fffff99ebe6"/>
 				<box>
 					<pen lineWidth="1.0"/>
 				</box>
@@ -1003,7 +1101,7 @@ EMP_ID]]>
 				<text><![CDATA[IwU. nvi]]></text>
 			</staticText>
 			<staticText>
-				<reportElement mode="Opaque" x="1245" y="0" width="54" height="44" backcolor="#EDEDED" uuid="71615068-fc34-4899-9748-de442e34f809"/>
+				<reportElement mode="Opaque" x="1244" y="0" width="54" height="44" backcolor="#EDEDED" uuid="71615068-fc34-4899-9748-de442e34f809"/>
 				<box>
 					<pen lineWidth="1.0"/>
 				</box>
@@ -1014,7 +1112,7 @@ EMP_ID]]>
 				<text><![CDATA[‡gvU cÖ‡`q †eZb]]></text>
 			</staticText>
 			<staticText>
-				<reportElement mode="Opaque" x="1299" y="0" width="64" height="44" backcolor="#EDEDED" uuid="3f5e6d78-72b8-43c3-bd96-d2b7b5b970b4"/>
+				<reportElement mode="Opaque" x="1298" y="0" width="66" height="44" backcolor="#EDEDED" uuid="3f5e6d78-72b8-43c3-bd96-d2b7b5b970b4"/>
 				<box>
 					<pen lineWidth="1.0"/>
 				</box>
@@ -1027,114 +1125,114 @@ EMP_ID]]>
 		</band>
 	</columnHeader>
 	<detail>
-		<band height="49" splitType="Stretch">
-			<textField>
-				<reportElement x="101" y="0" width="120" height="44" uuid="bb3ba4cc-5da2-405c-881d-0bd19bed71e4"/>
-				<box>
+		<band height="44" splitType="Stretch">
+			<textField isBlankWhenNull="true">
+				<reportElement x="100" y="0" width="120" height="44" uuid="bb3ba4cc-5da2-405c-881d-0bd19bed71e4"/>
+				<box leftPadding="5">
 					<pen lineWidth="1.0"/>
 				</box>
 				<textElement verticalAlignment="Middle"/>
 				<textFieldExpression><![CDATA[$F{NAME}]]></textFieldExpression>
 			</textField>
-			<textField>
-				<reportElement x="31" y="0" width="70" height="44" uuid="9c0d5624-c900-4a01-a7cf-95665b35637b"/>
+			<textField isBlankWhenNull="true">
+				<reportElement x="30" y="0" width="70" height="44" uuid="9c0d5624-c900-4a01-a7cf-95665b35637b"/>
 				<box>
 					<pen lineWidth="1.0"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle"/>
 				<textFieldExpression><![CDATA[$F{EMP_ID}]]></textFieldExpression>
 			</textField>
-			<textField>
-				<reportElement x="222" y="0" width="88" height="44" uuid="38b62393-97f9-44f1-a79a-8dec67c0c1da"/>
-				<box>
+			<textField isBlankWhenNull="true">
+				<reportElement x="220" y="0" width="88" height="44" uuid="38b62393-97f9-44f1-a79a-8dec67c0c1da"/>
+				<box leftPadding="5">
 					<pen lineWidth="1.0"/>
 				</box>
-				<textElement verticalAlignment="Middle"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
 				<textFieldExpression><![CDATA[$F{DESIGNATION}]]></textFieldExpression>
 			</textField>
-			<textField>
-				<reportElement x="310" y="0" width="72" height="44" uuid="e369e647-1fff-4878-bb18-7cefefee3232"/>
+			<textField isBlankWhenNull="true">
+				<reportElement x="308" y="0" width="72" height="44" uuid="e369e647-1fff-4878-bb18-7cefefee3232"/>
+				<box leftPadding="5">
+					<pen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{SECTION_NAME}]]></textFieldExpression>
+			</textField>
+			<textField pattern="dd/MM/yy" isBlankWhenNull="true">
+				<reportElement x="380" y="0" width="48" height="44" uuid="d53eaa63-a46d-4e37-83f3-1e11c1d59d2d"/>
 				<box>
 					<pen lineWidth="1.0"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle"/>
-				<textFieldExpression><![CDATA[$F{ACCOUNT_NO}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{JOIN_DATE}]]></textFieldExpression>
 			</textField>
-			<textField>
-				<reportElement x="382" y="0" width="48" height="44" uuid="d53eaa63-a46d-4e37-83f3-1e11c1d59d2d"/>
-				<box>
-					<pen lineWidth="1.0"/>
-				</box>
-				<textElement textAlignment="Center" verticalAlignment="Middle"/>
-				<textFieldExpression><![CDATA[$F{OFFDAY_THIS_MONTH}]]></textFieldExpression>
-			</textField>
-			<textField pattern="#,##0.###;#,##0.###-">
-				<reportElement x="430" y="0" width="26" height="44" uuid="1d23e8e2-f60e-4a07-8049-e01d71badbbf">
+			<textField pattern="#,##0.###;#,##0.###-" isBlankWhenNull="true">
+				<reportElement x="428" y="0" width="26" height="44" uuid="1d23e8e2-f60e-4a07-8049-e01d71badbbf">
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 				</reportElement>
 				<box>
 					<pen lineWidth="1.0"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle"/>
-				<textFieldExpression><![CDATA[$F{OFFDAY_QTY}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{GRADE}]]></textFieldExpression>
 			</textField>
-			<textField pattern="#,##0.###;#,##0.###-">
-				<reportElement x="456" y="0" width="50" height="44" uuid="a2952af8-0699-4687-90af-ba0281c60c69"/>
-				<box>
+			<textField pattern="" isBlankWhenNull="true">
+				<reportElement x="454" y="0" width="52" height="44" uuid="a2952af8-0699-4687-90af-ba0281c60c69"/>
+				<box rightPadding="5">
 					<pen lineWidth="1.0"/>
 				</box>
-				<textElement textAlignment="Center" verticalAlignment="Middle"/>
-				<textFieldExpression><![CDATA[$F{LUNCH_DIN_QTY}]]></textFieldExpression>
+				<textElement textAlignment="Right" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{PBASIC_SALARY}]]></textFieldExpression>
 			</textField>
-			<textField>
-				<reportElement x="506" y="0" width="43" height="44" uuid="8ac70755-b741-4b8e-858f-5e8c09e9945a"/>
-				<box>
+			<textField pattern="" isBlankWhenNull="true">
+				<reportElement x="506" y="0" width="44" height="44" uuid="8ac70755-b741-4b8e-858f-5e8c09e9945a"/>
+				<box rightPadding="5">
 					<pen lineWidth="1.0"/>
 				</box>
-				<textElement textAlignment="Center" verticalAlignment="Middle"/>
-				<textFieldExpression><![CDATA[$F{OFFDAY_RATE}]]></textFieldExpression>
+				<textElement textAlignment="Right" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{PHOUSE_RENT}]]></textFieldExpression>
 			</textField>
-			<textField>
-				<reportElement x="549" y="0" width="39" height="44" uuid="ba47989b-9ce9-46ab-8014-7e65db8d1155"/>
-				<box>
+			<textField pattern="" isBlankWhenNull="true">
+				<reportElement x="550" y="0" width="38" height="44" uuid="ba47989b-9ce9-46ab-8014-7e65db8d1155"/>
+				<box rightPadding="5">
 					<pen lineWidth="1.0"/>
 				</box>
-				<textElement textAlignment="Center" verticalAlignment="Middle"/>
-				<textFieldExpression><![CDATA[$F{LUNCH_DIN_RATE}]]></textFieldExpression>
+				<textElement textAlignment="Right" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{PMEDICAL_ALL}]]></textFieldExpression>
 			</textField>
-			<textField pattern="#,##0.###;#,##0.###-">
+			<textField pattern="" isBlankWhenNull="true">
 				<reportElement x="588" y="0" width="36" height="44" uuid="0ef513f8-3719-4ea2-bfb9-4db664ff20f8"/>
-				<box>
+				<box rightPadding="5">
 					<pen lineWidth="1.0"/>
 				</box>
-				<textElement textAlignment="Center" verticalAlignment="Middle"/>
-				<textFieldExpression><![CDATA[$F{OFFDAY_ALL}]]></textFieldExpression>
+				<textElement textAlignment="Right" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{PCONVEYANCE_ALL}]]></textFieldExpression>
 			</textField>
-			<textField pattern="#,##0.###;#,##0.###-">
+			<textField pattern="" isBlankWhenNull="true">
 				<reportElement x="624" y="0" width="40" height="44" uuid="eaba095b-4f2c-4d67-841e-8852fa16bb1b"/>
+				<box rightPadding="5">
+					<pen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{FOOD_ALL}]]></textFieldExpression>
+			</textField>
+			<textField pattern="" isBlankWhenNull="true">
+				<reportElement x="916" y="0" width="34" height="44" uuid="6b4c93d6-86e6-4d7f-90f2-e324f4927592"/>
 				<box>
 					<pen lineWidth="1.0"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle"/>
-				<textFieldExpression><![CDATA[$F{LUNCH_DIN_ALL}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{TOTAL_PAYABLE_DAYS}]]></textFieldExpression>
 			</textField>
-			<textField pattern="#,##0.###;#,##0.###-">
-				<reportElement x="916" y="0" width="40" height="44" uuid="6b4c93d6-86e6-4d7f-90f2-e324f4927592"/>
+			<textField pattern="" isBlankWhenNull="true">
+				<reportElement x="984" y="0" width="32" height="44" uuid="94c29667-e5b6-4556-8359-2f8fcbe72a9f"/>
 				<box>
 					<pen lineWidth="1.0"/>
 				</box>
-				<textElement textAlignment="Right" verticalAlignment="Middle"/>
-				<textFieldExpression><![CDATA[$F{NET_PAYABLE_BANK}]]></textFieldExpression>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{CF_PF}]]></textFieldExpression>
 			</textField>
-			<textField pattern="#,##0.###;#,##0.###-">
-				<reportElement x="992" y="0" width="40" height="44" uuid="94c29667-e5b6-4556-8359-2f8fcbe72a9f"/>
-				<box>
-					<pen lineWidth="1.0"/>
-				</box>
-				<textElement textAlignment="Right" verticalAlignment="Middle"/>
-				<textFieldExpression><![CDATA[$F{NET_PAYABLE_CASH}]]></textFieldExpression>
-			</textField>
-			<textField>
+			<textField isBlankWhenNull="true">
 				<reportElement x="0" y="0" width="30" height="44" uuid="4634670b-9d27-4863-9aaf-76851064d50f"/>
 				<box>
 					<pen lineWidth="1.0"/>
@@ -1142,156 +1240,156 @@ EMP_ID]]>
 				<textElement textAlignment="Center" verticalAlignment="Middle"/>
 				<textFieldExpression><![CDATA[$V{REPORT_COUNT}]]></textFieldExpression>
 			</textField>
-			<textField pattern="#,##0.###;#,##0.###-">
+			<textField pattern="" isBlankWhenNull="true">
 				<reportElement x="664" y="0" width="50" height="44" uuid="ab06ff14-55c3-4053-9cd7-7fc9d5e938da"/>
-				<box>
+				<box rightPadding="5">
 					<pen lineWidth="1.0"/>
 				</box>
-				<textElement textAlignment="Center" verticalAlignment="Middle"/>
-				<textFieldExpression><![CDATA[$F{LUNCH_DIN_ALL}]]></textFieldExpression>
+				<textElement textAlignment="Right" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{GROSS_SAL}]]></textFieldExpression>
 			</textField>
-			<textField pattern="#,##0.###;#,##0.###-">
+			<textField pattern="" isBlankWhenNull="true">
 				<reportElement x="714" y="0" width="30" height="44" uuid="7b5e4c94-4977-4591-af2d-7b7457cc5bd0"/>
 				<box>
 					<pen lineWidth="1.0"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle"/>
-				<textFieldExpression><![CDATA[$F{LUNCH_DIN_ALL}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{MONTH_DAYS}]]></textFieldExpression>
 			</textField>
-			<textField pattern="#,##0.###;#,##0.###-">
+			<textField pattern="" isBlankWhenNull="true">
 				<reportElement x="744" y="0" width="30" height="44" uuid="a080f2c6-716d-49e6-9e21-b6e364724b41"/>
 				<box>
 					<pen lineWidth="1.0"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle"/>
-				<textFieldExpression><![CDATA[$F{LUNCH_DIN_ALL}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{TOTAL_WORKING_DAYS}]]></textFieldExpression>
 			</textField>
-			<textField pattern="#,##0.###;#,##0.###-">
+			<textField pattern="" isBlankWhenNull="true">
 				<reportElement x="774" y="0" width="30" height="44" uuid="994a7873-5d7c-4db1-97c7-0e6bf881029b"/>
 				<box>
 					<pen lineWidth="1.0"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle"/>
-				<textFieldExpression><![CDATA[$F{LUNCH_DIN_ALL}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{WEEK_GOV_HOLIDAY}]]></textFieldExpression>
 			</textField>
-			<textField pattern="#,##0.###;#,##0.###-">
+			<textField pattern="" isBlankWhenNull="true">
 				<reportElement x="804" y="0" width="20" height="44" uuid="055e7059-4d57-4e27-9a1c-d456d4e1731e"/>
 				<box>
 					<pen lineWidth="1.0"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle"/>
-				<textFieldExpression><![CDATA[$F{LUNCH_DIN_ALL}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{CASUAL_LEAVE}]]></textFieldExpression>
 			</textField>
-			<textField pattern="#,##0.###;#,##0.###-">
+			<textField pattern="" isBlankWhenNull="true">
 				<reportElement x="824" y="0" width="20" height="44" uuid="c0e54139-56b8-4a45-a2d5-06c10951ebdf"/>
 				<box>
 					<pen lineWidth="1.0"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle"/>
-				<textFieldExpression><![CDATA[$F{LUNCH_DIN_ALL}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{MEDICAL_LEAVE}]]></textFieldExpression>
 			</textField>
-			<textField pattern="#,##0.###;#,##0.###-">
+			<textField pattern="" isBlankWhenNull="true">
 				<reportElement x="844" y="0" width="20" height="44" uuid="7c8d8edf-440d-4d38-8fc0-57f3e344e607"/>
 				<box>
 					<pen lineWidth="1.0"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle"/>
-				<textFieldExpression><![CDATA[$F{LUNCH_DIN_ALL}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{EARN_LEAVE}]]></textFieldExpression>
 			</textField>
-			<textField pattern="#,##0.###;#,##0.###-">
+			<textField pattern="" isBlankWhenNull="true">
 				<reportElement x="864" y="0" width="20" height="44" uuid="0c0faf9d-30fe-42df-bb56-81692d1078f2"/>
 				<box>
 					<pen lineWidth="1.0"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle"/>
-				<textFieldExpression><![CDATA[$F{LUNCH_DIN_ALL}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{OTHERS_LEAVE}]]></textFieldExpression>
 			</textField>
-			<textField pattern="#,##0.###;#,##0.###-">
+			<textField pattern="" isBlankWhenNull="true">
 				<reportElement x="884" y="0" width="32" height="44" uuid="95b43b3a-e754-408a-8679-483ec6e6b20b"/>
 				<box>
 					<pen lineWidth="1.0"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle"/>
-				<textFieldExpression><![CDATA[$F{LUNCH_DIN_ALL}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{TOTAL_ABSENT}]]></textFieldExpression>
 			</textField>
-			<textField pattern="#,##0.###;#,##0.###-">
-				<reportElement x="956" y="0" width="36" height="44" uuid="8e55b06b-1185-41d8-8cee-f378be2ac53f"/>
+			<textField pattern="" isBlankWhenNull="true">
+				<reportElement x="950" y="0" width="34" height="44" uuid="8e55b06b-1185-41d8-8cee-f378be2ac53f"/>
 				<box>
 					<pen lineWidth="1.0"/>
 				</box>
-				<textElement textAlignment="Right" verticalAlignment="Middle"/>
-				<textFieldExpression><![CDATA[$F{NET_PAYABLE_BANK}]]></textFieldExpression>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{CF_PF}]]></textFieldExpression>
 			</textField>
-			<textField pattern="#,##0.###;#,##0.###-">
-				<reportElement x="1032" y="0" width="38" height="44" uuid="4b2f90a9-f6ef-4c6e-9336-31bb2b72cb6b"/>
-				<box>
+			<textField pattern="" isBlankWhenNull="true">
+				<reportElement x="1016" y="0" width="38" height="44" uuid="4b2f90a9-f6ef-4c6e-9336-31bb2b72cb6b"/>
+				<box rightPadding="5">
 					<pen lineWidth="1.0"/>
 				</box>
 				<textElement textAlignment="Right" verticalAlignment="Middle"/>
-				<textFieldExpression><![CDATA[$F{NET_PAYABLE_CASH}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{ABSENT_DEDUCT_AMT}]]></textFieldExpression>
 			</textField>
-			<textField pattern="#,##0.###;#,##0.###-">
-				<reportElement x="1070" y="0" width="48" height="44" uuid="bc001772-cfd7-41b6-bece-86fd9bcbcb03"/>
-				<box>
+			<textField pattern="" isBlankWhenNull="true">
+				<reportElement x="1054" y="0" width="48" height="44" uuid="bc001772-cfd7-41b6-bece-86fd9bcbcb03"/>
+				<box rightPadding="5">
 					<pen lineWidth="1.0"/>
 				</box>
 				<textElement textAlignment="Right" verticalAlignment="Middle"/>
-				<textFieldExpression><![CDATA[$F{NET_PAYABLE_CASH}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{TOTAL_DEDUCT_AMT}]]></textFieldExpression>
 			</textField>
-			<textField pattern="#,##0.###;#,##0.###-">
-				<reportElement x="1118" y="0" width="46" height="44" uuid="8804ef64-0078-498e-8377-dcd09997c733"/>
-				<box>
+			<textField pattern="" isBlankWhenNull="true">
+				<reportElement x="1102" y="0" width="54" height="44" uuid="8804ef64-0078-498e-8377-dcd09997c733"/>
+				<box rightPadding="5">
 					<pen lineWidth="1.0"/>
 				</box>
 				<textElement textAlignment="Right" verticalAlignment="Middle"/>
-				<textFieldExpression><![CDATA[$F{NET_PAYABLE_CASH}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{NET_PAYABLE_AMOUNT}]]></textFieldExpression>
 			</textField>
-			<textField pattern="#,##0.###;#,##0.###-">
-				<reportElement x="1164" y="0" width="18" height="44" uuid="ccd67509-37d8-47cb-b6dc-695a6e3cd6d3"/>
+			<textField pattern="" isBlankWhenNull="true">
+				<reportElement x="1156" y="0" width="28" height="44" uuid="ccd67509-37d8-47cb-b6dc-695a6e3cd6d3"/>
 				<box>
 					<pen lineWidth="1.0"/>
 				</box>
-				<textElement textAlignment="Right" verticalAlignment="Middle"/>
-				<textFieldExpression><![CDATA[$F{NET_PAYABLE_CASH}]]></textFieldExpression>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{OT_RATE}]]></textFieldExpression>
 			</textField>
-			<textField pattern="#,##0.###;#,##0.###-">
-				<reportElement x="1182" y="0" width="22" height="44" uuid="4994aa4e-58f6-4b96-a8b9-10959db9a4da"/>
+			<textField pattern="" isBlankWhenNull="true">
+				<reportElement x="1184" y="0" width="20" height="44" uuid="4994aa4e-58f6-4b96-a8b9-10959db9a4da"/>
 				<box>
 					<pen lineWidth="1.0"/>
 				</box>
-				<textElement textAlignment="Right" verticalAlignment="Middle"/>
-				<textFieldExpression><![CDATA[$F{NET_PAYABLE_CASH}]]></textFieldExpression>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{OT_HOUR}]]></textFieldExpression>
 			</textField>
-			<textField pattern="#,##0.###;#,##0.###-">
+			<textField pattern="" isBlankWhenNull="true">
 				<reportElement x="1204" y="0" width="40" height="44" uuid="998bbb9d-ece2-408a-9b17-b7e70b10e553"/>
-				<box>
+				<box rightPadding="5">
 					<pen lineWidth="1.0"/>
 				</box>
 				<textElement textAlignment="Right" verticalAlignment="Middle"/>
-				<textFieldExpression><![CDATA[$F{NET_PAYABLE_CASH}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{OT_AMT}]]></textFieldExpression>
 			</textField>
-			<textField pattern="#,##0.###;#,##0.###-">
-				<reportElement x="1245" y="0" width="54" height="44" uuid="3c832089-5749-4d61-8560-eb3ed44c4f1a"/>
-				<box>
+			<textField pattern="" isBlankWhenNull="true">
+				<reportElement x="1244" y="0" width="54" height="44" uuid="3c832089-5749-4d61-8560-eb3ed44c4f1a"/>
+				<box rightPadding="5">
 					<pen lineWidth="1.0"/>
 				</box>
 				<textElement textAlignment="Right" verticalAlignment="Middle"/>
-				<textFieldExpression><![CDATA[$F{NET_PAYABLE_CASH}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{TOT_PAYABLE_AMT}]]></textFieldExpression>
 			</textField>
-			<textField pattern="#,##0.###;#,##0.###-">
-				<reportElement x="1299" y="0" width="64" height="44" uuid="6abbb5fe-8daf-41fd-9da9-7d4442b16c22"/>
+			<textField pattern="" isBlankWhenNull="true">
+				<reportElement x="1298" y="0" width="66" height="44" uuid="6abbb5fe-8daf-41fd-9da9-7d4442b16c22"/>
 				<box>
 					<pen lineWidth="1.0"/>
 				</box>
 				<textElement textAlignment="Right" verticalAlignment="Middle"/>
-				<textFieldExpression><![CDATA[$F{NET_PAYABLE_CASH}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[" "]]></textFieldExpression>
 			</textField>
 		</band>
 	</detail>
 	<pageFooter>
 		<band height="65" splitType="Stretch">
 			<componentElement>
-				<reportElement x="2" y="22" width="210" height="41" uuid="ba7b4d90-659d-4b20-80dd-ae371922d47f"/>
+				<reportElement x="81" y="22" width="210" height="41" uuid="ba7b4d90-659d-4b20-80dd-ae371922d47f"/>
 				<jr:list xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd" printOrder="Vertical">
 					<datasetRun subDataset="PRE_BY" uuid="fc2dbd59-b03f-4c1d-bb88-5e373bac22c0">
 						<datasetParameter name="P_COMPANY_BRANCH_CODE">
@@ -1324,7 +1422,7 @@ EMP_ID]]>
 				</jr:list>
 			</componentElement>
 			<componentElement>
-				<reportElement x="260" y="23" width="210" height="41" uuid="8a6f542a-46a1-4573-a0c7-f9c9ae071c3f">
+				<reportElement x="417" y="23" width="210" height="41" uuid="8a6f542a-46a1-4573-a0c7-f9c9ae071c3f">
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 				</reportElement>
 				<jr:list xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd" printOrder="Vertical">
@@ -1359,7 +1457,7 @@ EMP_ID]]>
 				</jr:list>
 			</componentElement>
 			<componentElement>
-				<reportElement x="521" y="24" width="210" height="41" uuid="753e1bc2-c102-4c1f-a438-3c1b90b7746d">
+				<reportElement x="763" y="24" width="210" height="41" uuid="753e1bc2-c102-4c1f-a438-3c1b90b7746d">
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 				</reportElement>
@@ -1393,7 +1491,7 @@ EMP_ID]]>
 				</jr:list>
 			</componentElement>
 			<componentElement>
-				<reportElement x="790" y="24" width="210" height="41" uuid="ea8ae754-f075-467f-88c0-2c2bc3536bfe">
+				<reportElement x="1070" y="24" width="210" height="41" uuid="ea8ae754-f075-467f-88c0-2c2bc3536bfe">
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 				</reportElement>
@@ -1429,16 +1527,14 @@ EMP_ID]]>
 		</band>
 	</pageFooter>
 	<summary>
-		<band height="42" splitType="Stretch">
+		<band height="38" splitType="Stretch">
 			<frame>
-				<reportElement x="0" y="1" width="1364" height="18" uuid="6204d6e9-d36a-4b5f-a209-4e08ce689971">
-					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
-				</reportElement>
+				<reportElement x="0" y="2" width="1364" height="36" uuid="6204d6e9-d36a-4b5f-a209-4e08ce689971"/>
 				<box>
 					<pen lineWidth="1.0"/>
 				</box>
 				<staticText>
-					<reportElement x="362" y="0" width="100" height="18" uuid="d5659ce6-c887-44d2-8ab0-a28f5031fe81">
+					<reportElement x="351" y="0" width="100" height="18" uuid="d5659ce6-c887-44d2-8ab0-a28f5031fe81">
 						<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
 					</reportElement>
 					<textElement textAlignment="Right">
@@ -1446,158 +1542,170 @@ EMP_ID]]>
 					</textElement>
 					<text><![CDATA[Grand Total:]]></text>
 				</staticText>
-				<textField pattern="#,##0.###;#,##0.###-">
-					<reportElement x="464" y="0" width="46" height="18" uuid="91224978-ab4a-46c3-9f78-e2361bc324c8">
+				<textField pattern="" isBlankWhenNull="true">
+					<reportElement x="454" y="0" width="52" height="36" uuid="91224978-ab4a-46c3-9f78-e2361bc324c8">
 						<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
 					</reportElement>
-					<box>
+					<box rightPadding="5">
 						<pen lineWidth="1.0"/>
 					</box>
-					<textElement textAlignment="Center">
+					<textElement textAlignment="Right" verticalAlignment="Middle">
 						<font isBold="true"/>
 					</textElement>
-					<textFieldExpression><![CDATA[$V{V_GRAND_OFFDAY_QTY}]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$V{V_TOT_BASIC}]]></textFieldExpression>
 				</textField>
-				<textField pattern="#,##0.###;#,##0.###-">
-					<reportElement x="549" y="0" width="38" height="18" uuid="ad552de0-2940-481d-bc2f-e503e7f16a57">
+				<textField pattern="" isBlankWhenNull="true">
+					<reportElement x="550" y="0" width="38" height="36" uuid="ad552de0-2940-481d-bc2f-e503e7f16a57">
 						<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
 					</reportElement>
-					<box>
+					<box rightPadding="5">
 						<pen lineWidth="1.0"/>
 					</box>
-					<textElement textAlignment="Center">
+					<textElement textAlignment="Right" verticalAlignment="Middle">
 						<font isBold="true"/>
 					</textElement>
-					<textFieldExpression><![CDATA[$V{V_GRAND_OFFDAY_LUNCH_QTY}]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$V{V_TOT_MEDICAL}]]></textFieldExpression>
 				</textField>
-				<textField pattern="#,##0.###;#,##0.###-">
-					<reportElement x="588" y="0" width="36" height="18" uuid="302a48e5-f163-479a-ad8d-63ffffaa822c">
+				<textField pattern="" isBlankWhenNull="true">
+					<reportElement x="588" y="0" width="36" height="36" uuid="302a48e5-f163-479a-ad8d-63ffffaa822c">
 						<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
 					</reportElement>
-					<box>
+					<box rightPadding="5">
 						<pen lineWidth="1.0"/>
 					</box>
-					<textElement textAlignment="Center">
+					<textElement textAlignment="Right" verticalAlignment="Middle">
 						<font isBold="true"/>
 					</textElement>
-					<textFieldExpression><![CDATA[$V{V_GRAND_OFFDAY_AMT}]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$V{V_TOT_CONVEYANCE}]]></textFieldExpression>
 				</textField>
-				<textField pattern="#,##0.###;#,##0.###-">
-					<reportElement x="624" y="0" width="40" height="18" uuid="4c28ed05-b265-4102-8a16-e146f71f75d1">
+				<textField pattern="" isBlankWhenNull="true">
+					<reportElement x="624" y="0" width="40" height="36" uuid="4c28ed05-b265-4102-8a16-e146f71f75d1">
 						<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
 					</reportElement>
-					<box>
+					<box rightPadding="5">
 						<pen lineWidth="1.0"/>
 					</box>
-					<textElement textAlignment="Center">
+					<textElement textAlignment="Right" verticalAlignment="Middle">
 						<font isBold="true"/>
 					</textElement>
-					<textFieldExpression><![CDATA[$V{V_GRAND_LUNCH_AMt}]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$V{V_TOT_FOOD}]]></textFieldExpression>
 				</textField>
-				<textField pattern="#,##0.###;#,##0.###-">
-					<reportElement x="664" y="0" width="50" height="18" uuid="e4a1af68-ed8d-4a8a-9945-6fd3b0295e6e">
+				<textField pattern="" isBlankWhenNull="true">
+					<reportElement x="664" y="0" width="50" height="36" uuid="e4a1af68-ed8d-4a8a-9945-6fd3b0295e6e">
 						<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
 					</reportElement>
-					<box>
+					<box rightPadding="5">
 						<pen lineWidth="1.0"/>
 					</box>
-					<textElement textAlignment="Right">
+					<textElement textAlignment="Right" verticalAlignment="Middle">
 						<font isBold="true"/>
 					</textElement>
-					<textFieldExpression><![CDATA[$V{V_GRAND_BANK}]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$V{V_TOT_GROSS}]]></textFieldExpression>
 				</textField>
-				<textField pattern="#,##0.###;#,##0.###-">
-					<reportElement x="511" y="1" width="38" height="18" uuid="c20f2d98-1850-4cfb-a7db-e42d56dd5c92">
+				<textField pattern="" isBlankWhenNull="true">
+					<reportElement x="506" y="0" width="44" height="36" uuid="c20f2d98-1850-4cfb-a7db-e42d56dd5c92">
 						<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
 					</reportElement>
-					<box>
+					<box rightPadding="5">
 						<pen lineWidth="1.0"/>
 					</box>
-					<textElement textAlignment="Center">
+					<textElement textAlignment="Right" verticalAlignment="Middle">
 						<font isBold="true"/>
 					</textElement>
-					<textFieldExpression><![CDATA[$V{V_GRAND_OFFDAY_QTY}]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$V{V_TOT_HOUSE_RENT}]]></textFieldExpression>
 				</textField>
 			</frame>
-			<textField pattern="#,##0.###;#,##0.###-">
-				<reportElement x="1205" y="2" width="40" height="16" uuid="5b989e22-42c3-4d71-92c9-b59d1aeae497"/>
-				<box>
+			<textField pattern="" isBlankWhenNull="true">
+				<reportElement x="1204" y="2" width="40" height="36" uuid="5b989e22-42c3-4d71-92c9-b59d1aeae497"/>
+				<box rightPadding="5">
 					<pen lineWidth="1.0"/>
 				</box>
-				<textElement textAlignment="Right" verticalAlignment="Middle"/>
-				<textFieldExpression><![CDATA[$F{NET_PAYABLE_CASH}]]></textFieldExpression>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{V_TOT_OT_AMT}]]></textFieldExpression>
 			</textField>
-			<textField pattern="#,##0.###;#,##0.###-">
-				<reportElement x="1119" y="2" width="46" height="16" uuid="d48c3ed1-9108-4bc1-9e26-1a9509d2146f"/>
-				<box>
+			<textField pattern="" isBlankWhenNull="true">
+				<reportElement x="1102" y="2" width="54" height="36" uuid="d48c3ed1-9108-4bc1-9e26-1a9509d2146f"/>
+				<box rightPadding="5">
 					<pen lineWidth="1.0"/>
 				</box>
-				<textElement textAlignment="Right" verticalAlignment="Middle"/>
-				<textFieldExpression><![CDATA[$F{NET_PAYABLE_CASH}]]></textFieldExpression>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{V_TOT_NET_PAYABLE_AMT}]]></textFieldExpression>
 			</textField>
-			<textField pattern="#,##0.###;#,##0.###-">
-				<reportElement x="1165" y="2" width="18" height="16" uuid="e7ad6f9c-44e5-4c15-a5ff-1e247cb0c7fe"/>
+			<textField pattern="" isBlankWhenNull="true">
+				<reportElement x="916" y="2" width="34" height="36" uuid="2eedceaf-a4e3-4aea-a8af-985349f4fa8c">
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+				</reportElement>
 				<box>
 					<pen lineWidth="1.0"/>
 				</box>
-				<textElement textAlignment="Right" verticalAlignment="Middle"/>
-				<textFieldExpression><![CDATA[$F{NET_PAYABLE_CASH}]]></textFieldExpression>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{V_TOT_PAYABLE_DAYS}]]></textFieldExpression>
 			</textField>
-			<textField pattern="#,##0.###;#,##0.###-">
-				<reportElement x="917" y="2" width="40" height="16" uuid="2eedceaf-a4e3-4aea-a8af-985349f4fa8c"/>
-				<box>
+			<textField pattern="" isBlankWhenNull="true">
+				<reportElement x="1016" y="2" width="38" height="36" uuid="7d9582c4-3260-43c1-a8ef-98573b2a4bee"/>
+				<box rightPadding="5">
 					<pen lineWidth="1.0"/>
 				</box>
-				<textElement textAlignment="Right" verticalAlignment="Middle"/>
-				<textFieldExpression><![CDATA[$F{NET_PAYABLE_BANK}]]></textFieldExpression>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{V_TOT_ABSENT_DEDUCT}]]></textFieldExpression>
 			</textField>
-			<textField pattern="#,##0.###;#,##0.###-">
-				<reportElement x="1033" y="2" width="38" height="16" uuid="7d9582c4-3260-43c1-a8ef-98573b2a4bee"/>
-				<box>
+			<textField pattern="" isBlankWhenNull="true">
+				<reportElement x="1054" y="2" width="48" height="36" uuid="b9985dd4-4ae0-4885-974c-7fe2f0a786f6"/>
+				<box rightPadding="5">
 					<pen lineWidth="1.0"/>
 				</box>
-				<textElement textAlignment="Right" verticalAlignment="Middle"/>
-				<textFieldExpression><![CDATA[$F{NET_PAYABLE_CASH}]]></textFieldExpression>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{V_TOT_DEDUCT_AMT}]]></textFieldExpression>
 			</textField>
-			<textField pattern="#,##0.###;#,##0.###-">
-				<reportElement x="1071" y="2" width="48" height="16" uuid="b9985dd4-4ae0-4885-974c-7fe2f0a786f6"/>
-				<box>
+			<textField pattern="" isBlankWhenNull="true">
+				<reportElement x="1244" y="2" width="54" height="36" uuid="3c7517a0-29be-4cc1-82c0-b2ed8bd85631"/>
+				<box rightPadding="5">
 					<pen lineWidth="1.0"/>
 				</box>
-				<textElement textAlignment="Right" verticalAlignment="Middle"/>
-				<textFieldExpression><![CDATA[$F{NET_PAYABLE_CASH}]]></textFieldExpression>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{V_TOT_PAYABLE_AMT}]]></textFieldExpression>
 			</textField>
-			<textField pattern="#,##0.###;#,##0.###-">
-				<reportElement x="1246" y="2" width="54" height="16" uuid="3c7517a0-29be-4cc1-82c0-b2ed8bd85631"/>
+			<textField pattern="" isBlankWhenNull="true">
+				<reportElement x="1184" y="2" width="20" height="36" uuid="a7dd98c9-ffe6-403b-bdb9-babdb4ae2c9b"/>
 				<box>
 					<pen lineWidth="1.0"/>
 				</box>
-				<textElement textAlignment="Right" verticalAlignment="Middle"/>
-				<textFieldExpression><![CDATA[$F{NET_PAYABLE_CASH}]]></textFieldExpression>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{V_TOT_OT_HOUR}]]></textFieldExpression>
 			</textField>
-			<textField pattern="#,##0.###;#,##0.###-">
-				<reportElement x="1183" y="2" width="22" height="16" uuid="a7dd98c9-ffe6-403b-bdb9-babdb4ae2c9b"/>
+			<textField pattern="" isBlankWhenNull="true">
+				<reportElement x="950" y="2" width="34" height="36" uuid="c6704944-1335-4236-805e-4fcb6772463f"/>
 				<box>
 					<pen lineWidth="1.0"/>
 				</box>
-				<textElement textAlignment="Right" verticalAlignment="Middle"/>
-				<textFieldExpression><![CDATA[$F{NET_PAYABLE_CASH}]]></textFieldExpression>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{V_TOT_PF}]]></textFieldExpression>
 			</textField>
-			<textField pattern="#,##0.###;#,##0.###-">
-				<reportElement x="957" y="2" width="36" height="16" uuid="c6704944-1335-4236-805e-4fcb6772463f"/>
+			<textField pattern="" isBlankWhenNull="true">
+				<reportElement x="984" y="2" width="32" height="36" uuid="6a147732-806f-4528-ba6e-b35da3eaa23f"/>
 				<box>
 					<pen lineWidth="1.0"/>
 				</box>
-				<textElement textAlignment="Right" verticalAlignment="Middle"/>
-				<textFieldExpression><![CDATA[$F{NET_PAYABLE_BANK}]]></textFieldExpression>
-			</textField>
-			<textField pattern="#,##0.###;#,##0.###-">
-				<reportElement x="993" y="2" width="40" height="16" uuid="6a147732-806f-4528-ba6e-b35da3eaa23f"/>
-				<box>
-					<pen lineWidth="1.0"/>
-				</box>
-				<textElement textAlignment="Right" verticalAlignment="Middle"/>
-				<textFieldExpression><![CDATA[$F{NET_PAYABLE_CASH}]]></textFieldExpression>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{V_TOT_PF}]]></textFieldExpression>
 			</textField>
 		</band>
 	</summary>

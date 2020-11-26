@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Created with Jaspersoft Studio version 6.3.0.final using JasperReports Library version 6.3.0  -->
-<!-- 2020-11-25T20:36:05 -->
-<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="HRM_COMPLIANCE_SALARY_PAYSLIP_BANGLA" pageWidth="936" pageHeight="1224" columnWidth="896" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="62d0349b-7ae0-4e9d-9b93-e2c3e0b912f3">
+<!-- 2020-11-26T17:25:08 -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="HRM_COMPLIANCE_SALARY_PAYSLIP_BANGLA" pageWidth="828" pageHeight="1188" columnWidth="788" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="62d0349b-7ae0-4e9d-9b93-e2c3e0b912f3">
 	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
 	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="KALYAR "/>
 	<property name="com.jaspersoft.studio.data.sql.SQLQueryDesigner.sash.w1" value="0"/>
@@ -9,12 +9,6 @@
 	<property name="com.jaspersoft.studio.unit." value="pixel"/>
 	<property name="com.jaspersoft.studio.unit.pageHeight" value="inch"/>
 	<property name="com.jaspersoft.studio.unit.pageWidth" value="inch"/>
-	<property name="com.jaspersoft.studio.unit.topMargin" value="pixel"/>
-	<property name="com.jaspersoft.studio.unit.bottomMargin" value="pixel"/>
-	<property name="com.jaspersoft.studio.unit.leftMargin" value="pixel"/>
-	<property name="com.jaspersoft.studio.unit.rightMargin" value="pixel"/>
-	<property name="com.jaspersoft.studio.unit.columnWidth" value="pixel"/>
-	<property name="com.jaspersoft.studio.unit.columnSpacing" value="pixel"/>
 	<subDataset name="COMPANY_INFO" uuid="6e0d2f84-e900-408a-a061-7a1a8a07a779">
 		<property name="com.jaspersoft.studio.data.defaultdataadapter" value="KALYAR "/>
 		<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
@@ -181,394 +175,451 @@ SIGNATORY_FOR   ='HRM']]>
 	<parameter name="P_EMP" class="java.lang.String"/>
 	<parameter name="P_DEPT_GROUP" class="java.lang.String"/>
 	<queryString>
-		<![CDATA[SELECT '  '||NAME as NAME, EMP_ID, DESIGNATION,
-
-(CASE 
-WHEN DESIG_GROUP ='OF' THEN EMP_AC_NO 
-WHEN DESIG_GROUP ='FW' THEN MOBILE_AC_NO
-WHEN DESIG_GROUP ='OS' THEN MOBILE_AC_NO
-ELSE NULL END) as ACCOUNT_NO,
-
-(SELECT COUNT(HOLIDAY_DATE) 
-FROM ( SELECT HOLIDAY_DATE HOLIDAY_DATE
-FROM HOLIDAY_WEEK
-WHERE 
-COMPANY_CODE        = $P{P_COMPANY_CODE} AND
-COMPANY_BRANCH_CODE = $P{P_COMPANY_BRANCH_CODE} AND
-TO_CHAR(HOLIDAY_DATE,'MM/YYYY') = $P{P_MNYR}
-UNION
-SELECT DATE_TO HOLIDAY_DATE
-FROM HOLIDAY
-WHERE 
-COMPANY_CODE        = $P{P_COMPANY_CODE} AND
-COMPANY_BRANCH_CODE = $P{P_COMPANY_BRANCH_CODE} AND
-TO_CHAR(FROM_DATE,'MM/YYYY')   = $P{P_MNYR}
-)) as OFFDAY_THIS_MONTH, 
-
-COUNT(ATTEND_DATE) as OFFDAY_QTY, SUM(LUNCH_QTY) as LUNCH_DIN_QTY,
-
-(SELECT NVL(O.OFFDAY_ALL,0) FROM HR_TNOFF_ALLOWANCE O
-WHERE O.DEPT_GROUP  = Y.DEPT_GROUP 
-AND O.DEPT_CODE   =  Y.DEPT_CODE  
-AND O.DESIG_CODE  = Y.DESIG_CODE 
-AND O.EFFECTIVE_DATE  = (SELECT MAX(EFFECTIVE_DATE) 
-                     FROM HR_TNOFF_ALLOWANCE 
-                     WHERE DEPT_GROUP = Y.DEPT_GROUP AND
-                     DEPT_CODE        = Y.DEPT_CODE  AND
-                     DESIG_CODE      = Y.DESIG_CODE AND
-                     EFFECTIVE_DATE  <= TO_DATE($P{P_MNYR},'MM/YYYY'))) as OFFDAY_RATE,
-
-(SELECT NVL(O.OFFDAY_LUNCH_BILL,0) FROM HR_TNOFF_ALLOWANCE O
-  WHERE O.DEPT_GROUP  = Y.DEPT_GROUP 
-  AND O.DEPT_CODE   =  Y.DEPT_CODE  
-  AND O.DESIG_CODE  = Y.DESIG_CODE 
-  AND O.EFFECTIVE_DATE  = (SELECT MAX(EFFECTIVE_DATE) 
-         FROM HR_TNOFF_ALLOWANCE 
-         WHERE DEPT_GROUP = Y.DEPT_GROUP AND
-         DEPT_CODE        = Y.DEPT_CODE  AND
-         DESIG_CODE      = Y.DESIG_CODE AND
-         EFFECTIVE_DATE  <= TO_DATE($P{P_MNYR},'MM/YYYY'))) as LUNCH_DIN_RATE,
-		 
-SUM(OFFDAY_ALL) as OFFDAY_ALL , SUM(OFFDAY_LUNCH_DIN_ALL) as LUNCH_DIN_ALL, SUM(TOTAL_PAY_AMT) AS TOT_PAY_AMT, 
-SUM(NET_PAYABLE_BANK) as NET_PAYABLE_BANK, SUM(NET_PAYABLE_CASH) as NET_PAYABLE_CASH,
-DEPARTMENT, SECTION_NAME, DEPT_GROUP, DEPT_CODE, DEPT_GROUP_SL, JOIN_DT
-FROM (SELECT 
-NAME, DESIGNATION, DEPARTMENT, SECTION_NAME, ATTEND_DATE , DD, EMP_ID,DUTY,
-BASIC_SALARY, JOIN_DT, BANK_SAL_FLAG, EMP_AC_NO, EMP_AC_DATE, MOBILE_BANK_SAL_FLAG, MOBILE_AC_NO, MOBILE_AC_DATE, DEPT_GROUP, DEPT_CODE, 
-DESIG_CODE, SALARY_TYPE, DESIG_GROUP, DEPT_GROUP_SL, OFFDAY_ALL, OFFDAY_LUNCH_DIN_ALL, ACTUAL_TIME, 
-IN_TIME, OUT_TIME, NVL(OFFDAY_ALL, 0)+NVL(OFFDAY_LUNCH_DIN_ALL, 0) as TOTAL_PAY_AMT,
-(CASE
-When NVL(OFFDAY_LUNCH_DIN_ALL, 0)  = 0 THEN 0
-ELSE
-1
-END) as LUNCH_QTY,
-(CASE 
-WHEN EMP_AC_NO IS NOT NULL AND BANK_SAL_FLAG IS NOT NULL 
-    OR MOBILE_AC_NO IS NOT NULL AND MOBILE_BANK_SAL_FLAG IS NOT NULL THEN
-    NVL(OFFDAY_ALL, 0)+NVL(OFFDAY_LUNCH_DIN_ALL, 0)
-ELSE 0
-END) as NET_PAYABLE_BANK,
-
-(CASE
-WHEN EMP_AC_NO IS NULL AND BANK_SAL_FLAG IS NULL AND MOBILE_AC_NO IS NULL AND MOBILE_BANK_SAL_FLAG IS NULL THEN
-    NVL(OFFDAY_ALL, 0)+NVL(OFFDAY_LUNCH_DIN_ALL, 0)
-ELSE 0
-END) as NET_PAYABLE_CASH 
+		<![CDATA[SELECT
+EMP_ID,
+NAME,
+DESIGNATION,
+SECTION_NAME,
+JOIN_DATE,
+GRADE,
+ROUND(PBASIC_SALARY) PBASIC_SALARY,
+PHOUSE_RENT,
+PMEDICAL_ALL,
+PCONVEYANCE_ALL,
+FOOD_ALL,
+GROSS_SAL,
+WEEK_GOV_HOLIDAY,
+CASUAL_LEAVE, 
+EARN_LEAVE, 
+MEDICAL_LEAVE,
+OTHERS_LEAVE,
+EL_PLUS_CL,
+TOTAL_WORKING_DAYS,
+TOTAL_PAYABLE_DAYS,
+CF_PF,
+OT_RATE,
+OT_HOUR,
+MONTH_DAYS,
+TOTAL_ABSENT,
+(select MONTH_BANGLA||' '||substr($P{P_MNYR},4,4)
+from a_period
+where to_number(month) = TO_NUMBER(substr($P{P_MNYR},1,2)))  MONTH_NAME,
+ROUND((NVL(PBASIC_SALARY,0)/30)*NVL(TOTAL_ABSENT, 0)) AS ABSENT_DEDUCT_AMT,
+NVL(CF_PF,0)+NVL(ROUND((NVL(PBASIC_SALARY,0)/30)*NVL(TOTAL_ABSENT, 0),2),0) AS TOTAL_DEDUCT_AMT,
+ROUND(((NVL(GROSS_SAL,0)/NVL(MONTH_DAYS,0))*NVL(TOTAL_PAYABLE_DAYS,0))+((NVL(GROSS_SAL,0)/NVL(MONTH_DAYS,0)*NVL(TOTAL_ABSENT,0)) - NVL(ROUND((NVL(PBASIC_SALARY,0)/30)*NVL(TOTAL_ABSENT, 0),2),0)), 2) AS PAYABLE_AMT,
+NVL(ROUND(((NVL(GROSS_SAL,0)/NVL(MONTH_DAYS,0))*NVL(TOTAL_PAYABLE_DAYS,0))+((NVL(GROSS_SAL,0)/NVL(MONTH_DAYS,0)*NVL(TOTAL_ABSENT,0)) - NVL(ROUND((NVL(PBASIC_SALARY,0)/30)*NVL(TOTAL_ABSENT, 0),2),0)), 2),0)-NVL(CF_PF,0) AS NET_PAYABLE_AMOUNT,
+ROUND(NVL(OT_RATE,0)*NVL(OT_HOUR,0)) AS OT_AMT,
+NVL(NVL(ROUND(((NVL(GROSS_SAL,0)/NVL(MONTH_DAYS,0))*NVL(TOTAL_PAYABLE_DAYS,0))+((NVL(GROSS_SAL,0)/NVL(MONTH_DAYS,0)*NVL(TOTAL_ABSENT,0)) - NVL(ROUND((NVL(PBASIC_SALARY,0)/30)*NVL(TOTAL_ABSENT, 0),2),0)), 2),0)-NVL(CF_PF,0),0)+NVL(ROUND(NVL(OT_RATE,0)*NVL(OT_HOUR,0)),0) AS TOT_PAYABLE_AMT
 FROM (SELECT
-NAME, DESIGNATION, DEPARTMENT, SECTION_NAME, ATTEND_DATE , DD, EMP_ID,DUTY,
-BASIC_SALARY, JOIN_DT, EMP_AC_NO, EMP_AC_DATE, MOBILE_AC_NO, MOBILE_AC_DATE, DEPT_GROUP, DEPT_CODE, 
-DESIG_CODE, SALARY_TYPE, DESIG_GROUP, DEPT_GROUP_SL, BANK_SAL_FLAG, MOBILE_BANK_SAL_FLAG,
-(CASE 
-WHEN PRE_ADJ_OFFDAY_ALL > 0 THEN 0
-    ELSE PRE_OFFDAY_ALL
-END) as OFFDAY_ALL,
+EMP_ID,
+NAME,
+DESIGNATION,
+SECTION_NAME,
+JOIN_DT JOIN_DATE,
+GRADE,
+PBASIC_SALARY,
+PHOUSE_RENT,
+PMEDICAL_ALL,
+PCONVEYANCE_ALL,
+FOOD_ALL,
+GROSS_SAL,
+NVL(WEEKLY_HOLIDAY,0)+NVL(GOV_HOLIDAY,0) AS WEEK_GOV_HOLIDAY,
+CASUAL_LEAVE, 
+EARN_LEAVE, 
+MEDICAL_LEAVE,
+OTHERS_LEAVE,
+NVL(EARN_LEAVE,0)+NVL(CASUAL_LEAVE,0) AS EL_PLUS_CL,
+NVL(CASUAL_LEAVE,0)+NVL(MEDICAL_LEAVE,0)+NVL(EARN_LEAVE,0)+NVL(OTHERS_LEAVE,0) AS TOTAL_LEAVE_DAY,
+NVL(PRESENT_DAYS,0)+NVL(AUTHORIZE_PRESENT,0) AS TOTAL_WORKING_DAYS,
+
+NVL(WEEKLY_HOLIDAY,0)+NVL(GOV_HOLIDAY,0)+NVL(CASUAL_LEAVE,0)+NVL(MEDICAL_LEAVE,0)+NVL(EARN_LEAVE,0)+NVL(OTHERS_LEAVE,0)+
+NVL(PRESENT_DAYS,0)+NVL(AUTHORIZE_PRESENT,0) AS TOTAL_PAYABLE_DAYS,
 
 (CASE 
-WHEN PRE_ADJ_OFFDAY_LUNCH_ALL > 0 THEN 0
-ELSE 
- CASE WHEN OUT_TIME1 IS NOT NULL AND OUT_TIME1>= TO_CHAR(TO_DATE('1400','HH24:MI'),'HH24:MI')  AND OUT_TIME1< TO_CHAR(TO_DATE('23:00','HH24:MI'),'HH24:MI') OR
- DUTY > 4 THEN 
-  PRE_OFFDAY_LUNCH_ALL
+WHEN TO_CHAR(JOIN_DT,'MM/YYYY') = $P{P_MNYR} THEN
+    NVL(NVL(MONTH_DAYS,0)-(TO_NUMBER(TO_CHAR(JOIN_DT,'DD'))-1),0)-(NVL(WEEKLY_HOLIDAY,0)+NVL(GOV_HOLIDAY,0)+NVL(CASUAL_LEAVE,0)+NVL(MEDICAL_LEAVE,0)+NVL(EARN_LEAVE,0)+NVL(OTHERS_LEAVE,0)+
+NVL(PRESENT_DAYS,0)+NVL(AUTHORIZE_PRESENT,0))
+WHEN TO_CHAR(EMP_INACTIVE_DT,'MM/YYYY') = $P{P_MNYR} THEN
+   	NVL(NVL(MONTH_DAYS,0)-(TO_NUMBER(TO_CHAR(EMP_INACTIVE_DT,'DD'))+1),0)-(NVL(WEEKLY_HOLIDAY,0)+NVL(GOV_HOLIDAY,0)+NVL(CASUAL_LEAVE,0)+NVL(MEDICAL_LEAVE,0)+NVL(EARN_LEAVE,0)+NVL(OTHERS_LEAVE,0)+
+NVL(PRESENT_DAYS,0)+NVL(AUTHORIZE_PRESENT,0))
+ELSE
+    (NVL(MONTH_DAYS,0) -(NVL(WEEKLY_HOLIDAY,0)+NVL(GOV_HOLIDAY,0)+NVL(CASUAL_LEAVE,0)+NVL(MEDICAL_LEAVE,0)+NVL(EARN_LEAVE,0)+NVL(OTHERS_LEAVE,0)+
+NVL(PRESENT_DAYS,0)+NVL(AUTHORIZE_PRESENT,0)))
+END) AS TOTAL_ABSENT,
+
+(CASE WHEN TRUNC(CONFIRM_DT) <= TO_DATE($P{P_MNYR},'MM/YYYY') THEN 
+   ROUND((NVL(PBASIC_SALARY, 0)*.07),2)
+ELSE
+	 NULL
+END)AS CF_PF,
+
+ROUND(((NVL(PBASIC_SALARY,0)/208)*2),2) AS OT_RATE,
+(CASE 
+WHEN OT_HOUR IS NOT NULL THEN 
+  CASE WHEN OT_HOUR <= NVL(PRESENT_DAYS,0)+NVL(AUTHORIZE_PRESENT,0)*2 THEN
+	OT_HOUR
+  ELSE 
+   (NVL(PRESENT_DAYS,0)+NVL(AUTHORIZE_PRESENT,0)*2)-1
+  END
+ELSE
+ CASE WHEN NVL(PRESENT_DAYS,0)+NVL(AUTHORIZE_PRESENT,0)*2 < 52 then
+  (NVL(PRESENT_DAYS,0)+NVL(AUTHORIZE_PRESENT,0)*2)-1
  ELSE
-    CASE WHEN ADJ_OFFDAY_LUNCH_ALL > 0 THEN PRE_OFFDAY_LUNCH_ALL
-    ELSE 0
-    END
- END    
-END) as OFFDAY_LUNCH_DIN_ALL,
-
+	52
+ END
+END)OT_HOUR,
+JOIN_DT,
+EMP_INACTIVE_DT,
+MONTH_DAYS
+FROM (SELECT     
+X.EMP_ID,
+X.NAME,
+(select DESIG_BANGLA 
+  from DESIGNATION
+  where
+  DEPT_GROUP = X.DEPT_GROUP AND
+  DEPT_CODE = X.DEPT_CODE AND
+  DESIG_code = X.DESIG_CODE) DESIGNATION,
+X.DEPT_DESC SECTION_NAME,
+X.JOIN_DT,
+( select GRADE 
+  from DESIGNATION
+  where
+  DEPT_GROUP = X.DEPT_GROUP AND
+  DEPT_CODE = X.DEPT_CODE AND
+  DESIG_code = X.DESIG_CODE) GRADE,
+((NVL(X.GROSS_SAL,0)-(X.PMEDICAL_ALL+X.PCONVEYANCE_ALL+X.FOOD_ALL))/1.4) PBASIC_SALARY,
+ROUND(((NVL(X.GROSS_SAL,0)-(X.PMEDICAL_ALL+X.PCONVEYANCE_ALL+X.FOOD_ALL))/1.4)*.40) PHOUSE_RENT,
+X.PMEDICAL_ALL,
+X.PCONVEYANCE_ALL,
+X.FOOD_ALL,
+X.GROSS_SAL,
 (CASE 
-  WHEN OUT_TIME_DATE> IN_TIME_DATE THEN 
-    ROUND(24*(OUT_TIME_DATE-IN_TIME_DATE))
-  WHEN IN_TIME_DATE > OUT_TIME_DATE  THEN 
-    ROUND(24*(IN_TIME_DATE-OUT_TIME_DATE))
-  WHEN OUT_TIME_DATE IS NULL  THEN 1
-END) as ACTUAL_TIME, 
-(CASE
-WHEN PRE_IN_TIME > 0 THEN ORIGIN_IN_TIME
+WHEN TO_CHAR(X.JOIN_DT,'MM/YYYY') = $P{P_MNYR} THEN
+  (SELECT COUNT(*) FROM HOLIDAY_WEEK
+  WHERE 
+  COMPANY_CODE           = $P{P_COMPANY_CODE} AND
+  COMPANY_BRANCH_CODE    = $P{P_COMPANY_BRANCH_CODE} AND
+  TO_CHAR(HOLIDAY_DATE,'MM/YYYY') = $P{P_MNYR}
+  AND HOLIDAY_DATE >= X.JOIN_DT
+  AND HOLIDAY_DATE NOT IN 
+	(SELECT LEAVE_DT
+   FROM   LEAVE_APPLICATION_DTL
+   WHERE 
+   COMPANY_CODE           = $P{P_COMPANY_CODE} AND
+   COMPANY_BRANCH_CODE    = $P{P_COMPANY_BRANCH_CODE} AND
+   EMP_ID                 = X.EMP_ID AND
+   TO_CHAR(LEAVE_DT,'MM/YYYY')= $P{P_MNYR}   
+  ))
+WHEN TO_CHAR(X.EMP_INACTIVE_DT,'MM/YYYY') = $P{P_MNYR} THEN
+ (SELECT COUNT(*) FROM HOLIDAY_WEEK
+ WHERE 
+ COMPANY_CODE           = $P{P_COMPANY_CODE} AND
+ COMPANY_BRANCH_CODE    = $P{P_COMPANY_BRANCH_CODE} AND
+ TO_CHAR(HOLIDAY_DATE,'MM/YYYY') =  $P{P_MNYR}
+ AND HOLIDAY_DATE <= X.EMP_INACTIVE_DT
+ AND HOLIDAY_DATE NOT IN 
+	(SELECT LEAVE_DT
+   FROM   LEAVE_APPLICATION_DTL
+   WHERE 
+   COMPANY_CODE           = $P{P_COMPANY_CODE} AND
+   COMPANY_BRANCH_CODE    = $P{P_COMPANY_BRANCH_CODE} AND
+   EMP_ID                 = X.EMP_ID AND
+   TO_CHAR(LEAVE_DT,'MM/YYYY')= $P{P_MNYR}   
+   ))  
 ELSE
-IN_TIME1
-END) as IN_TIME,
+ (SELECT COUNT(*) FROM HOLIDAY_WEEK
+ WHERE 
+ COMPANY_CODE           = $P{P_COMPANY_CODE} AND
+ COMPANY_BRANCH_CODE    = $P{P_COMPANY_BRANCH_CODE} AND
+ TO_CHAR(HOLIDAY_DATE,'MM/YYYY') = $P{P_MNYR}
+ AND HOLIDAY_DATE NOT IN 
+	(SELECT LEAVE_DT
+   FROM   LEAVE_APPLICATION_DTL
+   WHERE 
+   COMPANY_CODE           = $P{P_COMPANY_CODE} AND
+   COMPANY_BRANCH_CODE    = $P{P_COMPANY_BRANCH_CODE} AND
+   EMP_ID                 = X.EMP_ID AND
+   TO_CHAR(LEAVE_DT,'MM/YYYY')= $P{P_MNYR}   
+   ))
+END) AS WEEKLY_HOLIDAY,
 
 (CASE
-WHEN PRE_IN_TIME > 0 THEN ORIGIN_OUT_TIME
+WHEN TO_CHAR(X.JOIN_DT,'MM/YYYY') =  $P{P_MNYR} THEN
+	(SELECT COUNT(*)FROM HOLIDAY
+	WHERE 
+	COMPANY_CODE           = $P{P_COMPANY_CODE} AND
+    COMPANY_BRANCH_CODE    = $P{P_COMPANY_BRANCH_CODE} AND
+    TO_CHAR(DATE_TO,'MM/YYYY') = $P{P_MNYR}
+	AND FROM_DATE >= X.JOIN_DT
+	AND FROM_DATE NOT IN 
+			(
+			SELECT HOLIDAY_DATE
+			FROM HOLIDAY_WEEK
+			WHERE 
+			COMPANY_CODE           = $P{P_COMPANY_CODE} AND
+    		COMPANY_BRANCH_CODE    = $P{P_COMPANY_BRANCH_CODE} AND
+    		TO_CHAR(HOLIDAY_DATE,'MM/YYYY') = $P{P_MNYR}
+			UNION
+			SELECT LEAVE_DT
+   			FROM   LEAVE_APPLICATION_DTL
+   			WHERE 
+   			COMPANY_CODE           = $P{P_COMPANY_CODE} AND
+   			COMPANY_BRANCH_CODE    = $P{P_COMPANY_BRANCH_CODE} AND
+   			EMP_ID                 = X.EMP_ID AND
+   			TO_CHAR(LEAVE_DT,'MM/YYYY')= $P{P_MNYR}
+	))
+
+WHEN TO_CHAR(X.EMP_INACTIVE_DT,'MM/YYYY') =  $P{P_MNYR} THEN
+			(SELECT COUNT(*) FROM HOLIDAY
+			WHERE 
+			COMPANY_CODE           = $P{P_COMPANY_CODE} 
+  		    AND COMPANY_BRANCH_CODE    = $P{P_COMPANY_BRANCH_CODE} 
+  		    AND TO_CHAR(FROM_DATE,'MM/YYYY') = $P{P_MNYR} 
+			AND FROM_DATE <= X.EMP_INACTIVE_DT
+			AND FROM_DATE NOT IN 
+			(
+			SELECT HOLIDAY_DATE
+			FROM HOLIDAY_WEEK
+			WHERE
+    	COMPANY_CODE           = $P{P_COMPANY_CODE} AND
+    	COMPANY_BRANCH_CODE    = $P{P_COMPANY_BRANCH_CODE} AND
+    	TO_CHAR(HOLIDAY_DATE,'MM/YYYY')= $P{P_MNYR}
+    	UNION
+			SELECT LEAVE_DT
+   		FROM   LEAVE_APPLICATION_DTL
+   		WHERE 
+   		COMPANY_CODE           = $P{P_COMPANY_CODE} AND
+   		COMPANY_BRANCH_CODE    = $P{P_COMPANY_BRANCH_CODE} AND
+   		EMP_ID                 = X.EMP_ID AND
+   		TO_CHAR(LEAVE_DT,'MM/YYYY')= $P{P_MNYR}
+    	))
 ELSE
-OUT_TIME1
-END) as OUT_TIME
-FROM (SELECT 
-(SELECT ' '||O.DESIG_DESC FROM DESIGNATION O WHERE O.DEPT_GROUP = X.DEPT_GROUP AND O.DEPT_CODE  = X.DEPT_CODE AND O.DESIG_CODE = X.DESIG_CODE) as DESIGNATION,
-(SELECT ' '||O.DEPT_GROUP_NAME FROM DEPT_GROUP O WHERE O.DEPT_GROUP_CODE = X.DEPT_GROUP) as DEPARTMENT,
-(SELECT ' '||O.DEPT_DESC FROM DEPT O WHERE O.DEPT_GROUP = X.DEPT_GROUP AND O.DEPT_CODE  = X.DEPT_CODE) as SECTION_NAME,
-ATTEND_DATE , DD, EMP_ID, NAME, IN_TIME as IN_TIME_DATE, OUT_TIME as OUT_TIME_DATE, IN_TIME1, OUT_TIME1, ABS(TO_NUMBER(TO_CHAR(IN_TIME,'HH24'))- TO_NUMBER(TO_CHAR(OUT_TIME,'HH24'))) DUTY,
-BASIC_SALARY, JOIN_DT,BANK_SAL_FLAG,EMP_AC_NO,EMP_AC_DATE,MOBILE_BANK_SAL_FLAG,MOBILE_AC_NO,
-MOBILE_AC_DATE, DEPT_GROUP, DEPT_CODE, DESIG_CODE, SALARY_TYPE, DESIG_GROUP, DEPT_GROUP_SL,
-(SELECT NVL(O.OFFDAY_ALL,0) FROM HR_TNOFF_ALLOWANCE O
-WHERE O.DEPT_GROUP  = X.DEPT_GROUP 
-AND O.DEPT_CODE   =  X.DEPT_CODE  
-AND O.DESIG_CODE  = X.DESIG_CODE 
-AND O.EFFECTIVE_DATE  = (SELECT MAX(EFFECTIVE_DATE) 
-                     FROM HR_TNOFF_ALLOWANCE 
-                     WHERE DEPT_GROUP = X.DEPT_GROUP AND
-                     DEPT_CODE        = X.DEPT_CODE  AND
-                     DESIG_CODE      = X.DESIG_CODE AND
-                     EFFECTIVE_DATE  <= TO_DATE($P{P_MNYR},'MM/YYYY'))) PRE_OFFDAY_ALL,
-                     
-(SELECT COUNT(O.EMP_ID) FROM HR_OFFDAY_ADJUST O
-        WHERE O.COMPANY_CODE=$P{P_COMPANY_CODE}
-        AND O.COMPANY_BRANCH_CODE=$P{P_COMPANY_BRANCH_CODE}
-        AND O.EMP_ID = X.EMP_ID 
-        AND O.ADJ_DATE = X.ATTEND_DATE 
-        AND O.OFFDAY_ADJUST ='C' 
-        AND INIT_YR(TO_CHAR(O.ADJ_DATE,'MM/YYYY')) =  INIT_YR($P{P_MNYR})) as PRE_ADJ_OFFDAY_ALL,
-        
-(SELECT NVL(O.OFFDAY_LUNCH_BILL,0) FROM HR_TNOFF_ALLOWANCE O
-  WHERE O.DEPT_GROUP  = X.DEPT_GROUP 
-  AND O.DEPT_CODE   =  X.DEPT_CODE  
-  AND O.DESIG_CODE  = X.DESIG_CODE 
-  AND O.EFFECTIVE_DATE  = (SELECT MAX(EFFECTIVE_DATE) 
-         FROM HR_TNOFF_ALLOWANCE 
-         WHERE DEPT_GROUP = X.DEPT_GROUP AND
-         DEPT_CODE        = X.DEPT_CODE  AND
-         DESIG_CODE      = x.DESIG_CODE AND
-         EFFECTIVE_DATE  <= TO_DATE($P{P_MNYR},'MM/YYYY'))) as PRE_OFFDAY_LUNCH_ALL,
-         
-(SELECT COUNT(O.EMP_ID) FROM HR_OFFDAY_ADJUST O
-        WHERE O.COMPANY_CODE=$P{P_COMPANY_CODE}
-        AND O.COMPANY_BRANCH_CODE=$P{P_COMPANY_BRANCH_CODE}
-        AND O.EMP_ID = X.EMP_ID 
-        AND O.ADJ_DATE = X.ATTEND_DATE 
-        AND O.LUNCH_ADJUST ='C' 
-        AND INIT_YR(TO_CHAR(O.ADJ_DATE,'MM/YYYY')) =  INIT_YR($P{P_MNYR})) as PRE_ADJ_OFFDAY_LUNCH_ALL,
-        
-(SELECT COUNT(EMP_ID) FROM HR_OFFDAY_ADJUST O
-        WHERE O.COMPANY_CODE=$P{P_COMPANY_CODE} 
-        AND O.COMPANY_BRANCH_CODE=$P{P_COMPANY_BRANCH_CODE}
-        AND O.EMP_ID = X.EMP_ID 
-        AND O.ADJ_DATE = X.ATTEND_DATE 
-        AND O.LUNCH_ADJUST ='A' 
-        AND INIT_YR(TO_CHAR(O.ADJ_DATE,'MM/YYYY')) =  INIT_YR($P{P_MNYR})) as ADJ_OFFDAY_LUNCH_ALL,
-        
-(SELECT COUNT(attend_date) from daily_attendance O
- WHERE O.EMP_ID = X.EMP_ID AND to_char(O.attend_date, 'MM/YYYY') = $P{P_MNYR}
- AND O.attend_date = (SELECT adj_date FROM HR_OFFDAY_ADJUST WHERE emp_id = X.emp_id AND to_char(adj_date, 'MM/YYYY') = $P{P_MNYR} and adj_date = X.attend_date )) as PRE_IN_TIME,
- 
-(SELECT to_char(O.in_time, 'HH24:MI') from daily_attendance O
- WHERE O.EMP_ID = X.EMP_ID
- AND to_char(O.attend_date, 'MM/YYYY') = $P{P_MNYR}
- AND O.attend_date = X.attend_date) as ORIGIN_IN_TIME,
- 
- (SELECT to_char(O.out_time, 'HH24:MI') from daily_attendance O
- WHERE O.EMP_ID = X.EMP_ID
- AND to_char(O.attend_date, 'MM/YYYY') = $P{P_MNYR}
- AND O.attend_date = X.attend_date) as ORIGIN_OUT_TIME
- 
-FROM (SELECT DISTINCT A.ATTEND_DATE ,TO_CHAR(A.ATTEND_DATE,'DY') DD,A.EMP_ID,B.NAME,A.IN_TIME,A.OUT_TIME,TO_CHAR(A.IN_TIME,'HH24:MI') IN_TIME1,
-B.BASIC_SALARY,TO_CHAR(A.OUT_TIME,'HH24:MI') OUT_TIME1,B.JOIN_DT,B.BANK_SAL_FLAG,B.EMP_AC_NO,B.EMP_AC_DATE,B.MOBILE_BANK_SAL_FLAG,B.MOBILE_AC_NO,
-B.MOBILE_AC_DATE, B.DEPT_GROUP,B.DEPT_CODE,B.DESIG_CODE,B.SALARY_TYPE,S.DESIG_GROUP ,G.DEPT_GROUP_SL
-FROM DAILY_ATTENDANCE A, EMP B, DESIGNATION S, DEPT_GROUP G
-WHERE 
-(B.DEPT_GROUP = G.DEPT_GROUP_CODE) AND
-A.COMPANY_CODE =B.COMPANY_CODE AND
-A.COMPANY_BRANCH_CODE=B.COMPANY_BRANCH_CODE AND
-A.EMP_ID=B.EMP_ID AND
-A.ATTEND_DATE IN 
-        (
-        SELECT HOLIDAY_DATE
-        FROM HOLIDAY_WEEK
-        WHERE COMPANY_CODE = $P{P_COMPANY_CODE} AND
-        COMPANY_BRANCH_CODE = $P{P_COMPANY_BRANCH_CODE} AND
-        INIT_YR(TO_CHAR(HOLIDAY_DATE,'MM/YYYY')) = INIT_YR($P{P_MNYR})
-        UNION
-        SELECT DATE_TO
+		(SELECT COUNT(*) FROM HOLIDAY
+		WHERE 
+		COMPANY_CODE           = $P{P_COMPANY_CODE} AND
+    	COMPANY_BRANCH_CODE    = $P{P_COMPANY_BRANCH_CODE} AND
+    	TO_CHAR(FROM_DATE,'MM/YYYY') = $P{P_MNYR}
+		AND FROM_DATE NOT IN 
+			(
+			SELECT HOLIDAY_DATE
+			FROM HOLIDAY_WEEK
+			WHERE 
+			COMPANY_CODE           = $P{P_COMPANY_CODE} AND
+    	COMPANY_BRANCH_CODE    = $P{P_COMPANY_BRANCH_CODE} AND
+    	TO_CHAR(HOLIDAY_DATE,'MM/YYYY') = $P{P_MNYR}
+    	UNION
+			SELECT LEAVE_DT
+   		FROM   LEAVE_APPLICATION_DTL
+   		WHERE 
+   		COMPANY_CODE           = $P{P_COMPANY_CODE} AND
+   		COMPANY_BRANCH_CODE    = $P{P_COMPANY_BRANCH_CODE} AND
+   		EMP_ID                 = X.EMP_ID AND
+   		TO_CHAR(LEAVE_DT,'MM/YYYY')= $P{P_MNYR}
+			))
+END) AS GOV_HOLIDAY,
+
+(SELECT COUNT(B.LEAVE_DT)LEAVE_DAYS
+  FROM LEAVE_APPLICATION A, LEAVE_APPLICATION_DTL B
+  WHERE
+  A.COMPANY_CODE       =B.COMPANY_CODE AND
+  A.COMPANY_BRANCH_CODE=B.COMPANY_BRANCH_CODE AND
+  A.EMP_ID             =B.EMP_ID AND
+  A.APPLICATION_DT     =B.APPLICATION_DT AND
+  A.LEAVE_TYPE_CODE    ='01' AND
+  A.EMP_ID             = X.EMP_ID AND
+  SUBSTR(TO_CHAR(B.LEAVE_DT,'DD/MM/YYYY'),4,8)=$P{P_MNYR}) AS CASUAL_LEAVE,
+  
+(SELECT COUNT(B.LEAVE_DT)LEAVE_DAYS
+  FROM LEAVE_APPLICATION A, LEAVE_APPLICATION_DTL B
+  WHERE
+  A.COMPANY_CODE       =B.COMPANY_CODE AND
+  A.COMPANY_BRANCH_CODE=B.COMPANY_BRANCH_CODE AND
+  A.EMP_ID             =B.EMP_ID AND
+  A.APPLICATION_DT     =B.APPLICATION_DT AND
+  A.LEAVE_TYPE_CODE  IN ('03') AND
+  A.EMP_ID             = X.EMP_ID AND
+  SUBSTR(TO_CHAR(B.LEAVE_DT,'DD/MM/YYYY'),4,8)=$P{P_MNYR}) AS EARN_LEAVE,
+  
+(SELECT COUNT(B.LEAVE_DT)LEAVE_DAYS
+  FROM LEAVE_APPLICATION A, LEAVE_APPLICATION_DTL B
+  WHERE
+  A.COMPANY_CODE       =B.COMPANY_CODE AND
+  A.COMPANY_BRANCH_CODE=B.COMPANY_BRANCH_CODE AND
+  A.EMP_ID             =B.EMP_ID AND
+  A.APPLICATION_DT     =B.APPLICATION_DT AND
+  A.LEAVE_TYPE_CODE    ='02' AND
+  A.EMP_ID             = X.EMP_ID AND
+  SUBSTR(TO_CHAR(B.LEAVE_DT,'DD/MM/YYYY'),4,8)=$P{P_MNYR}) AS MEDICAL_LEAVE,
+  
+(SELECT COUNT(B.LEAVE_DT)LEAVE_DAYS
+  FROM LEAVE_APPLICATION A, LEAVE_APPLICATION_DTL B
+  WHERE
+  A.COMPANY_CODE       =B.COMPANY_CODE AND
+  A.COMPANY_BRANCH_CODE=B.COMPANY_BRANCH_CODE AND
+  A.EMP_ID             =B.EMP_ID AND
+  A.APPLICATION_DT     =B.APPLICATION_DT AND
+  A.LEAVE_TYPE_CODE  IN ('04','05') AND
+  A.EMP_ID             = X.EMP_ID AND
+  SUBSTR(TO_CHAR(B.LEAVE_DT,'DD/MM/YYYY'),4,8)=$P{P_MNYR}) AS OTHERS_LEAVE,
+  
+(SELECT COUNT(ATTEND_DATE)
+	FROM   DAILY_ATTENDANCE
+	WHERE 
+        COMPANY_CODE           = $P{P_COMPANY_CODE} AND
+        COMPANY_BRANCH_CODE    = $P{P_COMPANY_BRANCH_CODE} AND
+        EMP_ID                 = X.EMP_ID AND
+        IN_TIME IS NOT NULL AND
+				TO_CHAR(ATTEND_DATE,'MM/YYYY')= $P{P_MNYR} AND
+        ATTEND_DATE NOT IN 
+				(
+			SELECT ATTEND_DATE
+			FROM HR_AUTHORIZED_ABSENT_SAL
+  			WHERE 
+			COMPANY_CODE               = $P{P_COMPANY_CODE} 
+			AND COMPANY_BRANCH_CODE    = $P{P_COMPANY_BRANCH_CODE}
+    		AND TO_CHAR(ATTEND_DATE,'MM/YYYY') = $P{P_MNYR}
+			AND EMP_ID = X.EMP_ID
+			UNION
+			SELECT MISCONDUCT_DT
+        FROM HR_DISCIPLINARY_ACTION 
+        WHERE
+        COMPANY_CODE = $P{P_COMPANY_CODE} 
+        AND COMPANY_BRANCH_CODE = $P{P_COMPANY_BRANCH_CODE}
+        AND EMP_ID = X.EMP_ID
+        AND TO_CHAR(MISCONDUCT_DT,'MM/YYYY')= $P{P_MNYR}
+				UNION
+				SELECT HOLIDAY_DATE
+				FROM HOLIDAY_WEEK
+				WHERE 
+				COMPANY_CODE           = $P{P_COMPANY_CODE} 
+        AND COMPANY_BRANCH_CODE    = $P{P_COMPANY_BRANCH_CODE}
+    		AND TO_CHAR(HOLIDAY_DATE,'MM/YYYY') = $P{P_MNYR}
+				UNION
+				SELECT FROM_DATE
         FROM HOLIDAY
-        WHERE 
-        COMPANY_CODE = $P{P_COMPANY_CODE} AND
-        COMPANY_BRANCH_CODE = $P{P_COMPANY_BRANCH_CODE} AND
-        INIT_YR(TO_CHAR(FROM_DATE,'MM/YYYY'))   = INIT_YR($P{P_MNYR})
-        ) AND
-(A.EMP_ID, A.ATTEND_DATE) NOT IN (
-        SELECT EMP_ID, ADJ_DATE
-        FROM HR_OFFDAY_ADJUST
-        WHERE 
-        COMPANY_CODE=$P{P_COMPANY_CODE} AND
-        COMPANY_BRANCH_CODE=$P{P_COMPANY_BRANCH_CODE} AND
-        INIT_YR(TO_CHAR(ADJ_DATE,'MM/YYYY')) =  INIT_YR($P{P_MNYR})
-) AND
-B.DEPT_GROUP = S.DEPT_GROUP  AND
-B.DEPT_CODE  = S.DEPT_CODE  AND
-B.DESIG_CODE = S.DESIG_CODE AND
-A.COMPANY_CODE = $P{P_COMPANY_CODE} AND
-A.COMPANY_BRANCH_CODE = $P{P_COMPANY_BRANCH_CODE} AND
-S.DESIG_GROUP   NOT IN ('FW') AND
-(S.DESIG_GROUP = $P{P_DESIG_GROUP} OR $P{P_DESIG_GROUP} IS NULL) AND
-(B.DEPT_GROUP  = $P{P_DEPT_GROUP} OR $P{P_DEPT_GROUP} IS NULL) AND
-(B.DEPT_CODE = $P{P_DEPT_CODE} OR $P{P_DEPT_CODE} IS NULL) AND
---(B.BLOCK_CODE = :P_BLOCK OR :P_BLOCK IS NULL) AND
-(A.EMP_ID = $P{P_EMP} OR $P{P_EMP} IS NULL) AND
-(B.EMP_STATUS IN('A') OR B.EMP_STATUS IN('I') AND 
-B.EMP_INACTIVE_DT > (TO_DATE('01/'||$P{P_MNYR},'DD/MM/YYYY'))) AND
-INIT_YR(TO_CHAR(A.ATTEND_DATE,'MM/YYYY')) = INIT_YR($P{P_MNYR})    
+        WHERE
+        COMPANY_CODE           = $P{P_COMPANY_CODE} 
+        AND COMPANY_BRANCH_CODE    = $P{P_COMPANY_BRANCH_CODE}
+    		AND TO_CHAR(FROM_DATE,'MM/YYYY') = $P{P_MNYR}      
+        UNION 
+        SELECT L.LEAVE_DT
+    		FROM LEAVE_APPLICATION B, LEAVE_APPLICATION_DTL L
+    		WHERE
+    		B.COMPANY_CODE = L.COMPANY_CODE 
+    		AND B.COMPANY_BRANCH_CODE = L.COMPANY_BRANCH_CODE
+    		AND B.EMP_ID = L.EMP_ID
+    		AND B.APPLICATION_DT = L.APPLICATION_DT
+    		AND B.EMP_ID = X.EMP_ID
+    		AND B.COMPANY_CODE           = $P{P_COMPANY_CODE} 
+        AND B.COMPANY_BRANCH_CODE    = $P{P_COMPANY_BRANCH_CODE}
+    		AND TO_CHAR(L.LEAVE_DT,'MM/YYYY')= $P{P_MNYR}    
+)) AS PRESENT_DAYS,
+GET_AUTHORIZE_PRESENT($P{P_COMPANY_CODE},$P{P_COMPANY_BRANCH_CODE}, X.EMP_ID, $P{P_MNYR}) as AUTHORIZE_PRESENT, 
+GET_OT_HOUR ($P{P_COMPANY_CODE},$P{P_COMPANY_BRANCH_CODE}, X.EMP_ID, X.DEPT_GROUP, X.DEPT_CODE,$P{P_MNYR}) as OT_HOUR, 
+X.MONTH_DAYS,
+X.CONFIRM_DT,
+X.EMP_INACTIVE_DT
+FROM (SELECT
+(last_day(to_date('01/'||$P{P_MNYR},'DD/MM/YYYY'))-to_date('01/'||$P{P_MNYR},'DD/MM/YYYY')+1) MONTH_DAYS,                  
+A.EMP_ID,
+B.DEPT_GROUP,
+B.CONFIRM_DT,
+B.DESIG_CODE,
+B.SALGRADE,
+250 PMEDICAL_ALL,
+200 PCONVEYANCE_ALL,
+650 FOOD_ALL,
+ROUND(NVL(A.PBASIC_SALARY,0) + NVL(A.PHOUSE_RENT,0) + nvl(A.PMEDICAL_ALL,0)+NVL(A.PCONVEYANCE_ALL,0)+NVL(A.FOOD_ALL,0)) GROSS_SAL,
+(B.NAME_BANGLA)  NAME,
+B.DEPT_CODE  ,
+D.DEPT_BANGLA_DESC dept_desc,
+B.JOIN_DT,
+B.EMP_INACTIVE_DT
+FROM MONTHLY_SALARY A, EMP B, DEPT D, DESIGNATION S, DEPT_GROUP G
 
-UNION
-
-SELECT DISTINCT A.ADJ_DATE ,TO_CHAR(A.ADJ_DATE,'DY') DD, A.EMP_ID,B.NAME, NULL,NULL, NULL,
-B.BASIC_SALARY, NULL,B.JOIN_DT,B.BANK_SAL_FLAG,B.EMP_AC_NO,B.EMP_AC_DATE,B.MOBILE_BANK_SAL_FLAG,B.MOBILE_AC_NO,
-B.MOBILE_AC_DATE, B.DEPT_GROUP,B.DEPT_CODE,B.DESIG_CODE,B.SALARY_TYPE,S.DESIG_GROUP ,G.DEPT_GROUP_SL
-FROM HR_OFFDAY_ADJUST A, EMP B, DESIGNATION S, DEPT_GROUP G
 WHERE 
-(B.DEPT_GROUP = G.DEPT_GROUP_CODE) AND
-A.COMPANY_CODE  =B.COMPANY_CODE AND
-A.COMPANY_BRANCH_CODE =B.COMPANY_BRANCH_CODE AND
-A.EMP_ID=B.EMP_ID AND
-B.DEPT_GROUP = S.DEPT_GROUP  AND
-B.DEPT_CODE = S.DEPT_CODE  AND
-B.DESIG_CODE = S.DESIG_CODE AND
-A.COMPANY_CODE = $P{P_COMPANY_CODE} AND
-A.COMPANY_BRANCH_CODE = $P{P_COMPANY_BRANCH_CODE} AND
-------S.DESIG_GROUP   NOT IN ('FW') AND
-(S.DESIG_GROUP = $P{P_DESIG_GROUP} OR $P{P_DESIG_GROUP} IS NULL) AND
-(B.DEPT_GROUP = $P{P_DEPT_GROUP} OR $P{P_DEPT_GROUP} IS NULL) AND
-(B.DEPT_CODE = $P{P_DEPT_CODE} OR $P{P_DEPT_CODE} IS NULL) AND
---(B.BLOCK_CODE   = :P_BLOCK OR :P_BLOCK IS NULL) AND
-(A.EMP_ID = $P{P_EMP} OR $P{P_EMP} IS NULL) AND
-(A.EMP_ID,A.ADJ_DATE) NOT IN (
-        SELECT EMP_ID,ADJ_DATE
-        FROM HR_OFFDAY_ADJUST
-        WHERE 
-        COMPANY_CODE=$P{P_COMPANY_CODE} AND
-        COMPANY_BRANCH_CODE=$P{P_COMPANY_BRANCH_CODE} AND
-        (OFFDAY_ADJUST IS NULL AND  LUNCH_ADJUST IS NULL) OR
-        (OFFDAY_ADJUST ='C' AND  LUNCH_ADJUST ='C') AND
-        INIT_YR(TO_CHAR(ADJ_DATE,'MM/YYYY')) =  INIT_YR($P{P_MNYR})
-) AND
-(B.EMP_STATUS IN('A') OR B.EMP_STATUS IN('I') AND 
-B.EMP_INACTIVE_DT > (TO_DATE('01/'||$P{P_MNYR},'DD/MM/YYYY'))) AND
-INIT_YR(TO_CHAR(A.ADJ_DATE ,'MM/YYYY')) = INIT_YR($P{P_MNYR})   ) X))) Y
+A.COMPANY_CODE = B.COMPANY_CODE 
+AND A.COMPANY_BRANCH_CODE = B.COMPANY_BRANCH_CODE 
+AND A.EMP_ID = B.EMP_ID
+AND B.dept_group = S.dept_group 
+AND B.dept_code  = S.dept_code
+AND B.desig_code = S.desig_code 
+AND S.DESIG_GROUP IN ('OS','FW') 
+AND S.DESIG_DESC  NOT IN ('Supervisor', 'Incharge', 'Security Guard', 'Security Asst. Supervisor', 'Security in Charge', 'Security Supervisor', 'Helper(TROLLY)', 'Cook', 'Office Asst.', 'Imam', 'Helper(COVER VAN)', 'Dellivery Man','Asst. Incharge')
+AND UPPER(S.DESIG_DESC) NOT LIKE '%DRIVER%'
+AND B.DEPT_GROUP = G.DEPT_GROUP_CODE
+AND B.DEPT_GROUP = D.DEPT_GROUP
+AND B.DEPT_CODE    = D.DEPT_CODE  
+AND A.COMPANY_CODE                          = $P{P_COMPANY_CODE}
+AND A.COMPANY_BRANCH_CODE         = $P{P_COMPANY_BRANCH_CODE}
+AND INIT_YR(A.MNYR)                             = INIT_YR($P{P_MNYR})
+AND (b.dept_group                                     = $P{P_DEPT_GROUP} or $P{P_DEPT_GROUP} is null)
+AND (b.dept_code                                      = $P{P_DEPT_CODE} or $P{P_DEPT_CODE} is null)
+AND (a.emp_id                                            = $P{P_EMP} or $P{P_EMP} is null)
+AND  A.EMP_ID IN
+(SELECT EMP_ID 
+ FROM EMP
+ WHERE
+ (DESIG_CODE, DEPT_CODE, DEPT_GROUP)
+ IN 
+  (SELECT DESIG_CODE, DEPT_CODE, DEPT_GROUP 
+  FROM USER_VS_DESIG 
+  WHERE USER_ID=USER)
+ )
 
-GROUP BY NAME, DESIGNATION, DEPARTMENT, SECTION_NAME, EMP_ID, 
-DEPT_GROUP, DEPT_CODE, DEPT_GROUP_SL, DESIG_CODE, DESIG_GROUP, JOIN_DT, EMP_AC_NO, MOBILE_AC_NO                      
+AND A.EMP_ID  NOT IN 
+(
+SELECT DISTINCT  P.EMP_ID 
+FROM LEAVE_APPLICATION P, LEAVE_APPLICATION_DTL R
+WHERE 
+P.COMPANY_CODE = R.COMPANY_CODE 
+AND P.COMPANY_BRANCH_CODE = R.COMPANY_BRANCH_CODE
+AND P.EMP_ID = R.EMP_ID
+AND P.APPLICATION_DT = R.APPLICATION_DT
+AND P.COMPANY_CODE               = $P{P_COMPANY_CODE}
+AND P.COMPANY_BRANCH_CODE  = $P{P_COMPANY_BRANCH_CODE}
+AND (P.EMP_ID = $P{P_EMP} OR $P{P_EMP} IS NULL)
+AND P.LEAVE_TYPE_CODE = '06'
+AND INIT_YR(TO_CHAR(R.LEAVE_DT,'MM/YYYY')) = INIT_YR($P{P_MNYR})
+)
 
-ORDER BY 
-DEPT_GROUP_SL, DEPT_GROUP, DEPT_CODE, DESIG_CODE, JOIN_DT,
-EMP_ID]]>
+ORDER BY G.DEPT_GROUP_SL, B.DEPT_GROUP, B.DEPT_CODE, B.DESIG_CODE,B.JOIN_DT, A.EMP_ID) X))]]>
 	</queryString>
-	<field name="NAME" class="java.lang.String">
-		<property name="com.jaspersoft.studio.field.name" value="NAME"/>
-		<property name="com.jaspersoft.studio.field.label" value="NAME"/>
-	</field>
-	<field name="EMP_ID" class="java.lang.String">
-		<property name="com.jaspersoft.studio.field.name" value="EMP_ID"/>
-		<property name="com.jaspersoft.studio.field.label" value="EMP_ID"/>
-	</field>
-	<field name="DESIGNATION" class="java.lang.String">
-		<property name="com.jaspersoft.studio.field.name" value="DESIGNATION"/>
-		<property name="com.jaspersoft.studio.field.label" value="DESIGNATION"/>
-	</field>
-	<field name="ACCOUNT_NO" class="java.lang.String">
-		<property name="com.jaspersoft.studio.field.name" value="ACCOUNT_NO"/>
-		<property name="com.jaspersoft.studio.field.label" value="ACCOUNT_NO"/>
-	</field>
-	<field name="OFFDAY_THIS_MONTH" class="java.math.BigDecimal">
-		<property name="com.jaspersoft.studio.field.name" value="OFFDAY_THIS_MONTH"/>
-		<property name="com.jaspersoft.studio.field.label" value="OFFDAY_THIS_MONTH"/>
-	</field>
-	<field name="OFFDAY_QTY" class="java.math.BigDecimal">
-		<property name="com.jaspersoft.studio.field.name" value="OFFDAY_QTY"/>
-		<property name="com.jaspersoft.studio.field.label" value="OFFDAY_QTY"/>
-	</field>
-	<field name="LUNCH_DIN_QTY" class="java.math.BigDecimal">
-		<property name="com.jaspersoft.studio.field.name" value="LUNCH_DIN_QTY"/>
-		<property name="com.jaspersoft.studio.field.label" value="LUNCH_DIN_QTY"/>
-	</field>
-	<field name="OFFDAY_RATE" class="java.math.BigDecimal">
-		<property name="com.jaspersoft.studio.field.name" value="OFFDAY_RATE"/>
-		<property name="com.jaspersoft.studio.field.label" value="OFFDAY_RATE"/>
-	</field>
-	<field name="LUNCH_DIN_RATE" class="java.math.BigDecimal">
-		<property name="com.jaspersoft.studio.field.name" value="LUNCH_DIN_RATE"/>
-		<property name="com.jaspersoft.studio.field.label" value="LUNCH_DIN_RATE"/>
-	</field>
-	<field name="OFFDAY_ALL" class="java.math.BigDecimal">
-		<property name="com.jaspersoft.studio.field.name" value="OFFDAY_ALL"/>
-		<property name="com.jaspersoft.studio.field.label" value="OFFDAY_ALL"/>
-	</field>
-	<field name="LUNCH_DIN_ALL" class="java.math.BigDecimal">
-		<property name="com.jaspersoft.studio.field.name" value="LUNCH_DIN_ALL"/>
-		<property name="com.jaspersoft.studio.field.label" value="LUNCH_DIN_ALL"/>
-	</field>
-	<field name="TOT_PAY_AMT" class="java.math.BigDecimal">
-		<property name="com.jaspersoft.studio.field.name" value="TOT_PAY_AMT"/>
-		<property name="com.jaspersoft.studio.field.label" value="TOT_PAY_AMT"/>
-	</field>
-	<field name="NET_PAYABLE_BANK" class="java.math.BigDecimal">
-		<property name="com.jaspersoft.studio.field.name" value="NET_PAYABLE_BANK"/>
-		<property name="com.jaspersoft.studio.field.label" value="NET_PAYABLE_BANK"/>
-	</field>
-	<field name="NET_PAYABLE_CASH" class="java.math.BigDecimal">
-		<property name="com.jaspersoft.studio.field.name" value="NET_PAYABLE_CASH"/>
-		<property name="com.jaspersoft.studio.field.label" value="NET_PAYABLE_CASH"/>
-	</field>
-	<field name="DEPARTMENT" class="java.lang.String">
-		<property name="com.jaspersoft.studio.field.name" value="DEPARTMENT"/>
-		<property name="com.jaspersoft.studio.field.label" value="DEPARTMENT"/>
-	</field>
-	<field name="SECTION_NAME" class="java.lang.String">
-		<property name="com.jaspersoft.studio.field.name" value="SECTION_NAME"/>
-		<property name="com.jaspersoft.studio.field.label" value="SECTION_NAME"/>
-	</field>
-	<field name="DEPT_GROUP" class="java.lang.String">
-		<property name="com.jaspersoft.studio.field.name" value="DEPT_GROUP"/>
-		<property name="com.jaspersoft.studio.field.label" value="DEPT_GROUP"/>
-	</field>
-	<field name="DEPT_CODE" class="java.lang.String">
-		<property name="com.jaspersoft.studio.field.name" value="DEPT_CODE"/>
-		<property name="com.jaspersoft.studio.field.label" value="DEPT_CODE"/>
-	</field>
-	<field name="DEPT_GROUP_SL" class="java.math.BigDecimal">
-		<property name="com.jaspersoft.studio.field.name" value="DEPT_GROUP_SL"/>
-		<property name="com.jaspersoft.studio.field.label" value="DEPT_GROUP_SL"/>
-	</field>
-	<field name="JOIN_DT" class="java.sql.Timestamp">
-		<property name="com.jaspersoft.studio.field.name" value="JOIN_DT"/>
-		<property name="com.jaspersoft.studio.field.label" value="JOIN_DT"/>
-	</field>
+	<field name="EMP_ID" class="java.lang.String"/>
+	<field name="NAME" class="java.lang.String"/>
+	<field name="DESIGNATION" class="java.lang.String"/>
+	<field name="SECTION_NAME" class="java.lang.String"/>
+	<field name="JOIN_DATE" class="java.sql.Timestamp"/>
+	<field name="GRADE" class="java.math.BigDecimal"/>
+	<field name="PBASIC_SALARY" class="java.math.BigDecimal"/>
+	<field name="PHOUSE_RENT" class="java.math.BigDecimal"/>
+	<field name="PMEDICAL_ALL" class="java.math.BigDecimal"/>
+	<field name="PCONVEYANCE_ALL" class="java.math.BigDecimal"/>
+	<field name="FOOD_ALL" class="java.math.BigDecimal"/>
+	<field name="GROSS_SAL" class="java.math.BigDecimal"/>
+	<field name="WEEK_GOV_HOLIDAY" class="java.math.BigDecimal"/>
+	<field name="CASUAL_LEAVE" class="java.math.BigDecimal"/>
+	<field name="EARN_LEAVE" class="java.math.BigDecimal"/>
+	<field name="MEDICAL_LEAVE" class="java.math.BigDecimal"/>
+	<field name="OTHERS_LEAVE" class="java.math.BigDecimal"/>
+	<field name="EL_PLUS_CL" class="java.math.BigDecimal"/>
+	<field name="TOTAL_WORKING_DAYS" class="java.math.BigDecimal"/>
+	<field name="TOTAL_PAYABLE_DAYS" class="java.math.BigDecimal"/>
+	<field name="CF_PF" class="java.math.BigDecimal"/>
+	<field name="OT_RATE" class="java.math.BigDecimal"/>
+	<field name="OT_HOUR" class="java.math.BigDecimal"/>
+	<field name="MONTH_DAYS" class="java.math.BigDecimal"/>
+	<field name="TOTAL_ABSENT" class="java.math.BigDecimal"/>
+	<field name="MONTH_NAME" class="java.lang.String"/>
+	<field name="ABSENT_DEDUCT_AMT" class="java.math.BigDecimal"/>
+	<field name="TOTAL_DEDUCT_AMT" class="java.math.BigDecimal"/>
+	<field name="PAYABLE_AMT" class="java.math.BigDecimal"/>
+	<field name="NET_PAYABLE_AMOUNT" class="java.math.BigDecimal"/>
+	<field name="OT_AMT" class="java.math.BigDecimal"/>
+	<field name="TOT_PAYABLE_AMT" class="java.math.BigDecimal"/>
 	<variable name="V_HEADER" class="java.lang.String">
 		<variableExpression><![CDATA[$F{NAME}]]></variableExpression>
-	</variable>
-	<variable name="V_SEC_OFFDAY_QTY" class="java.math.BigDecimal" resetType="Group" resetGroup="Section" calculation="Sum">
-		<variableExpression><![CDATA[$F{OFFDAY_QTY}]]></variableExpression>
-	</variable>
-	<variable name="V_SEC_LUNCH_QTY" class="java.math.BigDecimal" resetType="Group" resetGroup="Section" calculation="Sum">
-		<variableExpression><![CDATA[$F{LUNCH_DIN_QTY}]]></variableExpression>
-	</variable>
-	<variable name="V_SEC_OFFDAY_AMT" class="java.math.BigDecimal" resetType="Group" resetGroup="Section" calculation="Sum">
-		<variableExpression><![CDATA[$F{OFFDAY_ALL}]]></variableExpression>
-	</variable>
-	<variable name="V_SEC_LUNCH_AMT" class="java.math.BigDecimal" resetType="Group" resetGroup="Section" calculation="Sum">
-		<variableExpression><![CDATA[$F{LUNCH_DIN_ALL}]]></variableExpression>
-	</variable>
-	<variable name="V_SEC_CASH" class="java.math.BigDecimal" resetType="Group" resetGroup="Section" calculation="Sum">
-		<variableExpression><![CDATA[$F{NET_PAYABLE_CASH}]]></variableExpression>
-	</variable>
-	<variable name="V_SEC_BANK" class="java.math.BigDecimal" resetType="Group" resetGroup="Section" calculation="Sum">
-		<variableExpression><![CDATA[$F{NET_PAYABLE_BANK}]]></variableExpression>
-	</variable>
-	<variable name="V_GRAND_OFFDAY_QTY" class="java.math.BigDecimal" calculation="Sum">
-		<variableExpression><![CDATA[$F{OFFDAY_QTY}]]></variableExpression>
-	</variable>
-	<variable name="V_GRAND_OFFDAY_LUNCH_QTY" class="java.math.BigDecimal" calculation="Sum">
-		<variableExpression><![CDATA[$F{LUNCH_DIN_QTY}]]></variableExpression>
-	</variable>
-	<variable name="V_GRAND_OFFDAY_AMT" class="java.math.BigDecimal" calculation="Sum">
-		<variableExpression><![CDATA[$F{OFFDAY_ALL}]]></variableExpression>
-	</variable>
-	<variable name="V_GRAND_LUNCH_AMt" class="java.math.BigDecimal" calculation="Sum">
-		<variableExpression><![CDATA[$F{LUNCH_DIN_ALL}]]></variableExpression>
-	</variable>
-	<variable name="V_GRAND_BANK" class="java.math.BigDecimal" calculation="Sum">
-		<variableExpression><![CDATA[$F{NET_PAYABLE_BANK}]]></variableExpression>
-	</variable>
-	<variable name="V_GRAND_CASH" class="java.math.BigDecimal" calculation="Sum">
-		<variableExpression><![CDATA[$F{NET_PAYABLE_CASH}]]></variableExpression>
 	</variable>
 	<group name="Section">
 		<groupExpression><![CDATA[$F{SECTION_NAME}]]></groupExpression>
@@ -576,13 +627,28 @@ EMP_ID]]>
 	<background>
 		<band splitType="Stretch"/>
 	</background>
-	<title>
-		<band height="50" splitType="Stretch"/>
-	</title>
+	<pageHeader>
+		<band height="12">
+			<textField>
+				<reportElement x="720" y="2" width="68" height="10" uuid="ce56a0d9-6a41-4cf5-a1cc-998456a1e99e"/>
+				<textElement>
+					<font fontName="SutonnyMJ" size="11"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="671" y="2" width="48" height="10" uuid="718e0382-7242-4640-804c-288800a1c803"/>
+				<textElement>
+					<font fontName="SutonnyMJ" size="11" isBold="false"/>
+				</textElement>
+				<text><![CDATA[c„ôv b¤^i t]]></text>
+			</staticText>
+		</band>
+	</pageHeader>
 	<detail>
-		<band height="364" splitType="Stretch">
+		<band height="277" splitType="Stretch">
 			<frame>
-				<reportElement x="0" y="5" width="896" height="295" uuid="931ef739-6254-444b-acff-28eddb08189c"/>
+				<reportElement x="0" y="2" width="788" height="268" uuid="931ef739-6254-444b-acff-28eddb08189c"/>
 				<box>
 					<topPen lineWidth="1.0"/>
 					<leftPen lineWidth="1.0"/>
@@ -590,342 +656,621 @@ EMP_ID]]>
 					<rightPen lineWidth="1.0"/>
 				</box>
 				<rectangle>
-					<reportElement x="582" y="47" width="208" height="124" uuid="db335fe9-08bc-46a0-8011-678ce0563851"/>
+					<reportElement mode="Transparent" x="390" y="44" width="193" height="175" uuid="585b8604-1a3e-4dc7-a150-a3c397590390"/>
 				</rectangle>
 				<rectangle>
-					<reportElement x="371" y="44" width="170" height="182" uuid="585b8604-1a3e-4dc7-a150-a3c397590390"/>
+					<reportElement mode="Transparent" x="246" y="44" width="144" height="175" uuid="579a0189-4095-4f6f-a93a-4d47502d0fa1"/>
 				</rectangle>
 				<rectangle>
-					<reportElement x="181" y="44" width="170" height="200" uuid="579a0189-4095-4f6f-a93a-4d47502d0fa1"/>
+					<reportElement mode="Transparent" x="11" y="44" width="219" height="175" uuid="77e69451-8216-4ae8-9321-7a8c2a956b68"/>
 				</rectangle>
 				<rectangle>
-					<reportElement x="9" y="44" width="170" height="200" uuid="77e69451-8216-4ae8-9321-7a8c2a956b68"/>
+					<reportElement mode="Transparent" x="583" y="44" width="193" height="175" uuid="a2d703a3-2bf4-448c-94f5-9098324f3e9b">
+						<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+					</reportElement>
 				</rectangle>
 				<staticText>
-					<reportElement x="50" y="12" width="210" height="8" uuid="28784943-109c-4471-83f8-bbb562039406"/>
+					<reportElement x="26" y="11" width="210" height="10" uuid="28784943-109c-4471-83f8-bbb562039406">
+						<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+					</reportElement>
 					<textElement textAlignment="Center">
-						<font fontName="SutonnyMJ"/>
+						<font fontName="SutonnyMJ" size="11" isBold="true"/>
 					</textElement>
 					<text><![CDATA[Kvwjqvi †icwjKv wjt]]></text>
 				</staticText>
 				<staticText>
-					<reportElement x="36" y="33" width="100" height="7" uuid="6f3911c2-e779-43fa-b41f-8e3821165c32"/>
+					<reportElement x="28" y="31" width="72" height="10" uuid="6f3911c2-e779-43fa-b41f-8e3821165c32"/>
 					<textElement>
-						<font fontName="SutonnyMJ"/>
+						<font fontName="SutonnyMJ" size="11"/>
 					</textElement>
 					<text><![CDATA[gv‡mi bvg t]]></text>
 				</staticText>
 				<staticText>
-					<reportElement x="282" y="14" width="210" height="8" uuid="63bedf77-c13c-468e-98fa-feba2cfde584"/>
-					<textElement textAlignment="Center">
-						<font fontName="SutonnyMJ"/>
+					<reportElement x="264" y="11" width="210" height="10" uuid="63bedf77-c13c-468e-98fa-feba2cfde584"/>
+					<textElement textAlignment="Left">
+						<font fontName="SutonnyMJ" size="11" isBold="true"/>
 					</textElement>
 					<text><![CDATA[Kvwjqvi †icwjKv wjt]]></text>
 				</staticText>
 				<staticText>
-					<reportElement x="28" y="53" width="100" height="10" uuid="12c4a126-4440-43de-992a-a02159884956"/>
-					<textElement>
-						<font fontName="SutonnyMJ"/>
+					<reportElement x="28" y="56" width="72" height="10" uuid="12c4a126-4440-43de-992a-a02159884956"/>
+					<textElement textAlignment="Right">
+						<font fontName="SutonnyMJ" size="11"/>
 					</textElement>
 					<text><![CDATA[Kg©Pvixi bvg t]]></text>
 				</staticText>
 				<staticText>
-					<reportElement x="27" y="67" width="100" height="11" uuid="df5b69d6-848a-48ae-a92e-0baf9a21ab54"/>
-					<textElement>
-						<font fontName="SutonnyMJ"/>
+					<reportElement x="28" y="71" width="72" height="10" uuid="df5b69d6-848a-48ae-a92e-0baf9a21ab54"/>
+					<textElement textAlignment="Right">
+						<font fontName="SutonnyMJ" size="11"/>
 					</textElement>
 					<text><![CDATA[c`ex t]]></text>
 				</staticText>
 				<staticText>
-					<reportElement x="27" y="94" width="100" height="7" uuid="5ae41c04-b1de-4da6-abaf-a0bb429564f8"/>
-					<textElement>
-						<font fontName="SutonnyMJ"/>
+					<reportElement x="28" y="87" width="72" height="10" uuid="5ae41c04-b1de-4da6-abaf-a0bb429564f8"/>
+					<textElement textAlignment="Right">
+						<font fontName="SutonnyMJ" size="11"/>
 					</textElement>
 					<text><![CDATA[jvBb/‡mKkb t]]></text>
 				</staticText>
 				<staticText>
-					<reportElement x="31" y="117" width="100" height="7" uuid="4a9f2b66-18eb-4cad-8140-0c1a5f410b82"/>
-					<textElement>
-						<font fontName="SutonnyMJ"/>
+					<reportElement x="28" y="103" width="72" height="10" uuid="4a9f2b66-18eb-4cad-8140-0c1a5f410b82"/>
+					<textElement textAlignment="Right">
+						<font fontName="SutonnyMJ" size="11"/>
 					</textElement>
 					<text><![CDATA[‡MÖW t]]></text>
 				</staticText>
 				<staticText>
-					<reportElement x="30" y="143" width="100" height="7" uuid="89ae9500-e7eb-4c49-aa37-bac1ebb7fa73"/>
-					<textElement>
-						<font fontName="SutonnyMJ"/>
+					<reportElement x="28" y="119" width="72" height="10" uuid="89ae9500-e7eb-4c49-aa37-bac1ebb7fa73"/>
+					<textElement textAlignment="Right">
+						<font fontName="SutonnyMJ" size="11"/>
 					</textElement>
 					<text><![CDATA[‡gvU †eZb t]]></text>
 				</staticText>
 				<staticText>
-					<reportElement x="26" y="165" width="100" height="7" uuid="f7def096-6a17-489c-ab7d-2b89b763c05b"/>
-					<textElement>
-						<font fontName="SutonnyMJ"/>
+					<reportElement x="28" y="135" width="72" height="10" uuid="f7def096-6a17-489c-ab7d-2b89b763c05b"/>
+					<textElement textAlignment="Right">
+						<font fontName="SutonnyMJ" size="11"/>
 					</textElement>
 					<text><![CDATA[KvW© bs t]]></text>
 				</staticText>
 				<staticText>
-					<reportElement x="30" y="183" width="100" height="7" uuid="d8763301-3903-41a8-90a0-235ce08c6da9"/>
-					<textElement>
-						<font fontName="SutonnyMJ"/>
+					<reportElement x="28" y="152" width="72" height="10" uuid="d8763301-3903-41a8-90a0-235ce08c6da9"/>
+					<textElement textAlignment="Right">
+						<font fontName="SutonnyMJ" size="11"/>
 					</textElement>
 					<text><![CDATA[nvwRiv †evbvm t]]></text>
 				</staticText>
 				<staticText>
-					<reportElement x="22" y="202" width="100" height="7" uuid="4d106c21-15d0-4c32-953d-37d2765a42ce"/>
-					<textElement>
-						<font fontName="SutonnyMJ"/>
+					<reportElement x="28" y="169" width="72" height="10" uuid="4d106c21-15d0-4c32-953d-37d2765a42ce"/>
+					<textElement textAlignment="Right">
+						<font fontName="SutonnyMJ" size="11"/>
 					</textElement>
 					<text><![CDATA[IwU UvKv t]]></text>
 				</staticText>
 				<staticText>
-					<reportElement x="22" y="218" width="100" height="7" uuid="72879783-f8b4-498c-8ac8-9f1961258b78"/>
-					<textElement>
-						<font fontName="SutonnyMJ"/>
+					<reportElement x="28" y="187" width="72" height="10" uuid="72879783-f8b4-498c-8ac8-9f1961258b78"/>
+					<textElement textAlignment="Right">
+						<font fontName="SutonnyMJ" size="11"/>
 					</textElement>
 					<text><![CDATA[m‡e©v‡gvU cÖ`vb t]]></text>
 				</staticText>
 				<staticText>
-					<reportElement x="195" y="45" width="100" height="7" uuid="7b5cce3a-10b9-4e92-981e-77edc16ecc26"/>
-					<textElement>
-						<font fontName="SutonnyMJ"/>
+					<reportElement x="263" y="56" width="72" height="10" uuid="7b5cce3a-10b9-4e92-981e-77edc16ecc26"/>
+					<textElement textAlignment="Right">
+						<font fontName="SutonnyMJ" size="11"/>
 					</textElement>
 					<text><![CDATA[Kg©w`em/QzwU ]]></text>
 				</staticText>
 				<staticText>
-					<reportElement x="195" y="60" width="100" height="7" uuid="8e3259af-a1d4-494b-ae5f-40e96437670f"/>
-					<textElement>
-						<font fontName="SutonnyMJ"/>
+					<reportElement x="263" y="71" width="72" height="10" uuid="8e3259af-a1d4-494b-ae5f-40e96437670f"/>
+					<textElement textAlignment="Right">
+						<font fontName="SutonnyMJ" size="11"/>
 					</textElement>
 					<text><![CDATA[cwÄKv w`em t]]></text>
 				</staticText>
 				<staticText>
-					<reportElement x="195" y="76" width="100" height="7" uuid="1a112e89-8a9e-4ace-89ab-f9d1fa6be170"/>
-					<textElement>
-						<font fontName="SutonnyMJ"/>
+					<reportElement x="263" y="87" width="72" height="10" uuid="1a112e89-8a9e-4ace-89ab-f9d1fa6be170"/>
+					<textElement textAlignment="Right">
+						<font fontName="SutonnyMJ" size="11"/>
 					</textElement>
 					<text><![CDATA[Dcw¯’wZ (w`b) t]]></text>
 				</staticText>
 				<staticText>
-					<reportElement x="192" y="92" width="100" height="7" uuid="f8f1adce-f640-4515-b236-f2520b877818"/>
-					<textElement>
-						<font fontName="SutonnyMJ"/>
+					<reportElement x="263" y="103" width="72" height="10" uuid="f8f1adce-f640-4515-b236-f2520b877818"/>
+					<textElement textAlignment="Right">
+						<font fontName="SutonnyMJ" size="11"/>
 					</textElement>
 					<text><![CDATA[Kv‡Ri w`b t]]></text>
 				</staticText>
 				<staticText>
-					<reportElement x="196" y="111" width="100" height="7" uuid="43994482-8cc0-4d5f-a280-40228649219c"/>
-					<textElement>
-						<font fontName="SutonnyMJ"/>
+					<reportElement x="263" y="135" width="72" height="10" uuid="43994482-8cc0-4d5f-a280-40228649219c"/>
+					<textElement textAlignment="Right">
+						<font fontName="SutonnyMJ" size="11"/>
 					</textElement>
 					<text><![CDATA[mv: QzwU t]]></text>
 				</staticText>
 				<staticText>
-					<reportElement x="195" y="132" width="100" height="7" uuid="c494d990-8043-40a8-a516-cdb104713af8"/>
-					<textElement>
-						<font fontName="SutonnyMJ"/>
+					<reportElement x="263" y="152" width="72" height="10" uuid="c494d990-8043-40a8-a516-cdb104713af8"/>
+					<textElement textAlignment="Right">
+						<font fontName="SutonnyMJ" size="11"/>
 					</textElement>
 					<text><![CDATA[Drme QzwU t]]></text>
 				</staticText>
 				<staticText>
-					<reportElement x="197" y="148" width="100" height="7" uuid="8ccd715c-805a-4182-9f02-6abcddc1cce0"/>
-					<textElement>
-						<font fontName="SutonnyMJ"/>
+					<reportElement x="263" y="169" width="72" height="10" uuid="8ccd715c-805a-4182-9f02-6abcddc1cce0"/>
+					<textElement textAlignment="Right">
+						<font fontName="SutonnyMJ" size="11"/>
 					</textElement>
 					<text><![CDATA[‰b:/AwR©Z QzwU t]]></text>
 				</staticText>
 				<staticText>
-					<reportElement x="197" y="166" width="100" height="7" uuid="ea5f7c82-adec-4777-9fae-0a9d553c4985"/>
-					<textElement>
-						<font fontName="SutonnyMJ"/>
+					<reportElement x="263" y="187" width="72" height="10" uuid="ea5f7c82-adec-4777-9fae-0a9d553c4985"/>
+					<textElement textAlignment="Right">
+						<font fontName="SutonnyMJ" size="11"/>
 					</textElement>
 					<text><![CDATA[‡gwW:QzwU t]]></text>
 				</staticText>
 				<staticText>
-					<reportElement x="190" y="184" width="100" height="7" uuid="b9e6a42d-f445-4cd0-be53-c226e1613a42"/>
-					<textElement>
-						<font fontName="SutonnyMJ"/>
+					<reportElement x="263" y="204" width="72" height="10" uuid="b9e6a42d-f445-4cd0-be53-c226e1613a42"/>
+					<textElement textAlignment="Right">
+						<font fontName="SutonnyMJ" size="11"/>
 					</textElement>
 					<text><![CDATA[Aby:(w`b) t]]></text>
 				</staticText>
 				<staticText>
-					<reportElement x="401" y="81" width="100" height="7" uuid="2c2f4348-7148-428b-95c2-4bd0eec5110d"/>
-					<textElement textAlignment="Left">
-						<font fontName="SutonnyMJ"/>
+					<reportElement x="399" y="87" width="98" height="10" uuid="2c2f4348-7148-428b-95c2-4bd0eec5110d"/>
+					<textElement textAlignment="Right">
+						<font fontName="SutonnyMJ" size="11"/>
 					</textElement>
 					<text><![CDATA[evox evov t]]></text>
 				</staticText>
 				<staticText>
-					<reportElement x="401" y="137" width="100" height="7" uuid="7d3e1ec2-3d15-4255-8cb3-8cdb8db0e554"/>
-					<textElement textAlignment="Left">
-						<font fontName="SutonnyMJ"/>
+					<reportElement x="399" y="135" width="98" height="10" uuid="7d3e1ec2-3d15-4255-8cb3-8cdb8db0e554"/>
+					<textElement textAlignment="Right">
+						<font fontName="SutonnyMJ" size="11"/>
 					</textElement>
 					<text><![CDATA[Lv`¨ fvZv t]]></text>
 				</staticText>
 				<staticText>
-					<reportElement x="401" y="65" width="100" height="7" uuid="bac5ee90-2cc4-4d44-b0bb-def73ec86f25"/>
-					<textElement textAlignment="Left">
-						<font fontName="SutonnyMJ"/>
+					<reportElement x="399" y="71" width="98" height="10" uuid="bac5ee90-2cc4-4d44-b0bb-def73ec86f25"/>
+					<textElement textAlignment="Right">
+						<font fontName="SutonnyMJ" size="11"/>
 					</textElement>
 					<text><![CDATA[g~j †eZb t]]></text>
 				</staticText>
 				<staticText>
-					<reportElement x="396" y="189" width="100" height="7" uuid="ccd67fc8-a77d-47b8-b0da-d51095042f27"/>
-					<textElement textAlignment="Left">
-						<font fontName="SutonnyMJ"/>
+					<reportElement x="399" y="187" width="98" height="10" uuid="ccd67fc8-a77d-47b8-b0da-d51095042f27"/>
+					<textElement textAlignment="Right">
+						<font fontName="SutonnyMJ" size="11"/>
 					</textElement>
 					<text><![CDATA[IwU N›Uv t]]></text>
 				</staticText>
 				<staticText>
-					<reportElement x="401" y="50" width="100" height="7" uuid="2bf131b5-bb89-4b82-8a21-045aff450dd5"/>
-					<textElement textAlignment="Left">
-						<font fontName="SutonnyMJ"/>
+					<reportElement x="399" y="56" width="98" height="10" uuid="2bf131b5-bb89-4b82-8a21-045aff450dd5"/>
+					<textElement textAlignment="Right">
+						<font fontName="SutonnyMJ" size="11"/>
 					</textElement>
 					<text><![CDATA[gRywi/Ifvi UvBg]]></text>
 				</staticText>
 				<staticText>
-					<reportElement x="398" y="97" width="100" height="7" uuid="7628f54a-48ee-4c0a-85a1-7a24b6f75fbb"/>
-					<textElement textAlignment="Left">
-						<font fontName="SutonnyMJ"/>
+					<reportElement x="399" y="103" width="98" height="10" uuid="7628f54a-48ee-4c0a-85a1-7a24b6f75fbb"/>
+					<textElement textAlignment="Right">
+						<font fontName="SutonnyMJ" size="11"/>
 					</textElement>
-					<text><![CDATA[wPwKrmv fvZvt]]></text>
+					<text><![CDATA[wPwKrmv fvZv t
+]]></text>
 				</staticText>
 				<staticText>
-					<reportElement x="402" y="116" width="100" height="7" uuid="fc2c8d05-e9b5-415d-9568-bc8d7082e073"/>
-					<textElement textAlignment="Left">
-						<font fontName="SutonnyMJ"/>
+					<reportElement x="399" y="119" width="98" height="10" uuid="fc2c8d05-e9b5-415d-9568-bc8d7082e073"/>
+					<textElement textAlignment="Right">
+						<font fontName="SutonnyMJ" size="11"/>
 					</textElement>
 					<text><![CDATA[hvZvqvZ fvZv t]]></text>
 				</staticText>
 				<staticText>
-					<reportElement x="403" y="153" width="100" height="7" uuid="be17d2b2-3282-46e6-901d-6318c9c7280d"/>
-					<textElement textAlignment="Left">
-						<font fontName="SutonnyMJ"/>
+					<reportElement x="399" y="152" width="98" height="10" uuid="be17d2b2-3282-46e6-901d-6318c9c7280d"/>
+					<textElement textAlignment="Right">
+						<font fontName="SutonnyMJ" size="11"/>
 					</textElement>
 					<text><![CDATA[‡gvU †eZb t]]></text>
 				</staticText>
 				<staticText>
-					<reportElement x="403" y="171" width="100" height="7" uuid="19cec6ba-8622-438b-89b4-fda249d6b62c"/>
-					<textElement textAlignment="Left">
-						<font fontName="SutonnyMJ"/>
+					<reportElement x="399" y="169" width="98" height="10" uuid="19cec6ba-8622-438b-89b4-fda249d6b62c"/>
+					<textElement textAlignment="Right">
+						<font fontName="SutonnyMJ" size="11"/>
 					</textElement>
-					<text><![CDATA[Abycw¯’wZ/cªwf‡W›U UvKv t]]></text>
+					<text><![CDATA[Abycw¯’wZ/cªwf‡W›U UvKv t
+]]></text>
 				</staticText>
 				<staticText>
-					<reportElement x="394" y="203" width="100" height="7" uuid="5e66a8a3-5c68-4e9c-80e4-3c2b3e33e407"/>
-					<textElement textAlignment="Left">
-						<font fontName="SutonnyMJ"/>
+					<reportElement x="399" y="204" width="98" height="10" uuid="5e66a8a3-5c68-4e9c-80e4-3c2b3e33e407"/>
+					<textElement textAlignment="Right">
+						<font fontName="SutonnyMJ" size="11"/>
 					</textElement>
 					<text><![CDATA[IwU nvi t]]></text>
 				</staticText>
 				<staticText>
-					<reportElement x="251" y="31" width="100" height="7" uuid="a47a1121-c5a8-460e-a95c-8a1d21485cec"/>
+					<reportElement x="264" y="31" width="60" height="10" uuid="a47a1121-c5a8-460e-a95c-8a1d21485cec"/>
 					<textElement>
-						<font fontName="SutonnyMJ"/>
+						<font fontName="SutonnyMJ" size="11"/>
 					</textElement>
 					<text><![CDATA[Kg©Pvixi bvg t]]></text>
 				</staticText>
 				<staticText>
-					<reportElement x="421" y="32" width="100" height="7" uuid="fa3de14f-eaa7-4447-a31a-ed03dcfa9972"/>
+					<reportElement x="440" y="31" width="36" height="10" uuid="fa3de14f-eaa7-4447-a31a-ed03dcfa9972"/>
 					<textElement>
-						<font fontName="SutonnyMJ"/>
+						<font fontName="SutonnyMJ" size="11"/>
 					</textElement>
 					<text><![CDATA[KvW© bs t]]></text>
 				</staticText>
 				<staticText>
-					<reportElement x="641" y="34" width="100" height="7" uuid="b3193c6c-260d-4646-bbcb-aba883617008"/>
+					<reportElement x="631" y="31" width="36" height="10" uuid="b3193c6c-260d-4646-bbcb-aba883617008"/>
 					<textElement>
-						<font fontName="SutonnyMJ"/>
+						<font fontName="SutonnyMJ" size="11"/>
 					</textElement>
-					<text><![CDATA[‡mKkb t]]></text>
+					<text><![CDATA[‡mKkb t
+]]></text>
 				</staticText>
 				<staticText>
-					<reportElement x="591" y="119" width="100" height="7" uuid="884e15f8-f90a-4075-8a9a-7cb89b68b101"/>
-					<textElement>
-						<font fontName="SutonnyMJ"/>
+					<reportElement x="596" y="169" width="84" height="10" uuid="884e15f8-f90a-4075-8a9a-7cb89b68b101"/>
+					<textElement textAlignment="Right">
+						<font fontName="SutonnyMJ" size="11"/>
 					</textElement>
 					<text><![CDATA[ivR¯^ (KZ©b) t]]></text>
 				</staticText>
 				<staticText>
-					<reportElement x="590" y="84" width="100" height="7" uuid="94984ba0-83eb-4a3a-a9f4-4565c6f59675"/>
-					<textElement>
-						<font fontName="SutonnyMJ"/>
+					<reportElement x="596" y="87" width="84" height="10" uuid="94984ba0-83eb-4a3a-a9f4-4565c6f59675"/>
+					<textElement textAlignment="Right">
+						<font fontName="SutonnyMJ" size="11"/>
 					</textElement>
 					<text><![CDATA[IwU UvKvt]]></text>
 				</staticText>
 				<staticText>
-					<reportElement x="590" y="68" width="100" height="7" uuid="5d85d7b5-5ecd-48c2-8e42-67965e1629ad"/>
-					<textElement>
-						<font fontName="SutonnyMJ"/>
+					<reportElement x="596" y="71" width="84" height="10" uuid="5d85d7b5-5ecd-48c2-8e42-67965e1629ad"/>
+					<textElement textAlignment="Right">
+						<font fontName="SutonnyMJ" size="11"/>
 					</textElement>
 					<text><![CDATA[nvRxiv †evbvm t]]></text>
 				</staticText>
 				<staticText>
-					<reportElement x="587" y="100" width="100" height="7" uuid="2de6ae0a-13c8-4b16-a1a3-4d0233f32c1b"/>
-					<textElement>
-						<font fontName="SutonnyMJ"/>
+					<reportElement x="596" y="152" width="84" height="10" uuid="2de6ae0a-13c8-4b16-a1a3-4d0233f32c1b"/>
+					<textElement textAlignment="Right">
+						<font fontName="SutonnyMJ" size="11"/>
 					</textElement>
 					<text><![CDATA[me©‡gvU cÖvc¨ t]]></text>
 				</staticText>
 				<staticText>
-					<reportElement x="590" y="140" width="100" height="7" uuid="9a301351-59fa-49b3-9b1c-75970f58d41d"/>
-					<textElement>
-						<font fontName="SutonnyMJ"/>
+					<reportElement x="596" y="187" width="84" height="10" uuid="9a301351-59fa-49b3-9b1c-75970f58d41d"/>
+					<textElement textAlignment="Right">
+						<font fontName="SutonnyMJ" size="11"/>
 					</textElement>
 					<text><![CDATA[me©‡gvU cÖ`vb t]]></text>
 				</staticText>
 				<staticText>
-					<reportElement x="590" y="53" width="100" height="7" uuid="81707dc9-7afd-477c-9c43-5a8f5b5b6042"/>
-					<textElement>
-						<font fontName="SutonnyMJ"/>
+					<reportElement x="596" y="56" width="84" height="10" uuid="81707dc9-7afd-477c-9c43-5a8f5b5b6042"/>
+					<textElement textAlignment="Right">
+						<font fontName="SutonnyMJ" size="11"/>
 					</textElement>
 					<text><![CDATA[cÖvc¨ †eZb t]]></text>
 				</staticText>
 				<staticText>
-					<reportElement x="711" y="251" width="100" height="7" uuid="1f76acd6-2503-47ef-b813-8d7163a49bda"/>
-					<textElement>
-						<font fontName="SutonnyMJ"/>
+					<reportElement x="617" y="251" width="100" height="10" uuid="1f76acd6-2503-47ef-b813-8d7163a49bda"/>
+					<textElement textAlignment="Center">
+						<font fontName="SutonnyMJ" size="11"/>
 					</textElement>
 					<text><![CDATA[KZ…©cÿ ]]></text>
 				</staticText>
 				<staticText>
-					<reportElement x="81" y="261" width="100" height="7" uuid="30b8077f-89e0-434e-86b7-0e092ce704c9"/>
-					<textElement>
-						<font fontName="SutonnyMJ"/>
+					<reportElement x="60" y="251" width="100" height="10" uuid="30b8077f-89e0-434e-86b7-0e092ce704c9"/>
+					<textElement textAlignment="Center">
+						<font fontName="SutonnyMJ" size="11"/>
 					</textElement>
 					<text><![CDATA[MÖnxZvi ¯^vÿi ]]></text>
 				</staticText>
 				<staticText>
-					<reportElement x="581" y="8" width="100" height="7" uuid="549fac7c-5635-4576-881e-bb81f11e8dbe"/>
+					<reportElement x="557" y="11" width="28" height="10" uuid="549fac7c-5635-4576-881e-bb81f11e8dbe"/>
 					<textElement>
-						<font fontName="SutonnyMJ"/>
+						<font fontName="SutonnyMJ" size="11"/>
 					</textElement>
 					<text><![CDATA[µ bs]]></text>
 				</staticText>
 				<staticText>
-					<reportElement x="751" y="9" width="68" height="7" uuid="8a92970a-b0bc-4d6d-9199-f3f82997c52f"/>
+					<reportElement x="640" y="11" width="52" height="10" uuid="8a92970a-b0bc-4d6d-9199-f3f82997c52f"/>
 					<textElement>
-						<font fontName="SutonnyMJ"/>
+						<font fontName="SutonnyMJ" size="11"/>
 					</textElement>
 					<text><![CDATA[gv‡mi bvg t]]></text>
 				</staticText>
-				<staticText>
-					<reportElement x="581" y="-49" width="100" height="7" uuid="718e0382-7242-4640-804c-288800a1c803"/>
-					<textElement>
-						<font fontName="SutonnyMJ"/>
+				<line>
+					<reportElement x="617" y="245" width="100" height="1" uuid="0a532cda-b18c-4379-b495-b061e22f9607">
+						<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+					</reportElement>
+				</line>
+				<line>
+					<reportElement x="60" y="245" width="100" height="1" uuid="14ed0d9a-be59-4281-84e1-f81b61864d8e">
+						<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+					</reportElement>
+				</line>
+				<textField>
+					<reportElement x="110" y="56" width="110" height="10" uuid="2d1a581b-6aae-42a5-aad7-bd8ae7efed7f"/>
+					<textElement textAlignment="Left">
+						<font fontName="SutonnyMJ" size="11"/>
 					</textElement>
-					<text><![CDATA[c„ôv b¤^i t]]></text>
-				</staticText>
-				<line>
-					<reportElement x="681" y="245" width="100" height="1" uuid="0a532cda-b18c-4379-b495-b061e22f9607">
-						<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
-					</reportElement>
-				</line>
-				<line>
-					<reportElement x="71" y="258" width="100" height="1" uuid="14ed0d9a-be59-4281-84e1-f81b61864d8e">
-						<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
-					</reportElement>
-				</line>
+					<textFieldExpression><![CDATA[$F{NAME}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="110" y="71" width="110" height="10" uuid="28f6bec6-72ee-450a-943d-ea77dc6baca7"/>
+					<textElement textAlignment="Left">
+						<font fontName="SutonnyMJ" size="11"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{DESIGNATION}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="110" y="87" width="110" height="10" uuid="6eb3b4c0-4d9e-4d30-ab60-87c3e7fd9ee7"/>
+					<textElement textAlignment="Left">
+						<font fontName="SutonnyMJ" size="11"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{SECTION_NAME}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="110" y="103" width="110" height="10" uuid="8b960bad-b464-49aa-81d8-635760c175e6"/>
+					<textElement textAlignment="Left">
+						<font fontName="SutonnyMJ" size="11"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{GRADE}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="110" y="119" width="110" height="10" uuid="5d782326-ebbc-4121-b803-1c27b58d584c"/>
+					<textElement textAlignment="Left">
+						<font fontName="SutonnyMJ" size="11"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{GROSS_SAL}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="110" y="135" width="110" height="10" uuid="94b73c99-5eec-4000-8f79-e2be647714ae"/>
+					<textElement textAlignment="Left">
+						<font fontName="SutonnyMJ" size="11"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{EMP_ID}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="110" y="152" width="110" height="10" uuid="71e309c7-fdcf-4566-9dae-eaeb670f3e71"/>
+					<textElement textAlignment="Left">
+						<font fontName="SutonnyMJ" size="11"/>
+					</textElement>
+					<textFieldExpression><![CDATA[""]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="110" y="169" width="110" height="10" uuid="a4ce102a-d095-4457-a73e-350fb18aaf0b"/>
+					<textElement textAlignment="Left">
+						<font fontName="SutonnyMJ" size="11"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{OT_AMT}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="110" y="187" width="110" height="10" uuid="a7861a0c-24d1-4cdc-a732-20d0563cc3f2"/>
+					<textElement textAlignment="Left">
+						<font fontName="SutonnyMJ" size="11"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{TOT_PAYABLE_AMT}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="338" y="71" width="42" height="10" uuid="a71e6814-dd58-4058-a89b-f4fe8e994017"/>
+					<textElement textAlignment="Right">
+						<font fontName="SutonnyMJ" size="11"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{MONTH_DAYS}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="338" y="87" width="42" height="10" uuid="4499c3cf-a09b-4803-97cb-2c7901429029"/>
+					<textElement textAlignment="Right">
+						<font fontName="SutonnyMJ" size="11"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{TOTAL_PAYABLE_DAYS}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="338" y="103" width="42" height="10" uuid="22592b21-00d3-4d0f-87ca-11b06004ab41"/>
+					<textElement textAlignment="Right">
+						<font fontName="SutonnyMJ" size="11"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{TOTAL_WORKING_DAYS}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="338" y="135" width="42" height="10" uuid="24fdc30f-b347-4e6e-8703-dc91b6f749c9"/>
+					<textElement textAlignment="Right">
+						<font fontName="SutonnyMJ" size="11"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{WEEK_GOV_HOLIDAY}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="338" y="152" width="42" height="10" uuid="7d9d7316-5d38-442f-ad19-b966fa4ffb12"/>
+					<textElement textAlignment="Right">
+						<font fontName="SutonnyMJ" size="11"/>
+					</textElement>
+					<textFieldExpression><![CDATA[" "]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="338" y="169" width="42" height="10" uuid="7cec6fa2-abe4-4bef-b925-e809651c73b6"/>
+					<textElement textAlignment="Right">
+						<font fontName="SutonnyMJ" size="11"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{EL_PLUS_CL}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="338" y="187" width="42" height="10" uuid="c56f7234-67ed-46e1-a4d4-39c03b195e7a"/>
+					<textElement textAlignment="Right">
+						<font fontName="SutonnyMJ" size="11"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{MEDICAL_LEAVE}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="338" y="204" width="42" height="10" uuid="142a7dd7-516b-4eba-93da-7d4bf197443d"/>
+					<textElement textAlignment="Right">
+						<font fontName="SutonnyMJ" size="11"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{TOTAL_ABSENT}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="506" y="71" width="64" height="10" uuid="dc64dee5-5c86-45a3-84d5-f9f8d90f7e0c"/>
+					<textElement textAlignment="Right">
+						<font fontName="SutonnyMJ" size="11"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{PBASIC_SALARY}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="506" y="87" width="64" height="10" uuid="8a680530-79fb-4e48-aebe-761192c355a4"/>
+					<textElement textAlignment="Right">
+						<font fontName="SutonnyMJ" size="11"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{PHOUSE_RENT}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="506" y="103" width="64" height="10" uuid="17f4f510-5eda-4378-bc2c-ca6f087fd643"/>
+					<textElement textAlignment="Right">
+						<font fontName="SutonnyMJ" size="11"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{PMEDICAL_ALL}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="506" y="119" width="64" height="10" uuid="42b12ce1-a2a7-4f58-8303-4a9428227d28"/>
+					<textElement textAlignment="Right">
+						<font fontName="SutonnyMJ" size="11"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{PCONVEYANCE_ALL}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="506" y="135" width="64" height="10" uuid="688817ce-7c6a-4631-a09c-675fec518220"/>
+					<textElement textAlignment="Right">
+						<font fontName="SutonnyMJ" size="11"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{FOOD_ALL}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="506" y="152" width="64" height="10" uuid="37ecaf69-0059-4677-a248-4f7691697627"/>
+					<textElement textAlignment="Right">
+						<font fontName="SutonnyMJ" size="11"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{GROSS_SAL}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="506" y="169" width="64" height="10" uuid="b807574a-bf24-41f8-839f-a212f16edc02"/>
+					<textElement textAlignment="Right">
+						<font fontName="SutonnyMJ" size="11"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{TOTAL_DEDUCT_AMT}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="506" y="187" width="64" height="10" uuid="e6836b74-e96b-4962-b3a4-2a759b23923a"/>
+					<textElement textAlignment="Right">
+						<font fontName="SutonnyMJ" size="11"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{OT_HOUR}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="506" y="204" width="64" height="10" uuid="ce3b22d1-64c8-4870-a8ec-0232e3c56229"/>
+					<textElement textAlignment="Right">
+						<font fontName="SutonnyMJ" size="11"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{OT_RATE}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="689" y="56" width="72" height="10" uuid="d383d26d-4649-4bc6-b67a-cfb1b5dc0827"/>
+					<textElement textAlignment="Right">
+						<font fontName="SutonnyMJ" size="11"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{NET_PAYABLE_AMOUNT}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="689" y="71" width="72" height="10" uuid="0ef45a15-f1e8-4e6f-805c-3916e5de249a"/>
+					<textElement textAlignment="Right">
+						<font fontName="SutonnyMJ" size="11"/>
+					</textElement>
+					<textFieldExpression><![CDATA[" "]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="689" y="87" width="72" height="10" uuid="71164061-c443-4613-81e4-0654fb666cc0"/>
+					<textElement textAlignment="Right">
+						<font fontName="SutonnyMJ" size="11"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{OT_AMT}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="689" y="152" width="72" height="10" uuid="b96a6cec-e723-4cb1-8825-94f4c82594f1"/>
+					<textElement textAlignment="Right">
+						<font fontName="SutonnyMJ" size="11"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{TOT_PAYABLE_AMT}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="689" y="169" width="72" height="10" uuid="3527f66a-7e28-4bc8-9828-ff797dce4bd9"/>
+					<textElement textAlignment="Right">
+						<font fontName="SutonnyMJ" size="11"/>
+					</textElement>
+					<textFieldExpression><![CDATA[" "]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="689" y="187" width="72" height="10" uuid="802789b7-5183-4838-ad26-611c9e40bab2"/>
+					<textElement textAlignment="Right">
+						<font fontName="SutonnyMJ" size="11"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{TOT_PAYABLE_AMT}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="110" y="31" width="124" height="10" uuid="e6c7266d-0189-4415-87d8-ace05c7c9af4"/>
+					<textElement textAlignment="Left">
+						<font fontName="SutonnyMJ" size="11"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{MONTH_NAME}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="324" y="31" width="112" height="10" uuid="918d55ea-aac7-4000-897d-d7f5b66e5c21"/>
+					<textElement>
+						<font fontName="SutonnyMJ" size="11"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{NAME}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="476" y="31" width="74" height="10" uuid="c6ad328b-edcb-4732-b279-8df2ff25babe"/>
+					<textElement>
+						<font fontName="SutonnyMJ" size="11"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{EMP_ID}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="550" y="31" width="80" height="10" uuid="348a42ce-910a-4ca5-b2ae-d0fc022de79f"/>
+					<textElement>
+						<font fontName="SutonnyMJ" size="11"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{DESIGNATION}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="668" y="31" width="106" height="10" uuid="a594324e-ae6b-4f73-a3bf-044fc8f4d55e"/>
+					<textElement>
+						<font fontName="SutonnyMJ" size="11"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{SECTION_NAME}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="693" y="11" width="82" height="10" uuid="f7f263d7-4096-4091-b2d6-e8ad7aa4f2fa"/>
+					<textElement>
+						<font fontName="SutonnyMJ" size="11"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{MONTH_NAME}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="584" y="9" width="32" height="14" uuid="51928a9b-a628-4725-8cd9-8b1a2d5a8576"/>
+					<box topPadding="2" leftPadding="2" bottomPadding="2" rightPadding="2">
+						<topPen lineWidth="1.0"/>
+						<leftPen lineWidth="1.0"/>
+						<bottomPen lineWidth="1.0"/>
+						<rightPen lineWidth="1.0"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="SutonnyMJ" size="11"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{REPORT_COUNT}]]></textFieldExpression>
+				</textField>
 			</frame>
 		</band>
 	</detail>

@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Created with Jaspersoft Studio version 6.3.1.final using JasperReports Library version 6.3.1  -->
-<!-- 2020-11-14T21:44:44 -->
+<!-- Created with Jaspersoft Studio version 6.3.0.final using JasperReports Library version 6.3.0  -->
+<!-- 2020-11-28T17:00:11 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="HRM_OFFDAY_ALLOWANCE_SUMMARY" pageWidth="1050" pageHeight="750" orientation="Landscape" columnWidth="1010" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" isIgnorePagination="true" uuid="62d0349b-7ae0-4e9d-9b93-e2c3e0b912f3">
 	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
-	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="KALYAR"/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="KALYAR "/>
 	<property name="com.jaspersoft.studio.data.sql.SQLQueryDesigner.sash.w1" value="0"/>
 	<property name="com.jaspersoft.studio.data.sql.SQLQueryDesigner.sash.w2" value="1000"/>
 	<subDataset name="COMPANY_INFO" uuid="6e0d2f84-e900-408a-a061-7a1a8a07a779">
@@ -622,7 +622,7 @@ EMP_ID]]>
 					<box>
 						<pen lineWidth="1.0"/>
 					</box>
-					<textField pattern="#,##0.###;#,##0.###-">
+					<textField pattern="" isBlankWhenNull="true">
 						<reportElement x="464" y="0" width="46" height="18" uuid="42c16e32-8c1c-44b0-a05b-9eb1ce354b5c">
 							<property name="com.jaspersoft.studio.unit.height" value="px"/>
 						</reportElement>
@@ -634,7 +634,7 @@ EMP_ID]]>
 						</textElement>
 						<textFieldExpression><![CDATA[$V{V_SEC_OFFDAY_QTY}]]></textFieldExpression>
 					</textField>
-					<textField pattern="#,##0.###;#,##0.###-">
+					<textField pattern="" isBlankWhenNull="true">
 						<reportElement x="510" y="0" width="58" height="18" uuid="a6be2246-e536-48e2-8515-2443bed6c191">
 							<property name="com.jaspersoft.studio.unit.height" value="px"/>
 						</reportElement>
@@ -646,7 +646,7 @@ EMP_ID]]>
 						</textElement>
 						<textFieldExpression><![CDATA[$V{V_SEC_LUNCH_QTY}]]></textFieldExpression>
 					</textField>
-					<textField pattern="#,##0.###;#,##0.###-">
+					<textField pattern="" isBlankWhenNull="true">
 						<reportElement x="670" y="0" width="50" height="18" uuid="8364a9ff-d32c-445e-8432-59f285bdc8a5">
 							<property name="com.jaspersoft.studio.unit.height" value="px"/>
 						</reportElement>
@@ -658,7 +658,7 @@ EMP_ID]]>
 						</textElement>
 						<textFieldExpression><![CDATA[$V{V_SEC_OFFDAY_AMT}]]></textFieldExpression>
 					</textField>
-					<textField pattern="#,##0.###;#,##0.###-">
+					<textField pattern="" isBlankWhenNull="true">
 						<reportElement x="720" y="0" width="57" height="18" uuid="e9a0d896-f63a-4de1-a1e2-a570b80c589d">
 							<property name="com.jaspersoft.studio.unit.height" value="px"/>
 						</reportElement>
@@ -670,7 +670,7 @@ EMP_ID]]>
 						</textElement>
 						<textFieldExpression><![CDATA[$V{V_SEC_LUNCH_AMT}]]></textFieldExpression>
 					</textField>
-					<textField pattern="#,##0.###;#,##0.###-">
+					<textField pattern="" isBlankWhenNull="true">
 						<reportElement x="777" y="0" width="72" height="18" uuid="648c5755-8fca-434a-ac92-a13860af41f2">
 							<property name="com.jaspersoft.studio.unit.height" value="px"/>
 						</reportElement>
@@ -682,7 +682,7 @@ EMP_ID]]>
 						</textElement>
 						<textFieldExpression><![CDATA[$V{V_SEC_BANK}]]></textFieldExpression>
 					</textField>
-					<textField pattern="#,##0.###;#,##0.###-">
+					<textField pattern="" isBlankWhenNull="true">
 						<reportElement x="849" y="0" width="70" height="18" uuid="6e30d416-0221-4b94-8faa-d76104f01d09">
 							<property name="com.jaspersoft.studio.unit.height" value="px"/>
 						</reportElement>
@@ -713,7 +713,7 @@ EMP_ID]]>
 	<title>
 		<band height="119" splitType="Stretch">
 			<textField>
-				<reportElement x="900" y="92" width="50" height="19" uuid="0f9fe99c-329e-4556-8472-af2edd789f5f"/>
+				<reportElement x="901" y="92" width="50" height="19" uuid="0f9fe99c-329e-4556-8472-af2edd789f5f"/>
 				<textElement textAlignment="Left">
 					<font isBold="true"/>
 				</textElement>
@@ -727,7 +727,7 @@ EMP_ID]]>
 				<textFieldExpression><![CDATA[" of " + $V{PAGE_NUMBER}]]></textFieldExpression>
 			</textField>
 			<textField pattern="MMMMM dd, yyyy">
-				<reportElement x="55" y="91" width="150" height="19" uuid="89cfa26e-922d-4841-a8f8-53e3b39ea66a"/>
+				<reportElement x="55" y="92" width="150" height="19" uuid="89cfa26e-922d-4841-a8f8-53e3b39ea66a"/>
 				<textElement textAlignment="Left" verticalAlignment="Middle">
 					<font isBold="true"/>
 				</textElement>
@@ -978,7 +978,7 @@ EMP_ID]]>
 				</box>
 				<textFieldExpression><![CDATA[$F{DESIGNATION}]]></textFieldExpression>
 			</textField>
-			<textField>
+			<textField isBlankWhenNull="true">
 				<reportElement x="332" y="0" width="72" height="16" uuid="e369e647-1fff-4878-bb18-7cefefee3232"/>
 				<box>
 					<pen lineWidth="1.0"/>
@@ -994,7 +994,7 @@ EMP_ID]]>
 				<textElement textAlignment="Center"/>
 				<textFieldExpression><![CDATA[$F{OFFDAY_THIS_MONTH}]]></textFieldExpression>
 			</textField>
-			<textField pattern="#,##0.###;#,##0.###-">
+			<textField pattern="" isBlankWhenNull="true">
 				<reportElement x="464" y="0" width="46" height="16" uuid="1d23e8e2-f60e-4a07-8049-e01d71badbbf">
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 				</reportElement>
@@ -1004,7 +1004,7 @@ EMP_ID]]>
 				<textElement textAlignment="Center"/>
 				<textFieldExpression><![CDATA[$F{OFFDAY_QTY}]]></textFieldExpression>
 			</textField>
-			<textField pattern="#,##0.###;#,##0.###-">
+			<textField pattern="" isBlankWhenNull="true">
 				<reportElement x="510" y="0" width="58" height="16" uuid="a2952af8-0699-4687-90af-ba0281c60c69"/>
 				<box>
 					<pen lineWidth="1.0"/>
@@ -1012,7 +1012,7 @@ EMP_ID]]>
 				<textElement textAlignment="Center"/>
 				<textFieldExpression><![CDATA[$F{LUNCH_DIN_QTY}]]></textFieldExpression>
 			</textField>
-			<textField>
+			<textField pattern="" isBlankWhenNull="true">
 				<reportElement x="568" y="0" width="43" height="16" uuid="8ac70755-b741-4b8e-858f-5e8c09e9945a"/>
 				<box>
 					<pen lineWidth="1.0"/>
@@ -1020,7 +1020,7 @@ EMP_ID]]>
 				<textElement textAlignment="Center"/>
 				<textFieldExpression><![CDATA[$F{OFFDAY_RATE}]]></textFieldExpression>
 			</textField>
-			<textField>
+			<textField pattern="" isBlankWhenNull="true">
 				<reportElement x="611" y="0" width="59" height="16" uuid="ba47989b-9ce9-46ab-8014-7e65db8d1155"/>
 				<box>
 					<pen lineWidth="1.0"/>
@@ -1028,7 +1028,7 @@ EMP_ID]]>
 				<textElement textAlignment="Center"/>
 				<textFieldExpression><![CDATA[$F{LUNCH_DIN_RATE}]]></textFieldExpression>
 			</textField>
-			<textField pattern="#,##0.###;#,##0.###-">
+			<textField pattern="" isBlankWhenNull="true">
 				<reportElement x="670" y="0" width="50" height="16" uuid="0ef513f8-3719-4ea2-bfb9-4db664ff20f8"/>
 				<box>
 					<pen lineWidth="1.0"/>
@@ -1036,7 +1036,7 @@ EMP_ID]]>
 				<textElement textAlignment="Center"/>
 				<textFieldExpression><![CDATA[$F{OFFDAY_ALL}]]></textFieldExpression>
 			</textField>
-			<textField pattern="#,##0.###;#,##0.###-">
+			<textField pattern="" isBlankWhenNull="true">
 				<reportElement x="720" y="0" width="57" height="16" uuid="eaba095b-4f2c-4d67-841e-8852fa16bb1b"/>
 				<box>
 					<pen lineWidth="1.0"/>
@@ -1044,7 +1044,7 @@ EMP_ID]]>
 				<textElement textAlignment="Center"/>
 				<textFieldExpression><![CDATA[$F{LUNCH_DIN_ALL}]]></textFieldExpression>
 			</textField>
-			<textField pattern="#,##0.##">
+			<textField pattern="" isBlankWhenNull="true">
 				<reportElement x="777" y="0" width="72" height="16" uuid="6b4c93d6-86e6-4d7f-90f2-e324f4927592"/>
 				<box rightPadding="5">
 					<pen lineWidth="1.0"/>
@@ -1052,7 +1052,7 @@ EMP_ID]]>
 				<textElement textAlignment="Right"/>
 				<textFieldExpression><![CDATA[$F{NET_PAYABLE_BANK}]]></textFieldExpression>
 			</textField>
-			<textField pattern="#,##0.###;#,##0.###-">
+			<textField pattern="" isBlankWhenNull="true">
 				<reportElement x="849" y="0" width="70" height="16" uuid="94c29667-e5b6-4556-8359-2f8fcbe72a9f"/>
 				<box rightPadding="5">
 					<pen lineWidth="1.0"/>
@@ -1202,7 +1202,7 @@ EMP_ID]]>
 							<textFieldExpression><![CDATA[$F{AUD_BY_NAME}]]></textFieldExpression>
 						</textField>
 						<textField>
-							<reportElement x="0" y="20" width="210" height="18" uuid="639b31f4-33f1-4ae4-8c52-a737d5ed8dc8">
+							<reportElement x="0" y="21" width="210" height="18" uuid="639b31f4-33f1-4ae4-8c52-a737d5ed8dc8">
 								<property name="com.jaspersoft.studio.unit.height" value="px"/>
 							</reportElement>
 							<textElement textAlignment="Center">
@@ -1233,7 +1233,7 @@ EMP_ID]]>
 					</textElement>
 					<text><![CDATA[Grand Total:]]></text>
 				</staticText>
-				<textField pattern="#,##0.###;#,##0.###-">
+				<textField pattern="" isBlankWhenNull="true">
 					<reportElement x="464" y="0" width="46" height="18" uuid="91224978-ab4a-46c3-9f78-e2361bc324c8">
 						<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
 					</reportElement>
@@ -1245,7 +1245,7 @@ EMP_ID]]>
 					</textElement>
 					<textFieldExpression><![CDATA[$V{V_GRAND_OFFDAY_QTY}]]></textFieldExpression>
 				</textField>
-				<textField pattern="#,##0.###;#,##0.###-">
+				<textField pattern="" isBlankWhenNull="true">
 					<reportElement x="510" y="0" width="58" height="18" uuid="ad552de0-2940-481d-bc2f-e503e7f16a57">
 						<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
 					</reportElement>
@@ -1257,7 +1257,7 @@ EMP_ID]]>
 					</textElement>
 					<textFieldExpression><![CDATA[$V{V_GRAND_OFFDAY_LUNCH_QTY}]]></textFieldExpression>
 				</textField>
-				<textField pattern="#,##0.###;#,##0.###-">
+				<textField pattern="" isBlankWhenNull="true">
 					<reportElement x="670" y="0" width="50" height="18" uuid="302a48e5-f163-479a-ad8d-63ffffaa822c">
 						<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
 					</reportElement>
@@ -1269,7 +1269,7 @@ EMP_ID]]>
 					</textElement>
 					<textFieldExpression><![CDATA[$V{V_GRAND_OFFDAY_AMT}]]></textFieldExpression>
 				</textField>
-				<textField pattern="#,##0.###;#,##0.###-">
+				<textField pattern="" isBlankWhenNull="true">
 					<reportElement x="720" y="0" width="57" height="18" uuid="4c28ed05-b265-4102-8a16-e146f71f75d1">
 						<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
 					</reportElement>
@@ -1281,7 +1281,7 @@ EMP_ID]]>
 					</textElement>
 					<textFieldExpression><![CDATA[$V{V_GRAND_LUNCH_AMt}]]></textFieldExpression>
 				</textField>
-				<textField pattern="#,##0.###;#,##0.###-">
+				<textField pattern="" isBlankWhenNull="true">
 					<reportElement x="777" y="0" width="72" height="18" uuid="e4a1af68-ed8d-4a8a-9945-6fd3b0295e6e">
 						<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
 					</reportElement>
@@ -1293,7 +1293,7 @@ EMP_ID]]>
 					</textElement>
 					<textFieldExpression><![CDATA[$V{V_GRAND_BANK}]]></textFieldExpression>
 				</textField>
-				<textField pattern="#,##0.###;#,##0.###-">
+				<textField pattern="" isBlankWhenNull="true">
 					<reportElement x="849" y="0" width="70" height="18" uuid="31736a5f-e8f0-44d3-b5c0-48e7dfbb92cd">
 						<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
 					</reportElement>

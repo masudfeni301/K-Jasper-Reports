@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Created with Jaspersoft Studio version 6.3.0.final using JasperReports Library version 6.3.0  -->
-<!-- 2020-11-28T14:33:18 -->
-<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="HRM_OFFDAY_ALLOWANCE" pageWidth="1050" pageHeight="750" orientation="Landscape" columnWidth="1010" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" isIgnorePagination="true" uuid="62d0349b-7ae0-4e9d-9b93-e2c3e0b912f3">
+<!-- 2020-11-28T14:28:56 -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="HRM_NIGHT_ALLOWANCE" pageWidth="1050" pageHeight="750" orientation="Landscape" columnWidth="1010" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" isIgnorePagination="true" uuid="62d0349b-7ae0-4e9d-9b93-e2c3e0b912f3">
 	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
 	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="KALYAR "/>
 	<property name="com.jaspersoft.studio.data.sql.SQLQueryDesigner.sash.w1" value="0"/>
@@ -398,11 +398,9 @@ DEPT_GROUP_SL, DEPT_GROUP, DEPT_CODE, DESIG_CODE, ATTEND_DATE]]>
 	<parameter name="P_EMP" class="java.lang.String"/>
 	<parameter name="P_DEPT_GROUP" class="java.lang.String"/>
 	<queryString>
-		<![CDATA[SELECT 
-NAME, DESIGNATION, DEPARTMENT, SECTION_NAME, ATTEND_DATE , DD, EMP_ID,DUTY,
-BASIC_SALARY, JOIN_DT, BANK_SAL_FLAG, EMP_AC_NO, EMP_AC_DATE, MOBILE_BANK_SAL_FLAG, MOBILE_AC_NO, MOBILE_AC_DATE, DEPT_GROUP, DEPT_CODE, 
-DESIG_CODE, SALARY_TYPE, DESIG_GROUP, DEPT_GROUP_SL, OFFDAY_ALL, OFFDAY_LUNCH_DIN_ALL, ACTUAL_TIME, 
-IN_TIME, OUT_TIME, NVL(OFFDAY_ALL, 0)+NVL(OFFDAY_LUNCH_DIN_ALL, 0) as TOTAL_PAY_AMT,
+		<![CDATA[SELECT
+NAME, DESIGNATION, DEPARTMENT, SECTION_NAME, ATTEND_DATE , JOIN_DT, DD, EMP_ID,
+DEPT_GROUP, DEPT_CODE, DESIG_CODE, DESIG_GROUP, NIGHT_ALL,
 (CASE 
 WHEN DESIG_GROUP ='OF' THEN EMP_AC_NO
 WHEN DESIG_GROUP ='FW' THEN MOBILE_AC_NO
@@ -410,64 +408,34 @@ WHEN DESIG_GROUP ='OS' THEN MOBILE_AC_NO
 ELSE NULL END) as ACCOUNT_NO,
 (CASE 
 WHEN EMP_AC_NO IS NOT NULL AND BANK_SAL_FLAG IS NOT NULL 
-	OR MOBILE_AC_NO IS NOT NULL AND MOBILE_BANK_SAL_FLAG IS NOT NULL THEN
-	NVL(OFFDAY_ALL, 0)+NVL(OFFDAY_LUNCH_DIN_ALL, 0)
+    OR MOBILE_AC_NO IS NOT NULL AND MOBILE_BANK_SAL_FLAG IS NOT NULL THEN
+    NVL(NIGHT_ALL, 0)
 ELSE 0
 END) as NET_PAYABLE_BANK,
-
 (CASE
 WHEN EMP_AC_NO IS NULL AND BANK_SAL_FLAG IS NULL AND MOBILE_AC_NO IS NULL AND MOBILE_BANK_SAL_FLAG IS NULL THEN
-	NVL(OFFDAY_ALL, 0)+NVL(OFFDAY_LUNCH_DIN_ALL, 0)
+    NVL(NIGHT_ALL, 0)
 ELSE 0
-END) as NET_PAYABLE_CASH 
-FROM (SELECT
-NAME, DESIGNATION, DEPARTMENT, SECTION_NAME, ATTEND_DATE , DD, EMP_ID,DUTY,
-BASIC_SALARY, JOIN_DT, EMP_AC_NO, EMP_AC_DATE, MOBILE_AC_NO, MOBILE_AC_DATE, DEPT_GROUP, DEPT_CODE, 
-DESIG_CODE, SALARY_TYPE, DESIG_GROUP, DEPT_GROUP_SL, BANK_SAL_FLAG, MOBILE_BANK_SAL_FLAG,
-(CASE 
-WHEN PRE_ADJ_OFFDAY_ALL > 0 THEN 0
-	ELSE PRE_OFFDAY_ALL
-END) as OFFDAY_ALL,
-
-(CASE 
-WHEN PRE_ADJ_OFFDAY_LUNCH_ALL > 0 THEN 0
-ELSE 
- CASE WHEN OUT_TIME1 IS NOT NULL AND OUT_TIME1>= TO_CHAR(TO_DATE('1400','HH24:MI'),'HH24:MI')  AND OUT_TIME1< TO_CHAR(TO_DATE('23:00','HH24:MI'),'HH24:MI') OR
- DUTY > 4 THEN 
-  PRE_OFFDAY_LUNCH_ALL
- ELSE
-	CASE WHEN ADJ_OFFDAY_LUNCH_ALL > 0 THEN PRE_OFFDAY_LUNCH_ALL
-	ELSE 0
-	END
- END	
-END) as OFFDAY_LUNCH_DIN_ALL,
-
-(CASE 
-  WHEN OUT_TIME_DATE> IN_TIME_DATE THEN 
-	ROUND(24*(OUT_TIME_DATE-IN_TIME_DATE))
-  WHEN IN_TIME_DATE > OUT_TIME_DATE  THEN 
-    ROUND(24*(IN_TIME_DATE-OUT_TIME_DATE))
-  WHEN OUT_TIME_DATE IS NULL  THEN 1
-END) as ACTUAL_TIME, 
+END) as NET_PAYABLE_CASH,
 (CASE
 WHEN PRE_IN_TIME > 0 THEN ORIGIN_IN_TIME
 ELSE
-IN_TIME1
+IN_TIME
 END) as IN_TIME,
 
 (CASE
 WHEN PRE_IN_TIME > 0 THEN ORIGIN_OUT_TIME
 ELSE
-OUT_TIME1
+OUT_TIME
 END) as OUT_TIME
+
 FROM (SELECT 
 (SELECT ' '||O.DESIG_DESC FROM DESIGNATION O WHERE O.DEPT_GROUP = X.DEPT_GROUP AND O.DEPT_CODE  = X.DEPT_CODE AND O.DESIG_CODE = X.DESIG_CODE) as DESIGNATION,
 (SELECT ' '||O.DEPT_GROUP_NAME FROM DEPT_GROUP O WHERE O.DEPT_GROUP_CODE = X.DEPT_GROUP) as DEPARTMENT,
 (SELECT ' '||O.DEPT_DESC FROM DEPT O WHERE O.DEPT_GROUP = X.DEPT_GROUP AND O.DEPT_CODE  = X.DEPT_CODE) as SECTION_NAME,
-ATTEND_DATE , DD, EMP_ID, NAME, IN_TIME as IN_TIME_DATE, OUT_TIME as OUT_TIME_DATE, IN_TIME1, OUT_TIME1, ABS(TO_NUMBER(TO_CHAR(IN_TIME,'HH24'))-  TO_NUMBER(TO_CHAR(OUT_TIME,'HH24'))) DUTY,
-BASIC_SALARY, JOIN_DT,BANK_SAL_FLAG,EMP_AC_NO,EMP_AC_DATE,MOBILE_BANK_SAL_FLAG,MOBILE_AC_NO,
-MOBILE_AC_DATE, DEPT_GROUP, DEPT_CODE, DESIG_CODE, SALARY_TYPE, DESIG_GROUP, DEPT_GROUP_SL,
-(SELECT NVL(O.OFFDAY_ALL,0) FROM HR_TNOFF_ALLOWANCE O
+ATTEND_DATE , DD, EMP_ID, NAME, BANK_SAL_FLAG,EMP_AC_NO,EMP_AC_DATE,MOBILE_BANK_SAL_FLAG,MOBILE_AC_NO,
+MOBILE_AC_DATE, DEPT_GROUP, DEPT_CODE, DESIG_CODE, DESIG_GROUP, JOIN_DT, IN_TIME, OUT_TIME,
+(SELECT NVL(O.NIGHT_ALL,0) FROM HR_TNOFF_ALLOWANCE O
 WHERE O.DEPT_GROUP  = X.DEPT_GROUP 
 AND O.DEPT_CODE   =  X.DEPT_CODE  
 AND O.DESIG_CODE  = X.DESIG_CODE 
@@ -476,43 +444,7 @@ AND O.EFFECTIVE_DATE  = (SELECT MAX(EFFECTIVE_DATE)
                      WHERE DEPT_GROUP = X.DEPT_GROUP AND
                      DEPT_CODE        = X.DEPT_CODE  AND
                      DESIG_CODE      = X.DESIG_CODE AND
-                     EFFECTIVE_DATE  <= TO_DATE($P{P_MNYR},'MM/YYYY'))) PRE_OFFDAY_ALL,
-					 
-(SELECT COUNT(O.EMP_ID) FROM HR_OFFDAY_ADJUST O
-        WHERE O.COMPANY_CODE=$P{P_COMPANY_CODE}
-        AND O.COMPANY_BRANCH_CODE=$P{P_COMPANY_BRANCH_CODE}
-		AND O.EMP_ID = X.EMP_ID 
-		AND O.ADJ_DATE = X.ATTEND_DATE 
-		AND O.OFFDAY_ADJUST ='C' 
-		AND INIT_YR(TO_CHAR(O.ADJ_DATE,'MM/YYYY')) =  INIT_YR($P{P_MNYR})) as PRE_ADJ_OFFDAY_ALL,
-		
-(SELECT NVL(O.OFFDAY_LUNCH_BILL,0) FROM HR_TNOFF_ALLOWANCE O
-  WHERE O.DEPT_GROUP  = X.DEPT_GROUP 
-  AND O.DEPT_CODE   =  X.DEPT_CODE  
-  AND O.DESIG_CODE  = X.DESIG_CODE 
-  AND O.EFFECTIVE_DATE  = (SELECT MAX(EFFECTIVE_DATE) 
-		 FROM HR_TNOFF_ALLOWANCE 
-		 WHERE DEPT_GROUP = X.DEPT_GROUP AND
-		 DEPT_CODE        = X.DEPT_CODE  AND
-		 DESIG_CODE      = x.DESIG_CODE AND
-		 EFFECTIVE_DATE  <= TO_DATE($P{P_MNYR},'MM/YYYY'))) as PRE_OFFDAY_LUNCH_ALL,
-		 
-(SELECT COUNT(O.EMP_ID) FROM HR_OFFDAY_ADJUST O
-        WHERE O.COMPANY_CODE=$P{P_COMPANY_CODE}
-        AND O.COMPANY_BRANCH_CODE=$P{P_COMPANY_BRANCH_CODE}
-		AND O.EMP_ID = X.EMP_ID 
-		AND O.ADJ_DATE = X.ATTEND_DATE 
-		AND O.LUNCH_ADJUST ='C' 
-		AND INIT_YR(TO_CHAR(O.ADJ_DATE,'MM/YYYY')) =  INIT_YR($P{P_MNYR})) as PRE_ADJ_OFFDAY_LUNCH_ALL,
-		
-(SELECT COUNT(EMP_ID) FROM HR_OFFDAY_ADJUST O
-        WHERE O.COMPANY_CODE=$P{P_COMPANY_CODE} 
-		AND O.COMPANY_BRANCH_CODE=$P{P_COMPANY_BRANCH_CODE}
-        AND O.EMP_ID = X.EMP_ID 
-		AND O.ADJ_DATE = X.ATTEND_DATE 
-		AND O.LUNCH_ADJUST ='A' 
-		AND INIT_YR(TO_CHAR(O.ADJ_DATE,'MM/YYYY')) =  INIT_YR($P{P_MNYR})) as ADJ_OFFDAY_LUNCH_ALL,
-		
+                     EFFECTIVE_DATE  <= TO_DATE($P{P_MNYR},'MM/YYYY'))) NIGHT_ALL,
 (SELECT COUNT(attend_date) from daily_attendance O
  WHERE O.EMP_ID = X.EMP_ID AND to_char(O.attend_date, 'MM/YYYY') = $P{P_MNYR}
  AND O.attend_date = (SELECT adj_date FROM HR_OFFDAY_ADJUST WHERE emp_id = X.emp_id AND to_char(adj_date, 'MM/YYYY') = $P{P_MNYR} and adj_date = X.attend_date )) as PRE_IN_TIME,
@@ -525,219 +457,92 @@ AND O.EFFECTIVE_DATE  = (SELECT MAX(EFFECTIVE_DATE)
  (SELECT to_char(O.out_time, 'HH24:MI') from daily_attendance O
  WHERE O.EMP_ID = X.EMP_ID
  AND to_char(O.attend_date, 'MM/YYYY') = $P{P_MNYR}
- AND O.attend_date = X.attend_date) as ORIGIN_OUT_TIME
- 
-FROM (SELECT DISTINCT A.ATTEND_DATE ,TO_CHAR(A.ATTEND_DATE,'DY') DD,A.EMP_ID,B.NAME,A.IN_TIME,A.OUT_TIME,TO_CHAR(A.IN_TIME,'HH24:MI') IN_TIME1,
-B.BASIC_SALARY,TO_CHAR(A.OUT_TIME,'HH24:MI') OUT_TIME1,B.JOIN_DT,B.BANK_SAL_FLAG,B.EMP_AC_NO,B.EMP_AC_DATE,B.MOBILE_BANK_SAL_FLAG,B.MOBILE_AC_NO,
-B.MOBILE_AC_DATE, B.DEPT_GROUP,B.DEPT_CODE,B.DESIG_CODE,B.SALARY_TYPE,S.DESIG_GROUP ,G.DEPT_GROUP_SL
-FROM DAILY_ATTENDANCE A, EMP B, DESIGNATION S, DEPT_GROUP G
+ AND O.attend_date = X.attend_date) as ORIGIN_OUT_TIME					 
+FROM (SELECT JOIN_DT,BANK_SAL_FLAG,EMP_AC_NO,EMP_AC_DATE,MOBILE_BANK_SAL_FLAG,MOBILE_AC_NO,MOBILE_AC_DATE,ATTEND_DATE ,
+DD,EMP_ID,NAME,IN_TIME,OUT_TIME,BASIC_SALARY,DEPT_GROUP,DEPT_CODE,DESIG_CODE,DESIG_GROUP,SALARY_TYPE
+FROM
+(SELECT DISTINCT B.JOIN_DT,B.BANK_SAL_FLAG,B.EMP_AC_NO,B.EMP_AC_DATE,B.MOBILE_BANK_SAL_FLAG,B.MOBILE_AC_NO,B.MOBILE_AC_DATE, A.ATTEND_DATE ,
+TO_CHAR(A.ATTEND_DATE,'DY') DD,A.EMP_ID,B.NAME,TO_CHAR(A.IN_TIME,'HH12:MI AM') IN_TIME,TO_CHAR(A.OUT_TIME,'HH12:MI PM') OUT_TIME,
+B.BASIC_SALARY,B.DEPT_GROUP,B.DEPT_CODE,B.DESIG_CODE,S.DESIG_GROUP,B.SALARY_TYPE
+FROM DAILY_ATTENDANCE A, EMP B, DESIGNATION S
 WHERE 
-(B.DEPT_GROUP = G.DEPT_GROUP_CODE) AND
-A.COMPANY_CODE =B.COMPANY_CODE AND
-A.COMPANY_BRANCH_CODE=B.COMPANY_BRANCH_CODE AND
-A.EMP_ID=B.EMP_ID AND
-A.ATTEND_DATE IN 
-		(
-		SELECT HOLIDAY_DATE
-		FROM HOLIDAY_WEEK
-		WHERE COMPANY_CODE = $P{P_COMPANY_CODE} AND
-        COMPANY_BRANCH_CODE = $P{P_COMPANY_BRANCH_CODE} AND
-        INIT_YR(TO_CHAR(HOLIDAY_DATE,'MM/YYYY')) = INIT_YR($P{P_MNYR})
-		UNION
-		SELECT DATE_TO
-        FROM HOLIDAY
-        WHERE 
-        COMPANY_CODE = $P{P_COMPANY_CODE} AND
-        COMPANY_BRANCH_CODE = $P{P_COMPANY_BRANCH_CODE} AND
-        INIT_YR(TO_CHAR(FROM_DATE,'MM/YYYY'))   = INIT_YR($P{P_MNYR})
-        ) AND
-(A.EMP_ID, A.ATTEND_DATE) NOT IN (
-		SELECT EMP_ID, ADJ_DATE
-        FROM HR_OFFDAY_ADJUST
+A.COMPANY_CODE                                   =B.COMPANY_CODE     AND
+A.COMPANY_BRANCH_CODE                            =B.COMPANY_BRANCH_CODE    AND
+A.EMP_ID                                         =B.EMP_ID    AND
+B.DEPT_GROUP                                     = S.DEPT_GROUP  AND
+B.DEPT_CODE                                      = S.DEPT_CODE  AND
+B.DESIG_CODE                                     = S.DESIG_CODE AND
+A.ATTEND_DATE != A.OUT_DATE                   AND
+(A.EMP_ID ,A.ATTEND_DATE) NOT IN (
+        SELECT EMP_ID ,ADJ_DATE
+        FROM HR_NIGHTBILL_ADJUST
         WHERE 
         COMPANY_CODE=$P{P_COMPANY_CODE} AND
         COMPANY_BRANCH_CODE=$P{P_COMPANY_BRANCH_CODE} AND
-        INIT_YR(TO_CHAR(ADJ_DATE,'MM/YYYY')) =  INIT_YR($P{P_MNYR})
-) AND
-B.DEPT_GROUP = S.DEPT_GROUP  AND
-B.DEPT_CODE  = S.DEPT_CODE  AND
-B.DESIG_CODE = S.DESIG_CODE AND
-A.COMPANY_CODE = $P{P_COMPANY_CODE} AND
-A.COMPANY_BRANCH_CODE = $P{P_COMPANY_BRANCH_CODE} AND
-S.DESIG_GROUP   NOT IN ('FW') AND
-(S.DESIG_GROUP = $P{P_DESIG_GROUP} OR $P{P_DESIG_GROUP} IS NULL) AND
-(B.DEPT_GROUP  = $P{P_DEPT_GROUP} OR $P{P_DEPT_GROUP} IS NULL) AND
-(B.DEPT_CODE = $P{P_DEPT_CODE} OR $P{P_DEPT_CODE} IS NULL) AND
---(B.BLOCK_CODE = :P_BLOCK OR :P_BLOCK IS NULL) AND
-(A.EMP_ID = $P{P_EMP} OR $P{P_EMP} IS NULL) AND
-(B.EMP_STATUS IN('A') OR B.EMP_STATUS IN('I') AND 
-B.EMP_INACTIVE_DT > (TO_DATE('01/'||$P{P_MNYR},'DD/MM/YYYY'))) AND
-INIT_YR(TO_CHAR(A.ATTEND_DATE,'MM/YYYY')) = INIT_YR($P{P_MNYR})    
+        INIT_YR(TO_CHAR(ADJ_DATE,'MM/YYYY')) =  INIT_YR($P{P_MNYR}) )  AND 
+A.COMPANY_CODE                                  = $P{P_COMPANY_CODE}      AND
+A.COMPANY_BRANCH_CODE                           = $P{P_COMPANY_BRANCH_CODE}      AND
+(S.DESIG_GROUP                                  = $P{P_DESIG_GROUP} OR $P{P_DESIG_GROUP} IS NULL)     AND
+(B.DEPT_GROUP                                   = $P{P_DEPT_GROUP} OR $P{P_DEPT_GROUP} IS NULL)       AND
+(B.DEPT_CODE                                    = $P{P_DEPT_CODE} OR $P{P_DEPT_CODE} IS NULL)      AND
+(A.EMP_ID                                       = $P{P_EMP} OR $P{P_EMP} IS NULL)         AND
+TO_CHAR(A.ATTEND_DATE,'MM/YYYY') = $P{P_MNYR}    
 
 UNION
 
-SELECT DISTINCT A.ADJ_DATE ,TO_CHAR(A.ADJ_DATE,'DY') DD, A.EMP_ID,B.NAME, NULL,NULL, NULL,
-B.BASIC_SALARY, NULL,B.JOIN_DT,B.BANK_SAL_FLAG,B.EMP_AC_NO,B.EMP_AC_DATE,B.MOBILE_BANK_SAL_FLAG,B.MOBILE_AC_NO,
-B.MOBILE_AC_DATE, B.DEPT_GROUP,B.DEPT_CODE,B.DESIG_CODE,B.SALARY_TYPE,S.DESIG_GROUP ,G.DEPT_GROUP_SL
-FROM HR_OFFDAY_ADJUST A, EMP B, DESIGNATION S, DEPT_GROUP G
+SELECT DISTINCT B.JOIN_DT,B.BANK_SAL_FLAG,B.EMP_AC_NO,B.EMP_AC_DATE,B.MOBILE_BANK_SAL_FLAG,B.MOBILE_AC_NO,B.MOBILE_AC_DATE, A.ADJ_DATE ,
+TO_CHAR(A.ADJ_DATE,'DY') DD,A.EMP_ID,B.NAME,NULL IN_TIME,NULL OUT_TIME,
+B.BASIC_SALARY,B.DEPT_GROUP,B.DEPT_CODE,B.DESIG_CODE,S.DESIG_GROUP,B.SALARY_TYPE
+FROM HR_NIGHTBILL_ADJUST A, EMP B, DESIGNATION S
 WHERE 
-(B.DEPT_GROUP = G.DEPT_GROUP_CODE) AND
-A.COMPANY_CODE  =B.COMPANY_CODE AND
-A.COMPANY_BRANCH_CODE =B.COMPANY_BRANCH_CODE AND
-A.EMP_ID=B.EMP_ID AND
-B.DEPT_GROUP = S.DEPT_GROUP  AND
-B.DEPT_CODE = S.DEPT_CODE  AND
-B.DESIG_CODE = S.DESIG_CODE AND
-A.COMPANY_CODE = $P{P_COMPANY_CODE} AND
-A.COMPANY_BRANCH_CODE = $P{P_COMPANY_BRANCH_CODE} AND
-------S.DESIG_GROUP   NOT IN ('FW') AND
-(S.DESIG_GROUP = $P{P_DESIG_GROUP} OR $P{P_DESIG_GROUP} IS NULL) AND
-(B.DEPT_GROUP = $P{P_DEPT_GROUP} OR $P{P_DEPT_GROUP} IS NULL) AND
-(B.DEPT_CODE = $P{P_DEPT_CODE} OR $P{P_DEPT_CODE} IS NULL) AND
---(B.BLOCK_CODE   = :P_BLOCK OR :P_BLOCK IS NULL) AND
-(A.EMP_ID = $P{P_EMP} OR $P{P_EMP} IS NULL) AND
-(A.EMP_ID,A.ADJ_DATE) NOT IN (
-		SELECT EMP_ID,ADJ_DATE
-        FROM HR_OFFDAY_ADJUST
+A.COMPANY_CODE                                   =B.COMPANY_CODE     AND
+A.COMPANY_BRANCH_CODE                            =B.COMPANY_BRANCH_CODE    AND
+A.EMP_ID                                         =B.EMP_ID    AND
+B.DEPT_GROUP                                     = S.DEPT_GROUP  AND
+B.DEPT_CODE                                      = S.DEPT_CODE  AND
+B.DESIG_CODE                                     = S.DESIG_CODE AND
+(A.EMP_ID ,A.ADJ_DATE) NOT IN (
+        SELECT EMP_ID ,ADJ_DATE
+        FROM HR_NIGHTBILL_ADJUST
         WHERE 
         COMPANY_CODE=$P{P_COMPANY_CODE} AND
         COMPANY_BRANCH_CODE=$P{P_COMPANY_BRANCH_CODE} AND
-        (OFFDAY_ADJUST IS NULL AND  LUNCH_ADJUST IS NULL) OR
-        (OFFDAY_ADJUST ='C' AND  LUNCH_ADJUST ='C') AND
-        INIT_YR(TO_CHAR(ADJ_DATE,'MM/YYYY')) =  INIT_YR($P{P_MNYR})
-) AND
-(B.EMP_STATUS IN('A') OR B.EMP_STATUS IN('I') AND 
-B.EMP_INACTIVE_DT > (TO_DATE('01/'||$P{P_MNYR},'DD/MM/YYYY'))) AND
-INIT_YR(TO_CHAR(A.ADJ_DATE ,'MM/YYYY')) = INIT_YR($P{P_MNYR})   ) X))                                 
+        ( ADJUST_FLAG IS NULL ) OR
+        ( ADJUST_FLAG ='-' ) AND
+        INIT_YR(TO_CHAR(ADJ_DATE,'MM/YYYY')) =  INIT_YR($P{P_MNYR}) )  AND       
+A.COMPANY_CODE                                  = $P{P_COMPANY_CODE}      AND
+A.COMPANY_BRANCH_CODE                           = $P{P_COMPANY_BRANCH_CODE}      AND
+(S.DESIG_GROUP                                  = $P{P_DESIG_GROUP} OR $P{P_DESIG_GROUP} IS NULL)     AND
+(B.DEPT_GROUP                                   = $P{P_DEPT_GROUP} OR $P{P_DEPT_GROUP} IS NULL)       AND
+(B.DEPT_CODE                                    = $P{P_DEPT_CODE} OR $P{P_DEPT_CODE} IS NULL)      AND
+(A.EMP_ID                                       = $P{P_EMP} OR $P{P_EMP} IS NULL)         AND
+TO_CHAR(A.ADJ_DATE,'MM/YYYY') = $P{P_MNYR}   )                               
+ORDER BY 
+ATTEND_DATE,
+DEPT_CODE  ) X)                              
 
 ORDER BY 
-DEPT_GROUP_SL, DEPT_GROUP, DEPT_CODE, DESIG_CODE, JOIN_DT,
-EMP_ID, ATTEND_DATE]]>
+DEPT_GROUP, DEPT_CODE, DESIG_CODE, ATTEND_DATE
+]]>
 	</queryString>
-	<field name="NAME" class="java.lang.String">
-		<property name="com.jaspersoft.studio.field.name" value="NAME"/>
-		<property name="com.jaspersoft.studio.field.label" value="NAME"/>
-	</field>
-	<field name="DESIGNATION" class="java.lang.String">
-		<property name="com.jaspersoft.studio.field.name" value="DESIGNATION"/>
-		<property name="com.jaspersoft.studio.field.label" value="DESIGNATION"/>
-	</field>
-	<field name="DEPARTMENT" class="java.lang.String">
-		<property name="com.jaspersoft.studio.field.name" value="DEPARTMENT"/>
-		<property name="com.jaspersoft.studio.field.label" value="DEPARTMENT"/>
-	</field>
-	<field name="SECTION_NAME" class="java.lang.String">
-		<property name="com.jaspersoft.studio.field.name" value="SECTION_NAME"/>
-		<property name="com.jaspersoft.studio.field.label" value="SECTION_NAME"/>
-	</field>
-	<field name="ATTEND_DATE" class="java.sql.Timestamp">
-		<property name="com.jaspersoft.studio.field.name" value="ATTEND_DATE"/>
-		<property name="com.jaspersoft.studio.field.label" value="ATTEND_DATE"/>
-	</field>
-	<field name="DD" class="java.lang.String">
-		<property name="com.jaspersoft.studio.field.name" value="DD"/>
-		<property name="com.jaspersoft.studio.field.label" value="DD"/>
-	</field>
-	<field name="EMP_ID" class="java.lang.String">
-		<property name="com.jaspersoft.studio.field.name" value="EMP_ID"/>
-		<property name="com.jaspersoft.studio.field.label" value="EMP_ID"/>
-	</field>
-	<field name="DUTY" class="java.math.BigDecimal">
-		<property name="com.jaspersoft.studio.field.name" value="DUTY"/>
-		<property name="com.jaspersoft.studio.field.label" value="DUTY"/>
-	</field>
-	<field name="BASIC_SALARY" class="java.math.BigDecimal">
-		<property name="com.jaspersoft.studio.field.name" value="BASIC_SALARY"/>
-		<property name="com.jaspersoft.studio.field.label" value="BASIC_SALARY"/>
-	</field>
-	<field name="JOIN_DT" class="java.sql.Timestamp">
-		<property name="com.jaspersoft.studio.field.name" value="JOIN_DT"/>
-		<property name="com.jaspersoft.studio.field.label" value="JOIN_DT"/>
-	</field>
-	<field name="BANK_SAL_FLAG" class="java.lang.String">
-		<property name="com.jaspersoft.studio.field.name" value="BANK_SAL_FLAG"/>
-		<property name="com.jaspersoft.studio.field.label" value="BANK_SAL_FLAG"/>
-	</field>
-	<field name="EMP_AC_NO" class="java.lang.String">
-		<property name="com.jaspersoft.studio.field.name" value="EMP_AC_NO"/>
-		<property name="com.jaspersoft.studio.field.label" value="EMP_AC_NO"/>
-	</field>
-	<field name="EMP_AC_DATE" class="java.sql.Timestamp">
-		<property name="com.jaspersoft.studio.field.name" value="EMP_AC_DATE"/>
-		<property name="com.jaspersoft.studio.field.label" value="EMP_AC_DATE"/>
-	</field>
-	<field name="MOBILE_BANK_SAL_FLAG" class="java.lang.String">
-		<property name="com.jaspersoft.studio.field.name" value="MOBILE_BANK_SAL_FLAG"/>
-		<property name="com.jaspersoft.studio.field.label" value="MOBILE_BANK_SAL_FLAG"/>
-	</field>
-	<field name="MOBILE_AC_NO" class="java.lang.String">
-		<property name="com.jaspersoft.studio.field.name" value="MOBILE_AC_NO"/>
-		<property name="com.jaspersoft.studio.field.label" value="MOBILE_AC_NO"/>
-	</field>
-	<field name="MOBILE_AC_DATE" class="java.sql.Timestamp">
-		<property name="com.jaspersoft.studio.field.name" value="MOBILE_AC_DATE"/>
-		<property name="com.jaspersoft.studio.field.label" value="MOBILE_AC_DATE"/>
-	</field>
-	<field name="DEPT_GROUP" class="java.lang.String">
-		<property name="com.jaspersoft.studio.field.name" value="DEPT_GROUP"/>
-		<property name="com.jaspersoft.studio.field.label" value="DEPT_GROUP"/>
-	</field>
-	<field name="DEPT_CODE" class="java.lang.String">
-		<property name="com.jaspersoft.studio.field.name" value="DEPT_CODE"/>
-		<property name="com.jaspersoft.studio.field.label" value="DEPT_CODE"/>
-	</field>
-	<field name="DESIG_CODE" class="java.lang.String">
-		<property name="com.jaspersoft.studio.field.name" value="DESIG_CODE"/>
-		<property name="com.jaspersoft.studio.field.label" value="DESIG_CODE"/>
-	</field>
-	<field name="SALARY_TYPE" class="java.lang.String">
-		<property name="com.jaspersoft.studio.field.name" value="SALARY_TYPE"/>
-		<property name="com.jaspersoft.studio.field.label" value="SALARY_TYPE"/>
-	</field>
-	<field name="DESIG_GROUP" class="java.lang.String">
-		<property name="com.jaspersoft.studio.field.name" value="DESIG_GROUP"/>
-		<property name="com.jaspersoft.studio.field.label" value="DESIG_GROUP"/>
-	</field>
-	<field name="DEPT_GROUP_SL" class="java.math.BigDecimal">
-		<property name="com.jaspersoft.studio.field.name" value="DEPT_GROUP_SL"/>
-		<property name="com.jaspersoft.studio.field.label" value="DEPT_GROUP_SL"/>
-	</field>
-	<field name="OFFDAY_ALL" class="java.math.BigDecimal">
-		<property name="com.jaspersoft.studio.field.name" value="OFFDAY_ALL"/>
-		<property name="com.jaspersoft.studio.field.label" value="OFFDAY_ALL"/>
-	</field>
-	<field name="OFFDAY_LUNCH_DIN_ALL" class="java.math.BigDecimal">
-		<property name="com.jaspersoft.studio.field.name" value="OFFDAY_LUNCH_DIN_ALL"/>
-		<property name="com.jaspersoft.studio.field.label" value="OFFDAY_LUNCH_DIN_ALL"/>
-	</field>
-	<field name="ACTUAL_TIME" class="java.math.BigDecimal">
-		<property name="com.jaspersoft.studio.field.name" value="ACTUAL_TIME"/>
-		<property name="com.jaspersoft.studio.field.label" value="ACTUAL_TIME"/>
-	</field>
-	<field name="IN_TIME" class="java.lang.String">
-		<property name="com.jaspersoft.studio.field.name" value="IN_TIME"/>
-		<property name="com.jaspersoft.studio.field.label" value="IN_TIME"/>
-	</field>
-	<field name="OUT_TIME" class="java.lang.String">
-		<property name="com.jaspersoft.studio.field.name" value="OUT_TIME"/>
-		<property name="com.jaspersoft.studio.field.label" value="OUT_TIME"/>
-	</field>
-	<field name="TOTAL_PAY_AMT" class="java.math.BigDecimal">
-		<property name="com.jaspersoft.studio.field.name" value="TOTAL_PAY_AMT"/>
-		<property name="com.jaspersoft.studio.field.label" value="TOTAL_PAY_AMT"/>
-	</field>
-	<field name="ACCOUNT_NO" class="java.lang.String">
-		<property name="com.jaspersoft.studio.field.name" value="ACCOUNT_NO"/>
-		<property name="com.jaspersoft.studio.field.label" value="ACCOUNT_NO"/>
-	</field>
-	<field name="NET_PAYABLE_BANK" class="java.math.BigDecimal">
-		<property name="com.jaspersoft.studio.field.name" value="NET_PAYABLE_BANK"/>
-		<property name="com.jaspersoft.studio.field.label" value="NET_PAYABLE_BANK"/>
-	</field>
-	<field name="NET_PAYABLE_CASH" class="java.math.BigDecimal">
-		<property name="com.jaspersoft.studio.field.name" value="NET_PAYABLE_CASH"/>
-		<property name="com.jaspersoft.studio.field.label" value="NET_PAYABLE_CASH"/>
-	</field>
+	<field name="NAME" class="java.lang.String"/>
+	<field name="DESIGNATION" class="java.lang.String"/>
+	<field name="DEPARTMENT" class="java.lang.String"/>
+	<field name="SECTION_NAME" class="java.lang.String"/>
+	<field name="ATTEND_DATE" class="java.sql.Timestamp"/>
+	<field name="JOIN_DT" class="java.sql.Timestamp"/>
+	<field name="DD" class="java.lang.String"/>
+	<field name="EMP_ID" class="java.lang.String"/>
+	<field name="DEPT_GROUP" class="java.lang.String"/>
+	<field name="DEPT_CODE" class="java.lang.String"/>
+	<field name="DESIG_CODE" class="java.lang.String"/>
+	<field name="DESIG_GROUP" class="java.lang.String"/>
+	<field name="NIGHT_ALL" class="java.math.BigDecimal"/>
+	<field name="ACCOUNT_NO" class="java.lang.String"/>
+	<field name="NET_PAYABLE_BANK" class="java.math.BigDecimal"/>
+	<field name="NET_PAYABLE_CASH" class="java.math.BigDecimal"/>
+	<field name="IN_TIME" class="java.lang.String"/>
+	<field name="OUT_TIME" class="java.lang.String"/>
 	<variable name="V_HEADER" class="java.lang.String">
 		<variableExpression><![CDATA[$F{NAME}]]></variableExpression>
 	</variable>
@@ -760,7 +565,7 @@ EMP_ID, ATTEND_DATE]]>
 		<variableExpression><![CDATA[$F{NET_PAYABLE_CASH}]]></variableExpression>
 	</variable>
 	<variable name="V_EMP_TOT_ALL" class="java.math.BigDecimal" resetType="Group" resetGroup="EMP" calculation="Count">
-		<variableExpression><![CDATA[$F{OFFDAY_ALL}]]></variableExpression>
+		<variableExpression><![CDATA[$F{NIGHT_ALL}]]></variableExpression>
 	</variable>
 	<variable name="V_EMP_BANK" class="java.math.BigDecimal" resetType="Group" resetGroup="EMP" calculation="Sum">
 		<variableExpression><![CDATA[$F{NET_PAYABLE_BANK}]]></variableExpression>
@@ -843,7 +648,7 @@ EMP_ID, ATTEND_DATE]]>
 						<text><![CDATA[Sub-Total:]]></text>
 					</staticText>
 					<textField>
-						<reportElement x="634" y="1" width="59" height="16" uuid="fe235342-a075-4359-a99a-39cc929525d0">
+						<reportElement x="634" y="1" width="66" height="16" uuid="fe235342-a075-4359-a99a-39cc929525d0">
 							<property name="com.jaspersoft.studio.unit.height" value="px"/>
 						</reportElement>
 						<textElement textAlignment="Center">
@@ -852,7 +657,7 @@ EMP_ID, ATTEND_DATE]]>
 						<textFieldExpression><![CDATA[$V{V_SEC_ALL_DAY}]]></textFieldExpression>
 					</textField>
 					<textField isBlankWhenNull="true">
-						<reportElement x="743" y="1" width="72" height="16" uuid="f520d6dc-97be-4f1f-8c12-0d019425db1f">
+						<reportElement x="701" y="1" width="72" height="16" uuid="f520d6dc-97be-4f1f-8c12-0d019425db1f">
 							<property name="com.jaspersoft.studio.unit.height" value="px"/>
 						</reportElement>
 						<box rightPadding="5"/>
@@ -862,7 +667,7 @@ EMP_ID, ATTEND_DATE]]>
 						<textFieldExpression><![CDATA[$V{V_SEC_BANK}]]></textFieldExpression>
 					</textField>
 					<textField isBlankWhenNull="true">
-						<reportElement x="815" y="1" width="70" height="16" uuid="4aba0360-5ebb-43ea-b340-cf9f91ff44dc">
+						<reportElement x="773" y="1" width="70" height="16" uuid="4aba0360-5ebb-43ea-b340-cf9f91ff44dc">
 							<property name="com.jaspersoft.studio.unit.height" value="px"/>
 						</reportElement>
 						<box rightPadding="5"/>
@@ -952,7 +757,7 @@ EMP_ID, ATTEND_DATE]]>
 					<textElement textAlignment="Center">
 						<font isBold="true"/>
 					</textElement>
-					<text><![CDATA[Offday Allowance Details]]></text>
+					<text><![CDATA[Night Allowance Details]]></text>
 				</staticText>
 			</band>
 		</groupHeader>
@@ -978,7 +783,7 @@ EMP_ID, ATTEND_DATE]]>
 						<text><![CDATA[Payable Days and Amount:]]></text>
 					</staticText>
 					<textField isBlankWhenNull="true">
-						<reportElement x="814" y="0" width="70" height="16" uuid="387d9bab-1033-4dbe-8cf9-5c857ef427d8">
+						<reportElement x="772" y="0" width="70" height="16" uuid="387d9bab-1033-4dbe-8cf9-5c857ef427d8">
 							<property name="com.jaspersoft.studio.unit.height" value="px"/>
 						</reportElement>
 						<box rightPadding="5">
@@ -988,7 +793,7 @@ EMP_ID, ATTEND_DATE]]>
 						<textFieldExpression><![CDATA[$V{V_EMP_CASH}]]></textFieldExpression>
 					</textField>
 					<textField isBlankWhenNull="true">
-						<reportElement x="742" y="0" width="72" height="16" uuid="c66974c1-5dcb-44c0-bda6-950e2b7aab23">
+						<reportElement x="700" y="0" width="72" height="16" uuid="c66974c1-5dcb-44c0-bda6-950e2b7aab23">
 							<property name="com.jaspersoft.studio.unit.height" value="px"/>
 						</reportElement>
 						<box rightPadding="5">
@@ -998,7 +803,7 @@ EMP_ID, ATTEND_DATE]]>
 						<textFieldExpression><![CDATA[$V{V_EMP_BANK}]]></textFieldExpression>
 					</textField>
 					<textField isBlankWhenNull="true">
-						<reportElement x="634" y="0" width="58" height="16" uuid="faad6103-f4c8-4774-8c05-5cc695a6b49c">
+						<reportElement x="634" y="0" width="66" height="16" uuid="faad6103-f4c8-4774-8c05-5cc695a6b49c">
 							<property name="com.jaspersoft.studio.unit.height" value="px"/>
 						</reportElement>
 						<box>
@@ -1098,7 +903,7 @@ EMP_ID, ATTEND_DATE]]>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font size="14" isBold="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA["Offday Statement for the Month of  "+new SimpleDateFormat("MMMM-yyyy").format(new SimpleDateFormat("MM/yyyy").parse($P{P_MNYR}))]]></textFieldExpression>
+				<textFieldExpression><![CDATA["Night Statement for the Month of  "+new SimpleDateFormat("MMMM-yyyy").format(new SimpleDateFormat("MM/yyyy").parse($P{P_MNYR}))]]></textFieldExpression>
 			</textField>
 		</band>
 	</pageHeader>
@@ -1189,7 +994,7 @@ EMP_ID, ATTEND_DATE]]>
 				<text><![CDATA[Out Time]]></text>
 			</staticText>
 			<staticText>
-				<reportElement mode="Opaque" x="634" y="0" width="58" height="44" backcolor="#EDEDED" uuid="abd2a25a-a384-4571-ab5f-dd35df96fb88"/>
+				<reportElement mode="Opaque" x="634" y="0" width="66" height="44" backcolor="#EDEDED" uuid="abd2a25a-a384-4571-ab5f-dd35df96fb88"/>
 				<box>
 					<pen lineWidth="1.0"/>
 				</box>
@@ -1199,17 +1004,7 @@ EMP_ID, ATTEND_DATE]]>
 				<text><![CDATA[Allowance Per Day]]></text>
 			</staticText>
 			<staticText>
-				<reportElement mode="Opaque" x="692" y="0" width="50" height="44" backcolor="#EDEDED" uuid="11516fd0-f6fe-42d8-90fc-dcea8a251cf5"/>
-				<box>
-					<pen lineWidth="1.0"/>
-				</box>
-				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font isBold="true"/>
-				</textElement>
-				<text><![CDATA[Dinner Per Day]]></text>
-			</staticText>
-			<staticText>
-				<reportElement mode="Opaque" x="742" y="20" width="72" height="24" backcolor="#EDEDED" uuid="dbe9fbb9-10a5-40ed-805c-ae52a5aa2819"/>
+				<reportElement mode="Opaque" x="700" y="20" width="72" height="24" backcolor="#EDEDED" uuid="dbe9fbb9-10a5-40ed-805c-ae52a5aa2819"/>
 				<box>
 					<pen lineWidth="1.0"/>
 				</box>
@@ -1219,7 +1014,7 @@ EMP_ID, ATTEND_DATE]]>
 				<text><![CDATA[Bank]]></text>
 			</staticText>
 			<staticText>
-				<reportElement mode="Opaque" x="814" y="20" width="70" height="24" backcolor="#EDEDED" uuid="075ed5e2-24fc-4562-9784-83d9476c87b9"/>
+				<reportElement mode="Opaque" x="772" y="20" width="70" height="24" backcolor="#EDEDED" uuid="075ed5e2-24fc-4562-9784-83d9476c87b9"/>
 				<box>
 					<pen lineWidth="1.0"/>
 				</box>
@@ -1229,7 +1024,7 @@ EMP_ID, ATTEND_DATE]]>
 				<text><![CDATA[Cash]]></text>
 			</staticText>
 			<staticText>
-				<reportElement mode="Opaque" x="884" y="0" width="126" height="44" backcolor="#EDEDED" uuid="caf56915-ac2b-4359-a879-4c2d1fd7ebfb"/>
+				<reportElement mode="Opaque" x="842" y="0" width="168" height="44" backcolor="#EDEDED" uuid="caf56915-ac2b-4359-a879-4c2d1fd7ebfb"/>
 				<box>
 					<pen lineWidth="1.0"/>
 				</box>
@@ -1239,7 +1034,7 @@ EMP_ID, ATTEND_DATE]]>
 				<text><![CDATA[Remarks]]></text>
 			</staticText>
 			<staticText>
-				<reportElement mode="Opaque" x="742" y="0" width="142" height="20" backcolor="#EDEDED" uuid="02854b24-604e-4d18-9f99-b94103813f9d"/>
+				<reportElement mode="Opaque" x="700" y="0" width="142" height="20" backcolor="#EDEDED" uuid="02854b24-604e-4d18-9f99-b94103813f9d"/>
 				<box>
 					<pen lineWidth="1.0"/>
 				</box>
@@ -1303,27 +1098,17 @@ EMP_ID, ATTEND_DATE]]>
 				<textFieldExpression><![CDATA[$F{OUT_TIME}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement x="634" y="0" width="58" height="16" uuid="e2e6943b-4f97-4ba1-9af4-76c9b817b062">
+				<reportElement x="634" y="0" width="66" height="16" uuid="e2e6943b-4f97-4ba1-9af4-76c9b817b062">
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 				</reportElement>
 				<box>
 					<pen lineWidth="1.0"/>
 				</box>
 				<textElement textAlignment="Center"/>
-				<textFieldExpression><![CDATA[$F{OFFDAY_ALL}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{NIGHT_ALL}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement x="692" y="0" width="50" height="16" uuid="68138c26-48e1-445d-a935-cba8fb4c8aa8">
-					<property name="com.jaspersoft.studio.unit.height" value="px"/>
-				</reportElement>
-				<box>
-					<pen lineWidth="1.0"/>
-				</box>
-				<textElement textAlignment="Center"/>
-				<textFieldExpression><![CDATA[$F{OFFDAY_LUNCH_DIN_ALL}]]></textFieldExpression>
-			</textField>
-			<textField isBlankWhenNull="true">
-				<reportElement x="742" y="0" width="72" height="16" uuid="7b0031ea-626d-4ff6-ab6d-baf382ea42d0">
+				<reportElement x="700" y="0" width="72" height="16" uuid="7b0031ea-626d-4ff6-ab6d-baf382ea42d0">
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 				</reportElement>
 				<box rightPadding="5">
@@ -1333,7 +1118,7 @@ EMP_ID, ATTEND_DATE]]>
 				<textFieldExpression><![CDATA[$F{NET_PAYABLE_BANK}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement x="814" y="0" width="70" height="16" uuid="5dd4e3b1-ab1a-4cff-874f-4c06d1fdffcb">
+				<reportElement x="772" y="0" width="70" height="16" uuid="5dd4e3b1-ab1a-4cff-874f-4c06d1fdffcb">
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 				</reportElement>
 				<box rightPadding="5">
@@ -1343,7 +1128,7 @@ EMP_ID, ATTEND_DATE]]>
 				<textFieldExpression><![CDATA[$F{NET_PAYABLE_CASH}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="884" y="0" width="126" height="16" uuid="66036afa-c353-4fa5-9954-05d1ea8142fb">
+				<reportElement x="842" y="0" width="168" height="16" uuid="66036afa-c353-4fa5-9954-05d1ea8142fb">
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 				</reportElement>
 				<box>
@@ -1560,7 +1345,7 @@ EMP_ID, ATTEND_DATE]]>
 					<text><![CDATA[Grand Total:]]></text>
 				</staticText>
 				<textField isBlankWhenNull="true">
-					<reportElement x="634" y="1" width="59" height="16" uuid="8796e337-92f1-44da-84a7-2be4d55b1732">
+					<reportElement x="634" y="1" width="67" height="16" uuid="8796e337-92f1-44da-84a7-2be4d55b1732">
 						<property name="com.jaspersoft.studio.unit.height" value="px"/>
 					</reportElement>
 					<textElement textAlignment="Center">
@@ -1569,7 +1354,7 @@ EMP_ID, ATTEND_DATE]]>
 					<textFieldExpression><![CDATA[$V{V_GRAND_ALL_DAY}]]></textFieldExpression>
 				</textField>
 				<textField isBlankWhenNull="true">
-					<reportElement x="743" y="1" width="72" height="16" uuid="0d843aa6-c857-46de-aad9-0e2f68d833f8">
+					<reportElement x="701" y="1" width="72" height="16" uuid="0d843aa6-c857-46de-aad9-0e2f68d833f8">
 						<property name="com.jaspersoft.studio.unit.height" value="px"/>
 					</reportElement>
 					<box rightPadding="5">
@@ -1581,7 +1366,7 @@ EMP_ID, ATTEND_DATE]]>
 					<textFieldExpression><![CDATA[$V{V_GRAND_BANK}]]></textFieldExpression>
 				</textField>
 				<textField isBlankWhenNull="true">
-					<reportElement x="815" y="1" width="70" height="16" uuid="d5ceed95-6f68-48be-840d-62cb1bc25e8b">
+					<reportElement x="773" y="1" width="70" height="16" uuid="d5ceed95-6f68-48be-840d-62cb1bc25e8b">
 						<property name="com.jaspersoft.studio.unit.height" value="px"/>
 					</reportElement>
 					<box rightPadding="5">
